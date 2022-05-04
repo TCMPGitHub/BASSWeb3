@@ -1,0 +1,382 @@
+﻿@using Kendo.Mvc.UI
+<style>
+    .k-grid-header th.k-header {
+        white-space: pre-wrap;
+        text-align: center;
+        vertical-align: middle;
+    }
+    .k-grid-footer td {
+        background-color: lightblue;
+    }
+</style>
+
+<script type="text/javascript">
+    $(function () {
+        var ctrl = $("#FromToDate").data("kendoDateRangePicker");
+        var datestring = kendo.toString(ctrl.options.range.start, "MM/dd/yyyy") + "-" + kendo.toString(DateAdds(60), 'MM/dd/yyyy')
+            //$("#FromDate").val() + "-" + $("#ToDate").val();
+        $("#reportspan").html(datestring);
+    });
+    function Grid1DataBound() {
+        var grid = $("#gridInmates").data("kendoGrid");
+        grid.thead.find('th').each(function () {
+            $(this).prop('title', $(this).data('title'));
+        })
+    }
+</script>
+
+<script>
+    function exportToExcel() {
+        //header 1
+        var ctrl = $("#FromToDate").data("kendoDateRangePicker");
+        var rows = [{
+            cells: [
+               {
+                   value: kendo.toString(ctrl.options.range.start, "MM/dd/yyyy") + "-" + kendo.toString(ctrl.options.range.end, "MM/dd/yyyy"), bold: true, color: "#4e9a06", background: "#dcdcdc",
+                   colSpan: 4, vAlign: "center", hAlign: "center" },
+               { value: "Global Services Not Provided", bold: true, color: "#cc0000", background: "#dcdcdc", colSpan: 10, vAlign: "center", hAlign: "center" },
+               { value: "Potential TCMP Paticipants", bold: true, color: "#3465A4", background: "#dcdcdc", colSpan: 3, vAlign: "center", hAlign: "center" },
+               { value: "Accepted TCMP Services", bold: true, color: "#4e9a06", background: "#dcdcdc", vAlign: "center", hAlign: "center", rowSpan: 2 },
+               { value: "TCMP Services / Applications Provided", bold: true, color: "#5E610B", background: "#dcdcdc", colSpan: 5, vAlign: "center", hAlign: "center" },
+               { value: "Benefit(s) Not Provided", bold: true, color: "#cc0000", background: "#dcdcdc", colSpan: 3, vAlign: "center", hAlign: "center" },
+               { value: "Released To", bold: true, color: "#3465A4", colSpan: 7, background: "#dcdcdc", vAlign: "center", hAlign: "center" }
+            ]
+        }];
+
+        //header 2
+        rows.push({
+            cells: [
+                { background: "#dcdcdc", value: "Facility", bold: true, color: "#4e9a06", vAlign: "center" },
+                { background: "#dcdcdc", value: "Released In Period By EPRD", bold: true, color: "#4e9a06", vAlign: "center" },
+                { background: "#dcdcdc", value: "Screened By TCMP", bold: true, color: "#4e9a06", vAlign: "center" },
+                { background: "#dcdcdc", value: "%", bold: true, color: "#4e9a06", vAlign: "center" },
+                { background: "#dcdcdc", value: "Late Referral", bold: true, color: "#cc0000", vAlign: "center" },
+                { background: "#dcdcdc", value: "Lifer", bold: true, color: "#cc0000", vAlign: "center" },
+                { background: "#dcdcdc", value: "In accessible", bold: true, color: "#cc0000", vAlign: "center" },
+                { background: "#dcdcdc", value: "Deceased", bold: true, color: "#cc0000", vAlign: "center" },
+                { background: "#dcdcdc", value: "Ineligible Confirmed Hold", bold: true, color: "#cc0000", vAlign: "center" },
+                { background: "#dcdcdc", value: "Refused All Services", bold: true, color: "#cc0000", vAlign: "center" },
+                { background: "#dcdcdc", value: "Ineligible County Boarder", bold: true, color: "#cc0000", vAlign: "center" },
+                { background: "#dcdcdc", value: "Refused Hold", bold: true, color: "#cc0000", vAlign: "center" },
+                { background: "#dcdcdc", value: "CID Refusal", bold: true, color: "#cc0000", vAlign: "center" },
+                { background: "#dcdcdc", value: "COVID19 Related", bold: true, color: "#cc0000", vAlign: "center" },
+                { background: "#dcdcdc", value: "Total", bold: true, color: "#3465A4", vAlign: "center" },
+                { background: "#dcdcdc", value: "Received Any Svcs", bold: true, color: "#3465A4", vAlign: "center" },
+                { background: "#dcdcdc", value: "%", bold: true, color: "#3465A4", vAlign: "center" },
+                { background: "#dcdcdc", value: "MediCal Submitted", bold: true, color: "#5E610B", vAlign: "center" },
+                { background: "#dcdcdc", value: "SSI Submitted", bold: true, color: "#5E610B", vAlign: "center" },
+                { background: "#dcdcdc", value: "VA Submitted", bold: true, color: "#5E610B", vAlign: "center" },
+                { background: "#dcdcdc", value: "CID Service Plan Created", bold: true, color: "#5E610B", vAlign: "center" },
+                { background: "#dcdcdc", value: "Total Submitted", bold: true, color: "#5E610B", vAlign: "center" },
+                { background: "#dcdcdc", value: "SSI", bold: true, color: "#cc0000", vAlign: "center" },
+                { background: "#dcdcdc", value: "Medi-Cal", bold: true, color: "#cc0000", vAlign: "center" },
+                { background: "#dcdcdc", value: "VA", bold: true, color: "#cc0000", vAlign: "center" },
+                { background: "#dcdcdc", value: "Parole", bold: true, color: "#3465A4", vAlign: "center" },
+                { background: "#dcdcdc", value: "PRCS", bold: true, color: "#3465A4", vAlign: "center" },
+                { background: "#dcdcdc", value: "Dis charged", bold: true, color: "#3465A4", vAlign: "center" },
+                { background: "#dcdcdc", value: "ACP", bold: true, color: "#3465A4", vAlign: "center" },
+                { background: "#dcdcdc", value: "MDO or SVP", bold: true, color: "#3465A4", vAlign: "center" },
+                { background: "#dcdcdc", value: "INS or ICE", bold: true, color: "#3465A4", vAlign: "center" },
+                { background: "#dcdcdc", value: "Out of State", bold: true, color: "#3465A4", vAlign: "center" }
+            ]
+        });
+
+        //data rows
+        var grid = $("#gridInmates").getKendoGrid();
+        var trs = grid.dataSource;
+        var filteredDataSource = new kendo.data.DataSource({
+            data: trs.data(),
+            filter: trs.filter()
+        });
+
+        var TotalEPRD = 0;
+        var TotalScreened = 0;
+        var TotalScreenedPercent = 0;
+        var TotalLateReferral = 0;
+        var TotalIneligibleLIFER = 0;
+        var TotalUnavailableInaccessible = 0;
+        var TotalUnavailablDeceased = 0;
+        var TotalIneligibleConfirmedHOLD = 0;
+        var TotalRefusedAllServices = 0;
+        var TotalIneligibleCountyBoarder = 0;
+        var TotalRefusedHold = 0;
+        var TotalCIDRefusal = 0;
+        var TotalCOVID19Related = 0;
+        var TotalAvailable = 0;
+        var TotalSeen = 0;
+        var TotalSeenPercent = 0;
+        var TotalAccepted = 0;
+        var TotalMediCalApps = 0;
+        var TotalSsiApps = 0;
+        var TotalVaApps = 0;
+        var TotalSignedCid = 0;
+        var TotalTotalAppsSubmitted = 0;
+        var TotalSSINotProvided = 0;
+        var TotalMediCalNotProvided = 0;
+        var TotalVANotProvided = 0;
+        var TotalDestParole = 0;
+        var TotalDestPRCS = 0;
+        var TotalDestDischarged = 0;
+        var TotalDestACP = 0;
+        var TotalDestMDOSVP = 0;
+        var TotalDestINSICE = 0;
+        var TotalDestOutOfState = 0;
+
+        filteredDataSource.read();
+        var data = filteredDataSource.view();
+
+        for (var i = 0; i < data.length; i++) {
+            rows.push({
+                cells: [
+                  { value: data[i].FacilityName },
+                  { value: data[i].EPRD },
+                  { value: data[i].Screened },
+                  { value: data[i].ScreenedPercent },
+                  { value: data[i].LateReferral },
+                  { value: data[i].IneligibleLIFER },
+                  { value: data[i].UnavailableInaccessible },
+                  { value: data[i].UnavailablDeceased },
+                  { value: data[i].IneligibleConfirmedHOLD },
+                  { value: data[i].RefusedAllServices },
+                  { value: data[i].IneligibleCountyBoarder },
+                  { value: data[i].RefusedHold },
+                  { value: data[i].CIDRefusal },
+                  { value: data[i].COVID19Related },
+                  { value: data[i].Available },
+                  { value: data[i].Seen },
+                  { value: data[i].SeenPercent },
+                  { value: data[i].Accepted },
+                  { value: data[i].MediCalApps },
+                  { value: data[i].SsiApps },
+                  { value: data[i].VaApps },
+                  { value: data[i].SignedCid },
+                  { value: data[i].TotalAppsSubmitted },
+                  { value: data[i].SSINotProvided },
+                  { value: data[i].MediCalNotProvided },
+                  { value: data[i].VANotProvided },
+                  { value: data[i].DestParole },
+                  { value: data[i].DestPRCS },
+                  { value: data[i].DestDischarged },
+                  { value: data[i].DestACP },
+                  { value: data[i].DestMDOSVP },
+                  { value: data[i].DestINSICE },
+                  { value: data[i].DestOutOfState },
+                ]
+            });
+            TotalEPRD += data[i].EPRD;
+            TotalScreened += data[i].Screened;
+            TotalLateReferral += data[i].LateReferral;
+            TotalIneligibleLIFER += data[i].IneligibleLIFER;
+            TotalUnavailableInaccessible += data[i].UnavailableInaccessible;
+            TotalUnavailablDeceased += data[i].UnavailablDeceased;
+            TotalIneligibleConfirmedHOLD += data[i].IneligibleConfirmedHOLD;
+            TotalRefusedAllServices += data[i].RefusedAllServices;
+            TotalIneligibleCountyBoarder += data[i].IneligibleCountyBoarder;
+            TotalRefusedHold += data[i].RefusedHold;
+            TotalCIDRefusal += data[i].CIDRefusal;
+            TotalCOVID19Related += data[i].TotalCOVID19Related;
+            TotalAvailable += data[i].Available;
+            TotalSeen += data[i].Seen;
+            TotalAccepted += data[i].Accepted;
+            TotalMediCalApps += data[i].MediCalApps;
+            TotalSsiApps += data[i].SsiApps;
+            TotalVaApps += data[i].VaApps;
+            TotalSignedCid += data[i].SignedCid;
+            TotalTotalAppsSubmitted += data[i].TotalAppsSubmitted;
+            TotalSSINotProvided += data[i].SSINotProvided;
+            TotalMediCalNotProvided += data[i].MediCalNotProvided;
+            TotalVANotProvided += data[i].VANotProvided;
+            TotalDestParole += data[i].DestParole;
+            TotalDestPRCS += data[i].DestPRCS;
+            TotalDestDischarged += data[i].DestDischarged;
+            TotalDestACP += data[i].DestACP;
+            TotalDestMDOSVP += data[i].DestMDOSVP;
+            TotalDestINSICE += data[i].DestINSICE;
+            TotalDestOutOfState += data[i].DestOutOfState;
+        }
+        //root(total) row
+        rows.push({
+            cells: [
+              { background: "#ADD8E6", value: "Total" },
+              { background: "#ADD8E6", value: TotalEPRD },
+              { background: "#ADD8E6", value: TotalScreened },
+              { background: "#ADD8E6", value: TotalScreened * 100 / TotalEPRD },
+              { background: "#ADD8E6", value: TotalLateReferral },
+              { background: "#ADD8E6", value: TotalIneligibleLIFER },
+              { background: "#ADD8E6", value: TotalUnavailableInaccessible },
+              { background: "#ADD8E6", value: TotalUnavailablDeceased },
+              { background: "#ADD8E6", value: TotalIneligibleConfirmedHOLD },
+              { background: "#ADD8E6", value: TotalRefusedAllServices },
+              { background: "#ADD8E6", value: TotalIneligibleCountyBoarder },
+              { background: "#ADD8E6", value: TotalRefusedHold },
+              { background: "#ADD8E6", value: TotalCIDRefusal },
+              { background: "#ADD8E6", value: TotalCOVID19Related },
+              { background: "#ADD8E6", value: TotalAvailable },
+              { background: "#ADD8E6", value: TotalSeen },
+              { background: "#ADD8E6", value: TotalSeen * 100 / TotalAvailable },
+              { background: "#ADD8E6", value: TotalAccepted },
+              { background: "#ADD8E6", value: TotalMediCalApps },
+              { background: "#ADD8E6", value: TotalSsiApps },
+              { background: "#ADD8E6", value: TotalVaApps },
+              { background: "#ADD8E6", value: TotalSignedCid },
+              { background: "#ADD8E6", value: TotalTotalAppsSubmitted },
+              { background: "#ADD8E6", value: TotalSSINotProvided },
+              { background: "#ADD8E6", value: TotalMediCalNotProvided },
+              { background: "#ADD8E6", value: TotalVANotProvided },
+              { background: "#ADD8E6", value: TotalDestParole },
+              { background: "#ADD8E6", value: TotalDestPRCS },
+              { background: "#ADD8E6", value: TotalDestDischarged },
+              { background: "#ADD8E6", value: TotalDestACP },
+              { background: "#ADD8E6", value: TotalDestMDOSVP },
+              { background: "#ADD8E6", value: TotalDestINSICE },
+              { background: "#ADD8E6", value: TotalDestOutOfState },
+            ]
+        });
+        var workbook = new kendo.ooxml.Workbook({
+            sheets: [
+              {
+                  columns: [
+                    { width: 60 }, { width: 50 }, { width: 50 }, { width: 50 }, { width: 50 },
+                    { width: 50 }, { width: 50 }, { width: 50 }, { width: 50 }, { width: 50 },
+                    { width: 50 }, { width: 50 }, { width: 50 }, { width: 50 }, { width: 50 },
+                    { width: 50 }, { width: 50 }, { width: 50 }, { width: 50 }, { width: 50 },
+                    { width: 50 }, { width: 50 }, { width: 50 }, { width: 50 }, { width: 50 },
+                    { width: 50 }, { width: 50 }, { width: 50 }, { width: 50 }, { width: 50 },
+                    { width: 50 }, { width: 50 }, { width: 50 }
+                  ],
+                  title: "Inmates Release Report",
+                  rows: rows
+              }
+            ]
+        });
+
+        kendo.saveAs({
+            dataURI: workbook.toDataURL(),
+            fileName: "InmatesReleaseRpt.xlsx"
+        });
+    }
+
+</script>
+@(Html.Kendo().Grid<BassIdentityManagement.Entities.InmatesReleaseReportData>()
+    .Name("gridInmates")
+    .NoRecords("No Data Found.")
+    .Selectable(s => s.Enabled(true)).HtmlAttributes(new { @style = "height:85vh;width:100vw!important;" })
+    //.Scrollable(sc=>sc.Height("auto"))
+    .Filterable()
+    .Events(e => { e.DataBound("Grid1DataBound"); })
+        .ToolBar(tb =>
+        {
+        tb.Template(@<text><a class='k-button k-grid-export' title='Export to excel' href="javascript:exportToExcel()"><span class="k-icon k-i-excel"></span>Export to excel</a></text>);
+        })
+            .ToolBar(toolbar => { toolbar.Excel().Text("Export to Excel"); }).Excel(e => e.FileName("InmatesReleaseRpt.xlsx").AllPages(true).Filterable(true).ForceProxy(false))
+            .Columns(column =>
+            {
+                column.Group(g => g.HeaderTemplate(@<text><span class="greentext" id="reportspan" style="font-weight:bold;height:auto;"></span></text>)
+                    .Columns(info =>
+                    {
+                    info.Bound(m => m.FacilityName).HeaderTemplate(@<text><span class="greentext">Facility</span></text>).ClientFooterTemplate("Total : ").Filterable(fs => fs.Multi(true));
+info.Bound(m => m.EPRD).HeaderTemplate(@<text><span class="greentext">Released In Period By EPRD</span></text>).ClientFooterTemplate("#=sum#").Filterable(false);
+info.Bound(m => m.Screened).HeaderTemplate(@<text><span class="greentext">Screened By TCMP</span></text>).ClientFooterTemplate("#=sum#").Filterable(false);
+info.Bound(m => m.ScreenedPercent).HeaderTemplate(@<text><span class="greentext">%</span></text>).ClientFooterTemplate("#= kendo.toString(data.Screened.sum * 100 / data.EPRD.sum, 'd')#").Filterable(false);
+                    }));
+                column.Group(g => g.HeaderTemplate(@<text><span class="redtext">Global Services Not Provided</span></text>)
+                  .Columns(info =>
+                  {
+                      info.Bound(x => x.LateReferral).HeaderTemplate(@<text><span class="redtext">Late Referral</span></text>).ClientFooterTemplate("#=sum#").Filterable(false);
+                      info.Bound(x => x.IneligibleLIFER).HeaderTemplate(@<text><span class="redtext">Lifer</span></text>).ClientFooterTemplate("#=sum#").Filterable(false);
+                      info.Bound(x => x.UnavailableInaccessible).HeaderTemplate(@<text><span class="redtext">In accessible</span></text>).ClientFooterTemplate("#=sum#").Filterable(false);
+                      info.Bound(x => x.UnavailablDeceased).HeaderTemplate(@<text><span class="redtext">Deceased</span></text>).ClientFooterTemplate("#=sum#").Filterable(false);
+                      info.Bound(x => x.IneligibleConfirmedHOLD).HeaderTemplate(@<text><span class="redtext">Ineligible Confirmed Hold</span></text>).ClientFooterTemplate("#=sum#").Filterable(false);
+                      info.Bound(x => x.RefusedAllServices).HeaderTemplate(@<text><span class="redtext">Refused All Services</span></text>).ClientFooterTemplate("#=sum#").Filterable(false);
+                      info.Bound(x => x.IneligibleCountyBoarder).HeaderTemplate(@<text><span class="redtext">Ineligible County Boarder</span></text>).ClientFooterTemplate("#=sum#").Filterable(false);
+                      info.Bound(x => x.RefusedHold).HeaderTemplate(@<text><span class="redtext">Refused Hold</span></text>).ClientFooterTemplate("#=sum#").Filterable(false);
+                      info.Bound(x => x.CIDRefusal).HeaderTemplate(@<text><span class="redtext">CID Refusal</span></text>).ClientFooterTemplate("#=sum#").Filterable(false);
+                      info.Bound(x => x.COVID19Related).HeaderTemplate(@<text><span class="redtext">COVID19 Related</span></text>).ClientFooterTemplate("#=sum#").Filterable(false);
+                  }));
+column.Group(g => g.HeaderTemplate(@<text><span class="bluetext">Potential TCMP Paticipants</span></text>)
+                   .Columns(info =>
+                   {
+                       info.Bound(m => m.Available).HeaderTemplate(@<text><span class="bluetext">Total</span></text>).ClientFooterTemplate("#=sum#").Filterable(false);
+                       info.Bound(m => m.Seen).HeaderTemplate(@<text><span class="bluetext">Received Any Svcs</span></text>).ClientFooterTemplate("#=sum#").Filterable(false);
+                       info.Bound(m => m.SeenPercent).HeaderTemplate(@<text><span class="bluetext">%</span></text>).ClientFooterTemplate("#= kendo.toString(data.Seen.sum * 100 / data.Available.sum, 'd')#").Filterable(false);
+                   }));
+                column.Bound(m => m.Accepted).HeaderTemplate(@<text><span class="greentext">Accepted TCMP Services</span></text>).ClientFooterTemplate("#=sum#").Filterable(false);
+column.Group(g => g.HeaderTemplate(@<text><span style="color: #5E610B">TCMP Services / Applications Provided</span></text>)
+                  .Columns(info =>
+                   {
+                       info.Bound(m => m.MediCalApps).HeaderTemplate(@<text><span style="color: #5E610B">MediCal Submitted</span></text>).ClientFooterTemplate("#=sum#").Filterable(false);
+                       info.Bound(m => m.SsiApps).HeaderTemplate(@<text><span style="color: #5E610B">SSI Submitted</span></text>).ClientFooterTemplate("#=sum#").Filterable(false);
+                       info.Bound(m => m.VaApps).HeaderTemplate(@<text><span style="color: #5E610B">VA Submitted</span></text>).ClientFooterTemplate("#=sum#").Filterable(false);
+                       info.Bound(m => m.SignedCid).HeaderTemplate(@<text><span style="color: #5E610B">CID Service Plan Created</span></text>).ClientFooterTemplate("#=sum#").Filterable(false);
+                       info.Bound(m => m.TotalAppsSubmitted).HeaderTemplate(@<text><span style="color: #5E610B">Total Submitted</span></text>).ClientFooterTemplate("#=sum#").Filterable(false);
+                  }));
+column.Group(g => g.HeaderTemplate(@<text><span class="redtext">Benefit(s) Not Provided</span></text>)
+                    .Columns(info =>
+                    {
+                        info.Bound(m => m.SSINotProvided).HeaderTemplate(@<text><span class="redtext">SSI</span></text>).ClientFooterTemplate("#=sum#").Filterable(false);
+                        info.Bound(m => m.MediCalNotProvided).HeaderTemplate(@<text><span class="redtext">Medi-Cal</span></text>).ClientFooterTemplate("#=sum#").Filterable(false);
+                        info.Bound(m => m.VANotProvided).HeaderTemplate(@<text><span class="redtext">VA</span></text>).ClientFooterTemplate("#=sum#").Filterable(false);
+                    }));
+column.Group(g => g.HeaderTemplate(@<text><span class="bluetext">Released To</span></text>)
+                  .Columns(info =>
+                  {
+                      info.Bound(m => m.DestParole).HeaderTemplate(@<text><span class="bluetext">Parole</span></text>).ClientFooterTemplate("#=sum#").Filterable(false);
+                      info.Bound(m => m.DestPRCS).HeaderTemplate(@<text><span class="bluetext">PRCS</span></text>).ClientFooterTemplate("#=sum#").Filterable(false);
+                      info.Bound(m => m.DestDischarged).HeaderTemplate(@<text><span class="bluetext">Dis charged</span></text>).ClientFooterTemplate("#=sum#").Filterable(false);
+                      info.Bound(m => m.DestACP).HeaderTemplate(@<text><span class="bluetext">ACP</span></text>).ClientFooterTemplate("#=sum#").Filterable(false);
+                      info.Bound(m => m.DestMDOSVP).HeaderTemplate(@<text><span class="bluetext"> MDO or SVP</span></text>).ClientFooterTemplate("#=sum#").Filterable(false);
+                      info.Bound(m => m.DestINSICE).HeaderTemplate(@<text><span class="bluetext"> INS or ICE</span></text>).ClientFooterTemplate("#=sum#").Filterable(false);
+                      info.Bound(m => m.DestOutOfState).HeaderTemplate(@<text><span class="bluetext"> Out of State</span></text>).ClientFooterTemplate("#=sum#").Filterable(false);
+                  }));
+            })
+             .DataSource(ds => ds.Ajax()
+             .Aggregates(aggregates =>
+             {
+                 aggregates.Add(p => p.EPRD).Sum();
+                 aggregates.Add(p => p.Screened).Sum();
+                 aggregates.Add(p => p.LateReferral).Sum();
+                 aggregates.Add(p => p.IneligibleLIFER).Sum();
+                 aggregates.Add(p => p.UnavailableInaccessible).Sum();
+                 aggregates.Add(p => p.UnavailablDeceased).Sum();
+                 aggregates.Add(p => p.IneligibleCountyBoarder).Sum();
+                 aggregates.Add(p => p.RefusedAllServices).Sum();
+                 aggregates.Add(p => p.IneligibleConfirmedHOLD).Sum();
+                 aggregates.Add(p => p.RefusedHold).Sum();
+                 aggregates.Add(p => p.CIDRefusal).Sum();
+                 aggregates.Add(p => p.COVID19Related).Sum();
+                 aggregates.Add(p => p.Available).Sum();
+                 aggregates.Add(p => p.Seen).Sum();
+                 aggregates.Add(p => p.ScreenedPercent).Average();
+                 aggregates.Add(p => p.Accepted).Sum();
+                 aggregates.Add(p => p.MediCalApps).Sum();
+                 aggregates.Add(p => p.SsiApps).Sum();
+                 aggregates.Add(p => p.VaApps).Sum();
+                 aggregates.Add(p => p.SignedCid).Sum();
+                 aggregates.Add(p => p.TotalAppsSubmitted).Sum();
+                 aggregates.Add(p => p.SSINotProvided).Sum();
+                 aggregates.Add(p => p.MediCalNotProvided).Sum();
+                 aggregates.Add(p => p.VANotProvided).Sum();
+                 aggregates.Add(p => p.DestParole).Sum();
+                 aggregates.Add(p => p.DestPRCS).Sum();
+                 aggregates.Add(p => p.DestDischarged).Sum();
+                 aggregates.Add(p => p.DestACP).Sum();
+                 aggregates.Add(p => p.DestMDOSVP).Sum();
+                 aggregates.Add(p => p.DestINSICE).Sum();
+                 aggregates.Add(p => p.DestOutOfState).Sum();
+             })
+            .Batch(false)
+            .ServerOperation(false)
+            .Model(m =>
+            {
+                m.Id(f => f.FacilityName);
+            })
+            .Read(r => r.Action("InmatsData_Read", "Reports").Data("getdates"))))
+
+<script>
+   $("tbody").on("click", "tr", function (e) {
+        $(this)
+           .toggleClass("selected")
+           .siblings(".selected")
+               .removeClass("selected");
+    });
+</script>

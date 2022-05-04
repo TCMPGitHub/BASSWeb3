@@ -1,0 +1,114 @@
+﻿@using Kendo.Mvc.UI
+@model BassIdentityManagement.Entities.CaseNoteData
+@{
+    //required in order to render validation attributes
+    ViewContext.FormContext = new FormContext();
+}
+
+<div id="divNote" style="width:100%;padding:0px;" class="k-edit-form-container k-content" data-role="page">
+    <script>
+        $(document).keydown(function (e) {
+            var doPrevent;
+            if (e.keyCode == 8) {
+                var d = e.srcElement || e.target;
+                if (d.tagName.toUpperCase() == 'INPUT' || d.tagName.toUpperCase() == 'TEXTAREA') {
+                    doPrevent = d.readOnly || d.disabled;
+                }
+                else
+                    doPrevent = true;
+            }
+            else
+                doPrevent = false;
+
+            if (doPrevent)
+                e.preventDefault();
+        });
+
+
+    </script>
+    <table style="height:150px;">
+        <tr>
+            <td>
+                @Html.Label("Event Date:", new { @style = "margin-top:5px;width:80px;float:left;margin-left:20px;" })
+            </td>
+            <td colspan="5">
+                @(Html.Kendo().DatePickerFor(m => m.EventDate).Format("MM/dd/yyyy")
+                                    .Value(Model.EventDate).Name("EventDate").DateInput()
+                                    .HtmlAttributes(new { @style = "padding:0.5px;margin-top:0.5px;max-width:120px;" }))
+            @*@(Html.Kendo().DatePickerFor(m => m.EventDate).HtmlAttributes(new { onkeydown = "javascript:return disableInput(event)" }))*@
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <scan style="color:red;margin-left:10px;margin-top:5px; float:left;">*</scan>
+                @Html.Label("Note Type:", new { @style = "margin-top:5px;width:80px;float:left;" })
+            </td>
+            <td colspan="2" width="200px">
+                @(Html.Kendo().DropDownListFor(m => m.CaseNoteTypeID)
+                          .Name("CaseNoteTypeID")
+                          .OptionLabel("Select Note Type  ...")
+                          .DataTextField("Name")
+                          .DataValueField("CaseNoteTypeID")
+                          //.Events(e => e.Change("GridDisabled"))
+                          .HtmlAttributes(new { style = "width:200px" })
+                                  .DataSource(source =>
+                                  {
+                                      source.Read(read =>
+                                      {
+                                          read.Action("GetCaseNoteTypeList", "EditOffender").Data("GetCurrentEpisodeID");
+                                      });
+                                  })
+                )
+            </td>
+            <td>@Html.Label("Reason:", new { @style = "margin-top:5px;margin-left:30px;width:60px;float:left;" })</td>
+            <td colspan="2">
+                <script>
+
+                    function FilterCaseNoteTypes() {
+                        return { CaseNoteTypeID: $("#CaseNoteTypeID").val() };
+                    };
+                    function EnableDropDown(e) {
+                        if (e.dataSource == undefined) {
+                            var dropdownlist = $("#CaseNoteTypeReasonID").data("kendoDropDownList");
+                            dropdownlist.enable(false);
+                        }
+                    }
+                    //$("span.k-dropdown").focusout(function () {
+                    //    validator.validate();
+                    //});
+                </script>
+
+                @(Html.Kendo().DropDownListFor(m => m.CaseNoteTypeReasonID)
+.Name("CaseNoteTypeReasonID")
+.HtmlAttributes(new { style = "width:250px;", @data_value_primitive = "true", @required = "required" })
+.OptionLabel("Select Reason ...")
+.DataTextField("Name")
+.DataValueField("CaseNoteTypeReasonID")
+.Events(e => { e.DataBound("GridDisabled"); })
+//.SelectedIndex(1)
+.DataSource(source =>
+{
+    source.Read(read => read.Action("GetCaseNoteTypeReasonList", "EditOffender").Data("FilterCaseNoteTypes"))
+    .ServerFiltering(true);
+})
+.Enable(false)
+.AutoBind(false)
+.CascadeFrom("CaseNoteTypeID")
+                )
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+                @Html.Label("Note:", new { @style = "margin-left:20px;margin-top:30px;width:80px;" })
+            </td>
+            <td colspan="5">
+                &nbsp;&nbsp;@Html.TextAreaFor(m => m.Text, new { @id = "txtComment", @class = "textareaforcasemanngement", placeholder = "Note ...", spellcheck = "true", style = "width:100%;margin-left:-10px;height:50px;" })
+            </td>
+        </tr>
+    </table>
+</div>
+
+@{
+    ViewContext.FormContext = null;
+}

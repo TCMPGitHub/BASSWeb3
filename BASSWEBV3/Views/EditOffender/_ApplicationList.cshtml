@@ -1,0 +1,175 @@
+﻿@using Kendo.Mvc.UI;
+
+<style>
+        .k-grid-header th.k-header > .k-link {
+            min-height: 10px;
+            line-height: 10px;
+        }
+        #gridArchivedApplication > .k-grid-content {
+            height: 104px !important;
+        }
+        .k-grid tbody .k-button {
+            min-width: 0px;
+            width: 18px;
+            min-height: 15px;
+            height: 15px;
+        }
+
+        .k-grid td {
+            line-height: 0.4em;
+        }
+
+        .k-grid-content .k-button {
+            width: 16px;
+            height: 16px;
+            border: none;
+            min-width: 0 !important;
+            border-radius: 0;
+            display: inline-block;
+            font: normal normal normal 14px/1 FontAwesome;
+            font-size: inherit;
+            text-rendering: auto;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-indent: -10000px;
+            position: relative;
+        }
+
+            .k-grid-content .k-button::before {
+                text-indent: 0;
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%,-50%);
+            }
+
+            .k-grid-content .k-button span {
+                display: none;
+            }
+            
+            .k-grid-content .k-button.k-grid-Restore {
+                /*content: "\f1f8";*/
+                background: url('../../Content/themes/base/images/undo.ico') no-repeat;
+            }
+            .k-tooltip{
+                border:none;
+                padding:0px;           
+            }
+</style>
+<script>
+   
+         function requestStart(e) {
+               var id = $("#gridArchivedApplication").data("kendoGrid").dataItem(e.target.closest("tr")).id;
+               if (id == "") {
+                   return false;
+               }
+               else
+                   e.options.data = { ApplicationID: id };
+           }
+
+           function ShowGrid(e) {
+               var releaseOfInfoSigned = $("#Inmate_ReleaseOfInfoSigned").prop('checked');
+               var authToRepresent = $("#Inmate_AuthToRepresent").prop('checked');
+               if (e.sender._data.length > 0 && releaseOfInfoSigned && authToRepresent ) {
+                    $("#gridArchivedApplication").show();
+                    $("#divNoFound").hide();
+                }
+                else {
+                   $("#gridArchivedApplication").hide();
+                   if (e.sender._data.length > 0 && !releaseOfInfoSigned || !authToRepresent)
+                       $("#divNoFound").hide();
+                   else
+                       $("#divNoFound").show();
+                }
+            }
+           function restoreApplication(e) {
+               e.preventDefault();
+               var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                $.ajax({
+                    url: "@Url.Action("RestoreApplication", "EditOffender")",
+                    data: { ApplicationId: dataItem.ApplicationID, ApplicationTypeID : dataItem.ApplicationTypeID, EpisodeID: dataItem.EpisodeID },
+                cache: false,
+                type: "POST",
+                dataType: "html",
+
+                success: function (data, textStatus, XMLHttpRequest) {
+                    ReloadApplication();
+                }
+                })
+            }
+
+           function editVisible(dataItem) {
+               // hide the Edit button for the item with ProductID=1
+               return dataItem.RestoreEnabled;
+           }
+</script>
+@(Html.Kendo().Tooltip()
+    .For("#gridArchivedApplication")
+    .Position(TooltipPosition.Left)
+    .Filter("td:not(:last-child, :empty)")
+    .LoadContentFrom("GetApplicationReadonly", "EditOffender")
+    .AutoHide(true)
+    .ShowOn(TooltipShowOnEvent.Click)
+    .Width(400)
+    .Events(events => events.RequestStart("requestStart"))
+)
+
+<div id="linkArchiveApp" class="divOffenderPart1tr collapsible">Hide&nbsp;Archived&nbsp;Applications</div>
+<div class="divOffenderPart1tr content" style="border:0.5px lightgray solid;">
+    @(Html.Kendo().Grid<BassIdentityManagement.Entities.ArchiveApplicationData>()
+    .Name("gridArchivedApplication")
+    .HtmlAttributes(new { style = "height:auto; max-height:200px;min-height:100px;width:100%;" })
+    .Scrollable(s => s.Height(80))
+    //.Navigatable()
+    .Events(e => { e.DataBound("ShowGrid"); })
+    .Sortable(sortable => sortable.AllowUnsort(true))
+        .Columns(columns =>
+        {
+            columns.Bound(o => o.ApplicationID).Hidden();
+            columns.Bound(o => o.EpisodeID).Hidden();
+            columns.Bound(o => o.ApplicationTypeID).Hidden();
+            columns.Bound(f => f.AppliedOrRefusedOnDate).Title("App/Ref*").Format("{0:MM/dd/yyyy}").Width(75);
+            columns.Bound(f => f.ApplicationTypeName).Title("Type").Width(80);
+            columns.Bound(f => f.ArchivedOnDate).Title("Archived").Format("{0:MM/dd/yyyy}").Width(75);
+            columns.Command(command =>
+            {
+                command.Custom("Restore").Click("restoreApplication").Visible("editVisible");
+            }).Width(30);
+        })
+    .DataSource(ds => ds.Ajax()
+    .Batch(true)
+    .ServerOperation(false)
+    .Model(m => m.Id(f => f.ApplicationID))
+    .Read(r => r.Action("GetArchivedApplications", "EditOffender").Data("GetEpisodeID"))))
+
+    @*<div id="restoreDialogDiv" class="hidden"></div>*@
+    <div id="divNoFound">
+        No archived applications.
+    </div>
+
+    <script type="text/javascript">
+        $(function () {
+            var hasdata = $("#gridArchivedApplication").data("kendoGrid").dataSource.length > 0;
+            if (hasdata)
+            {
+                $("#divNoFound").hide();
+                $("#gridArchivedApplication").show();
+            }
+            else {
+                $("#divNoFound").show();
+                $("#gridArchivedApplication").hide();
+            }
+            $('#linkArchiveApp').click(function (e) {
+            //this.classList.toggle("active");
+            var content = this.nextElementSibling;
+            if (content.style.display === "") {
+                content.style.display = "none";
+                this.innerText = "Open Archived Applications";
+            } else {
+                content.style.display = "";
+                this.innerText = "Hide Archived Applications";
+            }
+        });
+    })
+    </script>
+</div>

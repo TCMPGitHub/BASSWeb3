@@ -1,0 +1,341 @@
+﻿@using Kendo.Mvc.UI
+@model BassWebV3.ViewModels.IRP
+
+@using (Html.BeginForm("SaveIRP", "EditOffender", FormMethod.Post, new
+{
+    @id = "irpform",
+    @style = "background-color:aliceblue;height:99%;border:1px lightblue solid;padding:0px;overflow:auto;"
+}))
+{
+    <style>
+        table td, tr {
+            border: none;
+            padding: 0px;
+        }
+        .table thead > tr > th, .table tbody > tr > th, .table tfoot > tr > th, 
+        .table thead > tr > td, .table tbody > tr > td, .table tfoot > tr > td {
+            border-top: 0;
+            padding: 0px;
+            height:20px!important;
+           line-height:18px!important;
+        }
+    </style>
+    <script>
+        function onIrpdblclick(e) {
+            var editable = e.target.readOnly;
+            var popupHtml =
+                '<div class="k-editor-dialog k-popup-edit-form k-edit-form-container" style="width:auto;">' +
+                  '<div style="padding: 0 1em;">' +
+                    '<p><textarea cols="60" rows="10" style="width:98%" readOnly ="' + (editable ? "" : "readOnly") + '"></textarea></p>' +
+                  '</div>' +
+                  '<div class="k-edit-buttons k-state-default">' +
+                    '<button class="k-dialog-insert k-button k-primary" disabled=' + editable + '>Add</button>' +
+                    '<button class="k-dialog-close k-button">Cancel</button>' +
+                  '</div>' +
+                '</div>';
+            // Create a modal Window from a new DOM element.
+            var popupWindow = $(popupHtml)
+            .appendTo(document.body)
+            .kendoWindow({
+                // Modality is recommended in this scenario.
+                modal: true,
+                width: 600,
+                resizable: false,
+                title: "Insert to " + e.target.placeholder,
+                // Ensure the opening animation.
+                visible: false,
+                // Remove the Window from the DOM after closing animation is finished.
+                deactivate: function (e) { e.sender.destroy(); }
+            }).data("kendoWindow")
+            .center().open();
+            
+            var existText = $("#" + e.target.id).val();
+            if (existText.length > 0)
+            {
+                popupWindow.element.find("textarea").val(existText);
+            }
+            // Insert the new content in the Editor when the Insert button is clicked.
+            popupWindow.element.find(".k-dialog-insert").click(function () {
+                var customHtml = popupWindow.element.find("textarea").val();
+                $("#" + e.target.id).val(customHtml)
+            });
+
+            // Close the Window when any button is clicked.
+            popupWindow.element.find(".k-edit-buttons button").click(function () {
+                // Detach custom event handlers to prevent memory leaks.
+                popupWindow.element.find(".k-edit-buttons button").off();
+                popupWindow.close();
+            });
+        }
+    </script>
+       <div style="height:100%;min-width:1200px;width:99.5%;background-color:aliceblue;">
+            @Html.HiddenFor(m => m.PATSEpisodeID, new { id = "hdIRPEpisodeID" })
+            @Html.HiddenFor(m => m.CDCRNum, new { id = "hdCDCRNum" })
+            @Html.HiddenFor(m => m.CanEdit, new { @id = "hdEditable" })
+            @Html.HiddenFor(m => m.IRPSetList[0].IsLastIRPSet, new { id = "hdIsLastIRPSet" })
+            @{
+                var show = (Model.IRPSetList != null && Model.IRPSetList[0].IRPID > 0) ? "visible" : "hidden";
+            }
+            <table style="background-color:transparent;min-width:600px">
+                <tr>
+                    <td style="width:55vw;">
+                        <table style="width:30vw;float:left;">
+                            <tr style="line-height: 10px !important;"><td id="customers">@Html.Label("STATE OF CALIFORNIA", new { style = "float:left;font-size:12px;" })</td></tr>
+                            <tr style="line-height: 10px !important;"><td>@Html.Label("CASE MANAGEMENT INDIVIDUALIZED RE-ENTRY PLAN", new { style = "float:left;font-weight:bold;font-size:14px;" })</td></tr>
+                            <tr style="line-height: 10px !important;">
+                                <td>
+                                    @Html.Label("CDCR 2276(11/14)", new { style = "float:left;font-size:12px;" })&nbsp;&nbsp;
+                                </td>
+                            </tr>
+                        </table>
+                        <table style="width:5vw;float:left;">
+                            <tr><td colspan="3"></td></tr>
+                            <tr>
+                               <td><button type="submit" class="btn btn-group-lg danger-button" id="irpSave">Submit</button></td>
+                                <td><button type="button" class="btn btn-group-lg danger-button" id="irpCancel">Cancel</button></td>
+                                <td><button type="button" class="btn btn-group-lg danger-button" id="irpReset">Reset</button></td>
+                             </tr>
+                            <tr><td colspan="3"></td></tr>
+                        </table>
+                    </td>
+                    <td style="width:50vw;">
+                        <table id="gird" class="k-grid table-bordered" style="width:100%;background-color:white; min-width:600px;">
+                            <tr style="background-color:silver;height:10px!important;font-size:small;text-align:center;border-color:black" class="k-grid-header k-header table-bordered">
+                                <th style="text-align:left;height:11px!important;width:100px;font-size:10px">IRP DATE:</th>
+                                <th style="text-align:left;height:11px!important;width:250px;font-size:10px">PROGRAM PHASE:</th>
+                                <th style="text-align:left;height:11px!important;font-size:10px">RATER:</th>
+                            </tr>
+                            <tr style="text-align:left;">
+                                <td style="font-size:11px">
+                                    <script>                                                                          
+                                    function PopulatePreviousIRPSet(e) {
+                                        if (this.select() == 0) {
+                                            DisableInputFields("#irpform :input", "False");
+                                            return;
+                                        }
+                                        var object = this.dataItem(this.select());
+                                        var cdcr = e.sender._form[0].CDCRNum.value;
+                                        if (object.IRPDate.indexOf("*") > 0)
+                                            $("#hdIsLastIRPSet").val("True")
+                                        else
+                                            $("#hdIsLastIRPSet").val("False")
+                                        var edit = ($("#hdIsLastIRPSet").val() == "True" && $("#hdEditable").val() == "True");
+                                        DisableInputFields("#irpform :input", edit);
+                                        var id = (object == undefined || object.IRPID == "") ? 0 : object.IRPID;
+                                        $.ajax({
+                                            url: "@Url.Action("GetPATSIRP", "EditOffender")",
+                                            data: { CDCRNum: cdcr, IRPID: id },
+                                          cache: false,
+                                           type: "POST",
+                                       dataType: "html",
+                                        success: function (data, textStatus, XMLHttpRequest) {
+                                            $("#irpform").replaceWith(data); // HTML DOM replace
+                                        }
+                                    })
+                                    }
+                                    </script>
+                                    @(Html.Kendo().DropDownListFor(m => m.IRPSetList[0].IRPID)
+    .Name("AllIRPDates")
+    .OptionLabel("Select Dates...")
+    .DataTextField("IRPDate")
+    .DataValueField("IRPID")
+    .HtmlAttributes(new { style = "width:120px;text-align:left;", @class = "neverDisable" })
+    .Filter(FilterType.Contains)
+    .Height(290)
+    .Events(e => { e.Change("PopulatePreviousIRPSet"); })
+    .DataSource(source =>
+    {
+        source.Read(read => read.Action("GetIRPDateList", "EditOffender", new { EpisodeID = Model.PATSEpisodeID }));
+    }))
+                                </td>
+                                <td style="font-size:11px">@Html.DisplayFor(m => m.IRPSetList[0].IDTTDecision)</td>
+                                <td style="font-size:11px">@Html.DisplayFor(m => m.ActionUserName)</td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+            <table id="gird" class="k-grid" style="background-color:white;min-width:1200px;width:99.8%;">
+                <tr style="background-color:silver;font-size:small;text-align:center" class="k-grid-header k-header table-bordered">
+                    <th rowspan="2" style="text-align:center; width:400px">PRESENTING NEED</th>
+                    <th colspan="4" style="text-align:center">NEED</th>
+                    <th colspan="2" style="text-align:center">GOAL</th>
+                    <th rowspan="2" style="text-align:center">PLANNED INTERVENTION</th>
+                    <th colspan="3" style="text-align:center">LONG TERM STATUS</th>
+                    @*<th class="col-xs-1" rowspan="2" style="text-align:center">STATUS D</th>*@
+                </tr>
+                <tr style="text-align:center; background-color:silver;font-size:small;" class="k-grid-header k-header table-bordered">
+                    <th style="width:50px;text-align:center">NO</th>
+                    <th style="width:50px;text-align:center">LOW</th>
+                    <th style="width:50px;text-align:center">MOD</th>
+                    <th style="width:50px;text-align:center">HI/URG</th>
+                    <th style="text-align:center">SHORT TERM</th>
+                    <th style="text-align:center">LONG TERM</th>
+                    <th style="width:50px;text-align:center">MET</th>
+                    <th style="width:50px;text-align:center">NOT MET</th>
+                    <th style="width:110px;text-align:center">DATE</th>
+                </tr>
+                @for (int i = 0; i < Model.IRPSetList.Count; i++)
+                {
+                    <tr>
+                        @Html.HiddenFor(m => m.IRPSetList[i].NeedID)
+                        <td valign="top" style="line-height:14px;">
+                            <div style="font-size:12px;line-height:14px;">
+                                @Html.Raw(string.Format("<b>{0}.   {1}</b>", Model.IRPSetList[i].NeedID, Model.IRPSetList[i].Need))
+                            </div>
+                            <br />
+                            <div style="font-size:12px;margin-top:2px;">
+                                @Html.Raw(string.Format("{0}", Convert.ToString(Model.IRPSetList[i].DescriptionCurrentNeed)))
+                            </div>
+                        </td>
+                        <td>&nbsp;@(Html.Kendo().CheckBoxFor(m => m.IRPSetList[i].NeedStatus1).HtmlAttributes(new { @style = "text-align:center", @class = "needStatus" }))</td>
+                        <td>&nbsp;@(Html.Kendo().CheckBoxFor(m => m.IRPSetList[i].NeedStatus2).HtmlAttributes(new { @class = "needStatus" }))</td>
+                        <td>&nbsp;@(Html.Kendo().CheckBoxFor(m => m.IRPSetList[i].NeedStatus3).HtmlAttributes(new { @class = "needStatus" }))</td>
+                        <td>&nbsp;@(Html.Kendo().CheckBoxFor(m => m.IRPSetList[i].NeedStatus4).HtmlAttributes(new { @class = "needStatus" }))</td>
+
+                        <td style="line-height:14PX;">@Html.TextAreaFor(m => m.IRPSetList[i].ShortTermGoal, new { @spellcheck = "true", @class = "textareaforcasemanngement", @placeholder = "Short Term Goal ...", @maxLength = "100" })</td>
+                        <td style="line-height:14PX;">@Html.TextAreaFor(m => m.IRPSetList[i].LongTermGoal, new { @spellcheck = "true", @class = "textareaforcasemanngement", @placeholder = "Long Term Goal ...", @maxLength = "100" })</td>
+                        <td style="line-height:14PX;">@Html.TextAreaFor(m => m.IRPSetList[i].PlanedIntervention, new { @id = "txt" + @i, @refID = @i, @class = "textareaforcasemanngement", @placeholder = "Planned Intervention ...", @maxLength = "255" })</td>
+                        <td style="line-height:14PX;">
+                            &nbsp;@(Html.Kendo().CheckBoxFor(m => m.IRPSetList[i].LongTermStatusMet).Checked(Model.IRPSetList[i].LongTermStatusMet.Value).HtmlAttributes(new { @class = "ltermStatus" }))
+                        </td>
+                        <td>
+                            &nbsp;@(Html.Kendo().CheckBoxFor(m => m.IRPSetList[i].LongTermStatusNoMet).Checked(Model.IRPSetList[i].LongTermStatusNoMet.Value).HtmlAttributes(new { @class = "ltermStatus" }))
+                        </td>
+                        <td>
+                            @(Html.Kendo().DatePickerFor(m => m.IRPSetList[i].LongTermStatusDate).Format("MM/dd/yyyy").Value(Model.IRPSetList[i].LongTermStatusDate.HasValue ? Model.IRPSetList[i].LongTermStatusDate.Value.ToString("MM/dd/yyyy") : null).HtmlAttributes(new
+                        {
+                            @style = "width:120px",
+                            @id = "date-picker-irp-" + Model.IRPSetList[i].NeedID,
+                            @class = "input-group irpdp"
+                        }))
+
+                        </td>
+                    </tr>
+                }
+            </table>
+           <center>
+               <table style="width:5vw;">
+                   <tr><td colspan="3"></td></tr>
+                   <tr>
+                       <td><button type="submit" class="btn btn-group-lg danger-button" id="irpSave">Submit</button></td>
+                       <td><button type="button" class="btn btn-group-lg danger-button" id="irpCancel">Cancel</button></td>
+                       <td><button type="button" class="btn btn-group-lg danger-button" id="irpReset">Reset</button></td>
+                   </tr>
+                   <tr><td colspan="3"></td></tr>
+               </table>
+           </center>
+       </div>
+
+    @*<div class="padded aligncenter form-actions" id="caseIRPButtonDiv">
+
+       @if (Model.CanEdit)
+            {
+            <button type="submit" class="btn btn-group-lg danger-button" id="irpSave">Submit</button>
+        }&nbsp;&nbsp;
+        <button type="button" class="btn btn-group-lg danger-button" id="irpCancel">Cancel</button>
+        <button type="button" class="btn btn-group-lg danger-button" id="irpReset">Reset</button>&nbsp;&nbsp;
+        @if ((Model.IRPSetList != null && Model.IRPSetList.Count() > 0 && Model.IRPSetList[0].IRPId > 0))
+            {
+            <a href="javascript:printPATSPDF(@Model.EpisodeID, '@Model.IRPSetList[0].IRPId', 'Case Managemnent Individualized Re-entry Plan','color-danger')">
+                <img style="width:22px; height:22px;" title="Print Case IRP" src='@Url.Content("~/Content/images/printer-icon.png")' />
+            </a>
+        }
+    </div>}*@
+    <script type="text/javascript">
+        $(function () {
+            var edit = ($("#hdIsLastIRPSet").val() == "True" && $("#hdEditable").val() == "True");
+            
+            $('#irpform').on('dblclick', '.textareaforcasemanngement', function (e) {
+                onIrpdblclick(e);
+            });
+            var initdata = $('#irpform').serialize(); 
+        $('#irpform').submit(function (e) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            var nowdata = $('#irpform').serialize();
+            if (initdata === nowdata) {
+                e.stopPropagation();
+                return false;
+            }
+            initdata = nowdata;
+            postFormAndReplaceDivHtml($('#irpform'));
+            DisableInputFields("#irpform :input", edit);
+            var tabstrip = $("#offendertabstrip").data("kendoTabStrip");
+            var tab = tabstrip.select();
+            tabstrip.reload(tab);
+            return true;
+        });
+    });
+    $(".irpdp").kendoValidator({
+        rules: {
+            dateValidation: function (element) {
+                $(this).removeClass('field-validation-error');
+                $(this).parent().find('span[data-valmsg-for]').remove();
+                if (element.is("[data-val-date]") && element.val() != "") {
+                    var value = $(element).val();
+                    return is_valid_date(value);
+                }
+                return true;
+            }
+        },
+        messages: {
+            dateValidation: "must be a valid date",
+        }
+    });
+    $(".irpdp").kendoMaskedTextBox({
+        mask: "00/00/0000"
+    });
+    $(".irpdp").closest(".k-datepicker").add($(".irpdp")).removeClass("k-textbox")
+
+    $(".needStatus").click(function (e) {
+        if ($(this).prop('checked')) {
+            var rownum = this.name.substring((this.name.indexOf('[') + 1), (this.name.indexOf(']')));
+            var selectName = this.name;
+            var statusid = this.name.substring(this.name.length - 1, this.name.length);
+            $(".needStatus").each(function () {
+               if (this.name.substring((this.name.indexOf('[') + 1), (this.name.indexOf(']'))) == rownum &&
+                     this.name != selectName) {
+                    $(this).prop('checked', false);
+                }
+            })
+        }
+    })
+    $(".ltermStatus").click(function (e) {
+        if ($(this).prop('checked')) {
+            var rownum = this.name.substring((this.name.indexOf('[') + 1), (this.name.indexOf(']')));
+            var selectName = this.name;
+             $(".ltermStatus").each(function () {
+                 if (this.name.substring((this.name.indexOf('[') + 1), (this.name.indexOf(']'))) == rownum &&
+                     this.name != selectName) {
+                    $(this).prop('checked', false);
+                }
+            })
+        }
+    })
+    var editableIRP = EditableEpisode($("#hdEditable").val()) && $("#hdIsLastIRPSet").val() == "True";
+    DisableInputFields("#irpform :input", editableIRP);
+    $("#irpReset").click(function () {
+        $("#irpform :input").each(function () {
+            if (this.type == "checkbox" || this.type == "radio")
+                $(this).prop('checked', false);
+
+            if (this.type == "text" || this.type == "textarea") {
+                $(this).val('');
+            }
+
+        })
+    });
+
+    $("#irpCancel").click(function () {
+        document.getElementById("irpform").reset();
+    })
+</script>
+                }
+
+
+
+
+
+
+

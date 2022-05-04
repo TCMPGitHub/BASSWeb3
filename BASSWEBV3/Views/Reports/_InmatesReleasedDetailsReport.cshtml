@@ -1,0 +1,160 @@
+﻿@using Kendo.Mvc.UI
+@using Kendo.Mvc.Extensions
+
+
+<style>
+    .k-grid-header th.k-header {
+        white-space: pre-wrap;
+        text-align: center;
+        vertical-align: middle;
+    }
+</style>
+<script>
+
+    function execelexport() {
+        var ds = $("#gridInmatesDetails").data("kendoGrid").dataSource;
+
+        var rows = [{
+            cells: [
+              { value: "CDCR#", background: "#CD5C5C" },
+              { value: "LastName" },
+              { value: "FirstName" },
+              { value: "Facility" },
+              { value: "EPRD" },
+              { value: "Housing" },
+              { value: "BenefitWorkerName" },
+              { value: "StatusDesc" },
+              { value: "TotalApps" },
+              { value: "MediCalApps" },
+              { value: "SSIApps" },
+              { value: "VaApps" },
+              { value: "SignedCid" },
+              { value: "Release" },
+              { value: "MentallyIll" },
+              { value: "Gender" }
+            ]
+        }];
+
+        //using fetch, so we can process the data when the request is successfully completed
+        ds.fetch(function () {
+            var data = this.data();
+            for (var i = 0; i < data.length; i++) {
+                //push single row for every record
+                rows.push({
+                    cells: [
+                       { value: data[i].CDCRNum },
+                       { value: data[i].LastName },
+                       { value: data[i].FirstName },
+                       { value: data[i].Facility },
+                       { value: data[i].EPRD },
+                       { value: data[i].Housing },
+                       { value: data[i].BenefitWorkerName },
+                       { value: data[i].StatusDesc },
+                       { value: data[i].TotalApps },
+                       { value: data[i].MediCalApps },
+                       { value: data[i].SSIApps },
+                       { value: data[i].VaApps },
+                       { value: data[i].SignedCid },
+                       { value: data[i].Release },
+                       { value: data[i].MentallyIll },
+                       { value: data[i].Gender }]
+                })
+            }
+            var workbook = new kendo.ooxml.Workbook({
+                sheets: [
+                  {
+                      columns: [
+                        // Column settings (width)
+                        { autoWidth: true },
+                        { autoWidth: true },
+                        { autoWidth: true },
+                        { autoWidth: true },
+                        { autoWidth: true },
+                        { autoWidth: true },
+                        { autoWidth: true },
+                        { autoWidth: true },
+                        { autoWidth: true },
+                        { autoWidth: true },
+                        { autoWidth: true },
+                        { autoWidth: true },
+                        { autoWidth: true },
+                        { autoWidth: true },
+                        { autoWidth: true },
+                        { autoWidth: true }
+                      ],
+                      // Title of the sheet
+                      title: "Details Report",
+                      // Rows of the sheet
+                      rows: rows
+                  }
+                ]
+            });
+            //save the file as Excel file with extension xlsx
+            kendo.saveAs({ dataURI: workbook.toDataURL(), fileName: "InmatesDetails.xlsx" });
+        });
+    }
+
+</script>
+@*//$("#gridInmatesDetails ").getKendoGrid().saveAsExcel();
+    //  }*@
+
+@(Html.Kendo().Grid<BassIdentityManagement.Entities.InmatesReleaseDetailsReportData>()
+               .Name("gridInmatesDetails")
+               .Selectable(s => s.Enabled(true)).HtmlAttributes(new { @style = "height:85vh;width:98vw;" })
+                .Filterable(filterable => filterable
+                 .Extra(false)
+                 .Operators(operators => operators
+                 .ForString(str => str.Clear()
+                 .StartsWith("Starts with")
+                 .IsEqualTo("Is equal to")
+                 .IsNotEqualTo("Is not equal to")
+                 ))
+                 )
+               .NoRecords("No Data Found.")
+               .Sortable(sortable => sortable.AllowUnsort(false))
+               .ToolBar(toolbar => { toolbar.Excel().Text("Export to Excel").HtmlAttributes( new { style="height: 25px;" }); }).Excel(e => e.FileName("InmatesReleaseDetailsRpt.xlsx").Filterable(true).AllPages(true))
+               .Columns(column =>
+               {
+                   column.Bound(m => m.CDCRNum).Width(60).Title("CDCR#").ClientFooterTemplate("Total: ").Filterable(false);
+                   column.Bound(m => m.LastName).Width(60).Title("Last Name").ClientFooterTemplate("#=count#").Filterable(false);
+                   column.Bound(m => m.FirstName).Width(60).Title("First Name").Filterable(false);
+                   column.Bound(x => x.FacilityName).Width(50).Title("Facility").Filterable(f => f.Multi(true).DataSource(ds => ds.Read(r => r.Action("FilterInmatesDetailsFa_read", "Reports"))));
+                   column.Bound(m => m.EPRD).Width(80).Title("EPRD").Format("{0:MM/dd/yyyy}").Filterable(false);
+                   column.Bound(m => m.Housing).Width(130).Title("Housing").Filterable(false);
+                   column.Bound(m => m.BenefitWorkerName).Width(150).Title("Benefit Worker").Filterable(false);
+                   column.Bound(m => m.StatusDesc).Width(400).Title("Disposition").Filterable(false);
+                   column.Bound(m => m.TotalApps).Width(50).Title("Total Submitted").ClientFooterTemplate("#=sum#").Filterable(false);
+                   column.Bound(m => m.MediCalApps).Width(50).Title("MediCal Submitted").ClientFooterTemplate("#=sum#").Filterable(false);
+                   column.Bound(m => m.VaApps).Width(50).Title("VA Submitted").ClientFooterTemplate("#=sum#").Filterable(false);
+                   column.Bound(m => m.SsiApps).Width(50).Title("SSI Submitted").ClientFooterTemplate("#=sum#").Filterable(false);
+                   column.Bound(m => m.SignedCid).Width(50).Title("CID Created").ClientFooterTemplate("#=sum#").Filterable(false);
+                   column.Bound(m => m.Release).Width(50).Title("Parole/PRCS (OLD)").Filterable(false);
+                   column.Bound(m => m.MentallyIll).Width(150).Title("Mentally Ill?").Filterable(false);
+                   column.Bound(m => m.Gender).Width(30).Title("Gender").Filterable(false);
+               })
+             .Resizable(resize => resize.Columns(true))
+             .Pageable(pageable => pageable
+             .Refresh(true)
+             .PageSizes(new List<object> { 20, 30, 50, 100 })
+             .ButtonCount(5))
+             .DataSource(ds => ds.Ajax()
+             .Aggregates(aggregates =>
+             {
+                 aggregates.Add(p => p.LastName).Count();
+                 aggregates.Add(p => p.TotalApps).Sum();
+                 aggregates.Add(p => p.MediCalApps).Sum();
+                 aggregates.Add(p => p.VaApps).Sum();
+                 aggregates.Add(p => p.SsiApps).Sum();
+                 aggregates.Add(p => p.SignedCid).Sum();
+             })
+            .Batch(true)
+            .ServerOperation(true)
+            .PageSize(100)
+            .Model(m =>
+            {
+                m.Id(f => f.CDCRNum);
+            })
+            .Read(r => r.Action("InmatsDetailsData_Read", "Reports").Data("getdates"))))
+
+
+

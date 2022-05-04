@@ -1,0 +1,517 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Edit Offender";
+}
+@using Kendo.Mvc.UI
+@model BassWebV3.ViewModels.OffenderSearch
+@using BassWebV3.DataAccess
+
+@section Scripts {
+<style>
+    .k-i-arrow-60-down, .k-i-calendar{
+        padding:0;
+        margin-top:-10px!important;
+    }
+        input{
+            text-indent: 0.15em!important;
+        }
+        .k-panelbar .k-tabstrip > .k-content, .k-tabstrip > .k-content{
+            padding:0px!important;
+        }
+        #popupWindow_wnd_title{
+            background-color:goldenrod;
+        }
+        .popupbutton{
+            width:70px;
+            height:22px;
+            text-align:center;
+            vertical-align:central;
+            float:right;
+            padding:5px;
+            font-size:85%;
+            cursor: pointer;
+        }
+        .popupMessage{
+            padding:10px!important;
+        }
+
+         .k-tabstrip > .k-tabstrip-items .k-item {
+            background-color:aliceblue;
+            border-radius:3px;
+            margin-left:2px;
+            padding:2px;
+            overflow:hidden;
+        }
+         :after{
+            background-color:lavender;
+        }
+         .k-tabstrip > .k-tabstrip-items .k-state-active.k-item .k-link{
+             background-color:#526a7f;
+             padding:4px;
+             color:white;
+             font-weight:bold;
+             height:15px!important;
+         }
+        .k-tabstrip-wrapper{
+            padding:0px;
+            height:inherit!important;
+        }
+        .k-reset .k-tabstrip-items{
+            height:15.5px!important;
+        }
+        #offendertabstrip-1, #offendertabstrip-2,#offendertabstrip-3{
+            padding:0px;
+            border-radius:3px!important;
+            border-color: #526a7f!important;    /*lightsteelblue!important;*/
+            height: calc(100vh - 160px) !important;
+            overflow:hidden;
+        }
+        .k-panelbar .k-tabstrip-items .k-link, .k-tabstrip-items .k-link{
+            height:15px!important;
+            padding:2px!important;
+            border-radius:3px!important;
+        }
+        .k-item k-state-default k-first k-tab-on-top k-state-active{
+            border-radius:inherit;
+            height:15px!important;
+            background-color:#526a7f;    /*lightsteelblue;*/
+        }
+        div.k-loading-mask {
+            z-index: 3; /* must be larger than the z-index:2 of #container */
+        }
+        /*span.k-icon.k-i-calendar, span.k-icon.k-i-arrow-60-down{
+         margin-top: -10px!important;
+       }*/
+</style>
+}
+<script id="confirmationTemplate" type="text/x-kendo-template">
+    <div class="popupMessage"></div>
+    <br/>
+    
+    <div class="dialog_buttons" style="height:30px!important;bottom:2px;padding:5px;border-top:1px lightgray solid;">
+        <button class="confirm_no k-button popupbutton">Cancel</button> 
+        <button class="confirm_yes k-button popupbutton">Continue</button>
+    </div>
+</script>
+
+<script>
+      function showConfirmationWindow(message) {
+        return showWindow('#confirmationTemplate', message)
+      };
+      function showWindow(template, message) {
+
+        var dfd = new jQuery.Deferred();
+        var result = false;
+
+        $("<div id='popupWindow'></div>")
+        .appendTo("body")
+        .kendoWindow({
+          width: "400px",
+          modal: true,
+          title: "Bass Web Message",
+          content: message,
+          modal: true,
+          visible: false,
+          close: function (e) {
+            this.destroy();
+            dfd.resolve(result);
+          }
+        }).data('kendoWindow').content($(template).html()).center().open();
+
+        $('.popupMessage').html(message);
+
+        $('#popupWindow .confirm_yes').val('OK');
+        $('#popupWindow .confirm_no').val('Cancel');
+
+        $('#popupWindow .confirm_no').click(function () {
+          $('#popupWindow').data('kendoWindow').close();
+        });
+
+        $('#popupWindow .confirm_yes').click(function () {
+          result = true;
+          $('#popupWindow').data('kendoWindow').close();
+        });
+
+        return dfd.promise();
+      };
+</script>
+<script>
+    function onOpenWin(e) {
+        e.sender.center();
+        if ($("#hdEpisodeID").val() != "0") {           
+            $(".k-i-excel").parent().attr("title", "Print to Excel");
+            $(".k-i-pdf").parent().attr("title", "Print to PDF");
+            $(".k-i-refresh").parent().attr("title", "Refresh");
+            $(".k-i-close").parent().attr("title", "Close");
+            $(".k-i-window-minimize").parent().attr("title", "Minimize");
+            $(".k-i-window-maximize").parent().attr("title", "Maximize");
+        }
+        else {
+            //$("#divImg").hide();
+            $("#divWindow").hide();
+            $("#Assignmentwindow").data("kendoWindow").close();
+        }
+    }
+</script>
+@Html.HiddenFor(m => m.LoginUser.UserID, new { id = "hdLoginUserID" })
+@Html.HiddenFor(m => m.LoginUser.IsBenefitWorker, new { id = "hdIsLoginUserBFW" })
+@Html.HiddenFor(m => m.LoginUser.CanAccessReports, new { id = "hdCanAccessReports" })
+@Html.HiddenFor(m => m.LoginUser.CanEditAllCases, new { id = "hdCanEditAllCases" })
+@Html.HiddenFor(m => m.SelectEpisode.CDCRNum, new { id = "hdCDCRNum" })
+@Html.HiddenFor(m => m.SelectEpisode.EpisodeID, new { id = "hdEpisodeID" })
+<div id="editContent">
+    <script>
+        function onClick(e) {
+            $.when(showLoadWindow("\r\nLoading page...", 0)).then(function () {
+                kendo.ui.progress($('#loadWindow'), true);
+            });
+            var actionText = UnsavedChanges();
+            if (actionText.length > 0) {
+                if (!confirm("WARNING: You have unsaved changes in " + actionText + " that will be lost if you continue searching for others.\n\nIf you'd like to discard your changes and continue, click \"OK\"; otherwise, click \"Cancel\".")) {
+                    e.stopPropagation();
+                    return false;
+                }
+            }
+
+            var lastorcdcr = $("#SearchString").val();
+            var facility = $("#FacilityID").val();
+            var bf = $("#UserID").val();
+            var pgChecked = "1";
+            for (i = 0; i < $("[type=radio]").length; i++) {
+                if ($("[type=radio]")[i].checked) {
+                    pgChecked = $("[type=radio]")[i].value;
+                    break;
+                }
+            }
+
+            if ($("#FacilityID").val() == "" && $("#hdIsLoginUserBFW").val() == "False" && $("#hdCanEditAllCases").val() == "True") {
+                alert("Must select a facility.")
+                return;
+            }
+
+            //<LastOrCDCR>|<Facility>|<BenefitWorkerId>|<ProgramStatus>
+            var searchString = lastorcdcr.toUpperCase() + "|" + facility + "|" + bf.toUpperCase() + "|" + pgChecked;
+            $("#AllSearchResults").data("kendoDropDownList").dataSource.read({ text: searchString });
+        }
+        
+        function SearchDataBound(e) {
+            var dropdown = $("#AllSearchResults").data("kendoDropDownList");
+            if (dropdown.dataSource._data.length == 0) {
+                alert("No Data Found!");
+                if ($('#loadWindow').data('kendoWindow') !== undefined)
+                   $('#loadWindow').data('kendoWindow').close();
+                return false;
+            }
+            dropdown.select(1);
+            dropdown.trigger("change");
+        }
+        function SearchDataChanged(e) {
+            var selectedSearchResult = $("#AllSearchResults").val();
+            var actionText = UnsavedChanges();
+            if (actionText.length > 0) {
+                if (!confirm("WARNING: You have unsaved changes in " + actionText + " that will be lost if you continue searching for others.\n\nIf you'd like to discard your changes and continue, click \"OK\"; otherwise, click \"Cancel\".")) {
+                    e.preventDefault();
+                    return false;
+                }
+            }
+            $.ajax({
+                url: "@Url.Action("GetInmateData", "EditOffender")",
+                data: { EpisodeID: $("#AllSearchResults").val() },
+                cache: false,
+                type: "POST",
+                dataType: "html",
+                success: function (data, textStatus, XMLHttpRequest) {
+                    $("#InmatePanel").html(data);
+                    if ($('#loadWindow').data('kendoWindow') !== undefined)
+                        $('#loadWindow').data('kendoWindow').close();
+                }
+            });
+        }
+        function BenefitWorkerSelected(e) {
+            if ($("#hdEpisodeID").val() != "0") {
+                $("#divImg").show();
+                $("#getAssignedCase").trigger('click');
+            }
+            //else {
+            //    $("#divImg").hide();
+            //}
+        }
+
+    </script>
+    <div class="bass-searchheader">
+        <div class="bass-searchheadersub1">
+            <div class="bass-searchheadersub2">
+                <div><b>&nbsp;Custody&nbsp;Facility:&nbsp;</b></div>
+                <div>
+                    @(Html.Kendo().DropDownList()
+            .Name("FacilityID")
+            .DataValueField("FacilityID")
+            .DataTextField("NameWithCode")
+            .OptionLabel("Select Custody Facility ...")
+            .HtmlAttributes(new { style = "width:calc(100vw/6);" })
+            .Filter(FilterType.Contains)
+            .SelectedIndex((Model.LoginUser.IsBenefitWorker == false && Model.LoginUser.CanEditAllCases) ? 1 : 0)
+            .Height(290)
+            .BindTo(Model.AllSearchFacilities))
+                </div>
+            </div>
+            <div class="bass-searchheadersub2">
+                &nbsp;&nbsp;
+                <div><b>Benefit&nbsp;Worker:&nbsp;</b></div>
+                <div class="divOffenderPart1tbh">
+                    <div>
+                        @(Html.Kendo().DropDownListFor(m => m.SelectedSearchUser)
+                        .Name("UserID")
+                        .DataValueField("UserID")
+                        .DataTextField("UserLFM")
+                        .OptionLabel("Select Benefit Worker ...")
+                        .Events(e => e.Change("BenefitWorkerSelected"))
+                        .HtmlAttributes(new { style = "width:calc(100vw/6);" })
+                        .Filter(FilterType.Contains)
+                        .Value(Model.LoginUser.IsBenefitWorker ? Model.LoginUser.UserID.ToString() : "")
+                        .Height(290)
+                        .BindTo(Model.AllSearchUsers))
+                    </div>
+                    <div id="divImg">
+                        @if (!(Model.LoginUser.CanEditAllCases && !Model.LoginUser.IsBenefitWorker))
+                        {
+                            <a id="getAssignedCase" href="#" title="Show Assigned Cases">
+                                <img src="~/Content/themes/base/images/FolderOpen1.png" style="width:25px;height:22px;" />
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="bass-searchheadersub1A">
+            <div class="bass-searchheadersub11">
+                <div class="bass-searchheadersub21">
+                    <div><b>Last&nbsp;Name/CDCR#:&nbsp;</b></div>
+                    <div>
+                        @(Html.Kendo().TextBoxFor(model => model.SearchString).HtmlAttributes(new { @id = "SearchString", @placeholder = "Enter search criteria...", @onkeypress = "onClick", @style= "width:calc(100vw/6)!important;height:22px!important;" }))
+                        @(Html.Kendo().Button().Name("searchButton").Content("Search").Icon("search").HtmlAttributes(new { @style = "height:22px;width:75px;display:inline-block;padding:0;" })
+                                  .Events(e => { e.Click("onClick"); }))
+                    </div>
+                </div>
+                <div class="bass-searchheadersub21">
+                    <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>Search&nbsp;Result:</b>&nbsp;</div>
+                    <div>
+                        @(Html.Kendo().DropDownListFor(m => m.SelectedSearchResult)
+                    .Name("AllSearchResults")
+                    .DataValueField("EpisodeID")
+                    .DataTextField("AssignedInmate")
+                    .OptionLabel("Select result ...")
+                    .HtmlAttributes(new { style = "width:calc((100vw / 6) + 50px);" })
+                    .Filter(FilterType.Contains)
+                    .Height(290)
+                    .Events(e => { e.Change("SearchDataChanged"); e.DataBound("SearchDataBound"); })
+                    .DataSource(source =>
+                    {
+                        source.Read(read => { read.Action("GetAllSearchResults", "EditOffender"); });
+                    }) )
+                    </div>
+                </div>
+            </div>
+            <div class="bass-searchheadersub11">
+                <div class="bass-searchheadersub21">
+                    <div><B>Program&nbsp;Status:&nbsp;&nbsp;</B></div>
+                    @*<div>*@
+                        <div style="border:0.5px darkgray solid; padding:4px; border-radius:5px;">
+                            @Html.RadioButtonFor(m => m.ProgramStatus, "2", new { @class = "nomargin", id = "ProgramStatus2" })&nbsp;Referral&nbsp;&nbsp;&nbsp;&nbsp;
+                            @Html.RadioButtonFor(m => m.ProgramStatus, "3", new { @class = "nomargin", id = "ProgramStatus3" })&nbsp;Screened (No Disposition)&nbsp;&nbsp;&nbsp;&nbsp;
+                            @Html.RadioButtonFor(m => m.ProgramStatus, "4", new { @class = "nomargin", id = "ProgramStatus4" })&nbsp;Accepted&nbsp;&nbsp;&nbsp;&nbsp;
+                            @Html.RadioButtonFor(m => m.ProgramStatus, "1", new { @class = "nomargin", id = "ProgramStatus1", @checked = "checked" })&nbsp;Any&nbsp;&nbsp;&nbsp;&nbsp;
+                            @Html.RadioButtonFor(m => m.ProgramStatus, "5", new { @class = "nomargin", id = "ProgramStatus5" })&nbsp;Services Not Provided
+                        </div>
+                    @*</div>*@
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="InmatePanel" style="height:calc(100vh - 125px);"></div>
+</div>
+<div id="divWindow">
+    @(Html.Kendo().Window()
+                .Name("Assignmentwindow")
+                .Width(1060)
+                .Height(370)
+                .HtmlAttributes(new { @style = "background-color:cornflowerblue;padding:5px 10px 20px 10px;" })
+                .Title("My Assigned Cases")
+                .Actions(actions => actions.Custom("pdf").Custom("excel").Refresh().Minimize().Maximize().Close())
+                .LoadContentFrom("GetBWAssignment", "EditOffender", new { BenefitWorkerID = Model.LoginUser.IsBenefitWorker ? Model.LoginUser.UserID : (int?)null })
+            .Draggable()
+            .Visible(false)
+            .Events(events =>
+            {
+                events.Open("onOpenWin");
+            })
+    )
+</div>
+
+<script type="text/javascript">
+    function exportMyAssignmentToExcel() {
+         //header 1
+        var rows = [{
+            cells: [
+               { value: "CDCR#", bold: true, background: "#dcdcdc",rowSpan: 2, vAlign: "center", hAlign: "center" },
+               { value: "Offender Name", bold: true, background: "#dcdcdc",rowSpan: 2, vAlign: "center", hAlign: "center" },
+               { value: "Housing", bold: true, background: "#dcdcdc",rowSpan: 2, vAlign: "center", hAlign: "center" },
+               { value: "MHClass/SOMS Codes", bold: true, background: "#dcdcdc",rowSpan: 2, vAlign: "center", hAlign: "center" },
+               { value: "Custody Facility", bold: true, background: "#dcdcdc",colSpan : 2,  vAlign: "center", hAlign: "center" },
+               { value: "Release Date", bold: true, background: "#dcdcdc",colSpan : 2, vAlign: "center", hAlign: "center"},
+               { value: "Application", bold: true, background: "#dcdcdc",rowSpan: 2, vAlign: "center", hAlign: "center" },
+               { value: "Disposition", bold: true, background: "#dcdcdc",rowSpan: 2, vAlign: "center", hAlign: "center" }
+            ]
+        }];
+
+        //header 2
+        rows.push({
+            cells: [
+                { background: "#dcdcdc", value: "SOMS", bold: true, vAlign: "center" },
+                { background: "#dcdcdc", value: "BASS", bold: true, vAlign: "center" },
+                { background: "#dcdcdc", value: "SOMS", bold: true, vAlign: "center" },
+                { background: "#dcdcdc", value: "BASS", bold: true, vAlign: "center" }
+            ]
+        });
+
+        //data rows
+        var grid = $("#gridMyAssignments").getKendoGrid();
+        var trs = grid.dataSource;
+        var filteredDataSource = new kendo.data.DataSource({
+            data: trs.data(),
+            filter: trs.filter()
+        });
+
+        filteredDataSource.read();
+        var data = filteredDataSource.view();
+
+        for (var i = 0; i < data.length; i++) {
+            var bgcolor = "#fffff";
+            if (data[i].RedFlag === "1")
+                bgcolor = "#cc0000";
+
+            var custfacolor = bgcolor;
+            var releaseColor = bgcolor;
+            if(data[i].SomsCustFacilityName !== data[i].CustFacilityName)
+            {
+                custfacolor = "#4e9a06";
+            }
+
+            if(((new Date(data[i].SomsReleaseDate)) - (new Date(data[i].ReleaseDate))) !==0)
+                releaseColor = "#4e9a06";
+
+            rows.push({
+                cells: [
+                  {background:bgcolor, value: data[i].CDCRNum },
+                  {background:bgcolor, value: data[i].ClientName },
+                  {background:bgcolor, value: data[i].Housing },
+                  {background:bgcolor, value: data[i].MHClass },
+                  {background:custfacolor, value: data[i].SomsCustFacilityName},
+                  {background:custfacolor, value: data[i].CustFacilityName },
+                  {background:releaseColor,value: data[i].SomsReleaseDate },
+                  {background:releaseColor,value: data[i].ReleaseDate },
+                  {background:bgcolor, value: data[i].Apps },
+                  {background:bgcolor, value: data[i].AppStatus },
+                ]
+            });
+        }
+
+
+        var workbook = new kendo.ooxml.Workbook({
+            sheets: [
+              {
+                  columns: [ { width: 60 }, { width: 160 }, { width: 120 }, { width: 150 }, { width: 50 },
+                             { width: 50 }, { width: 75 }, { width: 75 },{ width: 75 }, { width: 160 } ],
+                  title: "MyAssignment",
+                  rows: rows
+              }
+            ]
+        });
+
+        kendo.saveAs({
+            dataURI: workbook.toDataURL(),
+            fileName: "MyAssignment.xlsx"
+        });
+    }
+    $(function () {
+       $("#Assignmentwindow").keydown(function (e) { if (e.keyCode == 8) e.preventDefault(); });
+        if ($("#hdCanAccessReports").val() == "True" && $("#hdIsLoginUserBFW").val() == "True") {
+            $("#divImg").show();
+            if ($("#hdEpisodeID").val() != "0") {
+                $("#divWindow").show();
+                $("#Assignmentwindow").data("kendoWindow").open();
+            }
+        }
+        else
+        {
+            //$("#divImg").hide();
+            $("#divWindow").hide();
+            $("#Assignmentwindow").data("kendoWindow").close();
+        }
+        $(".k-tabstrip.k-content.k-state-active").css("background-color", "transparent");
+        $("#Assignmentwindow").data("kendoWindow").wrapper.find(".k-i-pdf").parent().click(function (e) {
+             $("#gridMyAssignments").getKendoGrid().saveAsPDF();
+            e.preventDefault();
+        });
+
+        $("#Assignmentwindow").data("kendoWindow").wrapper.find(".k-i-excel").parent().click(function (e) {
+            exportMyAssignmentToExcel(); }
+        );
+
+        $("#getAssignedCase").click(function (e) {
+            if($("#UserID").val().length > 0 )
+            {
+                $("#gridMyAssignments").data('kendoGrid').dataSource.read({ BenefitWorkerId: $("#UserID").val() });
+                $("#Assignmentwindow").data("kendoWindow").open();
+                $("#Assignmentwindow").data("kendoWindow").refresh();
+            }
+            else if($("#hdIsLoginUserBFW").val() == "True")
+            {
+                var grid = $("#gridMyAssignments").data('kendoGrid');
+                grid.dataSource.read({ BenefitWorkerId: $("#hdLoginUserID").val() });
+                grid.refresh();
+                $("#Assignmentwindow").data("kendoWindow").open();
+            }
+            else
+            {
+                //$("#divImg").hide();
+                $("#Assignmentwindow").data("kendoWindow").close();
+            }
+        });
+
+        var tempDL = $("#UserID").data("kendoDropDownList");
+        if( $("#hdIsLoginUserBFW").val() == "True" && $("#hdCanAccessReports").val() == "False"  )
+        {
+            if(tempDL != undefined)
+            {
+                tempDL.enable(false);
+            }
+        }
+        else if($("#hdIsLoginUserBFW").val() == "False" && $("#hdCanEditAllCases").val() == "True" )
+        {
+            if(tempDL != undefined)
+            {
+                tempDL.enable(false);
+            }
+        }
+        else
+        {
+            if(tempDL != undefined)
+            {
+                tempDL.enable(true);
+            }
+        }
+        var cdcr = $("#hdCDCRNum").val();
+        if (cdcr !== null && cdcr !== undefined && cdcr !== "") {
+            $("#SearchString").val(cdcr);
+            $("#searchButton").trigger("click");
+        }
+    });
+
+    //$("#searchButton").kendoTooltip({
+    //    content: function () {
+    //        return "Search Inmate";
+    //    }
+    //});
+</script>

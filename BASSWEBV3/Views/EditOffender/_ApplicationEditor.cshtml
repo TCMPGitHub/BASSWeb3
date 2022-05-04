@@ -1,0 +1,403 @@
+﻿@using Kendo.Mvc.UI
+@model BassWebV3.ViewModels.ApplicationEditor
+
+@{
+    var enableClose = (Model.App.IsEditable && Model.App.ApplicationID == 0 && Model.App.AgreesToApply.HasValue) ? true : false;
+    var formname = "appForm" + Model.ApplicationTypeName;
+    var linkname = "link" + Model.ApplicationTypeName;
+    var spanname = "span" + Model.ApplicationTypeName;
+    var devname = "divATA" + Model.ApplicationTypeName;
+}
+@using (Html.BeginForm("SaveApplication", "EditOffender", FormMethod.Post, new
+{
+    @id = formname,
+    @style = "background-color:aliceblue;height:100%;border:1px lightblue solid;padding:0px;overflow:hidden;width:inherit;"
+}))
+{
+    <script>
+        function CloseApplication(e)
+        {
+            var appId = e.sender.element[0].id.substring(1);
+            var typeid = 2;
+            if (appId == "SSI")
+                typeid = 0;
+            else if (appId == "VA")
+                typeid = 1;
+            var form = $("#appForm" + appId);
+            $.ajax({
+                url: "@Url.Action("GetApplicationBox", "EditOffender")",
+                data: { EpisodeID : $("#hdAppEpisodeID").val(), AppTypeID : typeid },
+            cache: false,
+            type: "POST",
+            dataType: "html",
+            success: function (data, textStatus, XMLHttpRequest) {
+                form.html(data);
+            }});
+        };
+        function ArchiveApplication(e){
+            var appId = @Html.Raw(Json.Encode(Model.App.ApplicationID));
+            var appTypeId = @Html.Raw(Json.Encode(Model.App.ApplicationTypeID));
+            var appname = @Html.Raw(Json.Encode(Model.ApplicationTypeName));
+            $.ajax({
+                url: "@Url.Action("ArchiveApplication", "EditOffender")",
+                data: { ApplicationID : appId, ApplicationTypeID : appTypeId,
+                    EpisodeID : $("#hdAppEpisodeID").val() },
+                cache: false,
+                type: "POST",
+                dataType: "html",
+                success: function (data, textStatus, XMLHttpRequest) {
+                    ReloadApplication();
+                }});
+            return false;
+        }       
+      </script>
+        if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <scan style="color:red">@Html.DisplayFor(m => m.ErrorMessage)</scan>
+        }
+        @Html.HiddenFor(m => m.App.ApplicationID, new { id = "hdApplicationID" + Model.ApplicationTypeName })
+        @Html.HiddenFor(m => m.App.ApplicationTypeID)
+        @Html.HiddenFor(m => m.App.EpisodeID)
+        @Html.HiddenFor(m => m.App.DHCSDate)
+        @Html.HiddenFor(m => m.App.CustodyFacilityId, new { id = "hdCustodyFacilityId" })
+        @Html.HiddenFor(m => m.App.ApplicationOutcomeID, new { id = "hdApplicationOutcomeID" })
+        @Html.HiddenFor(m => m.App.OutcomeDate, new { id = "hdOutcomeDate" })
+        @Html.HiddenFor(m => m.App.IssuedOnDate, new { id = "hdIssuedOnDate" })
+        @Html.HiddenFor(m => m.App.IsEditable, new { id = "hdIsEditable" })
+        @Html.HiddenFor(m => m.App.AgreesToApply, new { id = "hdAgreesToApply" })
+        <div id=@linkname class="collapsible">Hide&nbsp;@Model.ApplicationTypeName&nbsp;Application</div>
+        <div class="divOffenderPart1tab content" style="border:0.5px lightgray solid;">
+            <div class="divOffenderPart1tr">
+                @{ 
+                    var appnm = Model.App.ApplicationTypeID == 2 ? "MEDI-CAL" : Model.ApplicationTypeName.ToUpper();
+                    var closebnt = Model.App.ApplicationID == 0 ? "" : "none";
+                    var archivebnt = Model.App.ApplicationID > 0 ? "" : "none";
+                    var apptDetails = (Model.App.AgreesToApply == false || Model.App.AgreesToApply == null) ? "none" : "";
+                }
+                <div class="divOffenderPart1tbs" style="float:right;width:40%;"><scan style="color: saddlebrown;font-size:12px;font-weight:bold;">@appnm</scan></div>
+                <div class="divOffenderPart1tbs" style="float:left;width:60%;justify-content:flex-start;">
+                    @(Html.Kendo().Button().Name("r" + Model.ApplicationTypeName).Content("Revert").HtmlAttributes(new { type = "reset", style = "height:20px;padding:1px;width:60px;" }).Enable(false).Events(e => e.Click("CloseApplication")))&nbsp;
+                    @(Html.Kendo().Button().Name("s" + Model.ApplicationTypeName).Content("Save").HtmlAttributes(new { type = "submit", style = "height:20px;padding:1px;width:45px;" }).Enable(false))&nbsp;
+
+                    <div style="display:@closebnt">@(Html.Kendo().Button().Name("c" + Model.ApplicationTypeName).Content("Cancel").HtmlAttributes(new { type = "button", style = "height:20px;padding:1px;width:60px;" }).Enable(@enableClose).Events(e => e.Click("CloseApplication")))</div>
+                    <div style="display:@archivebnt">
+                        @(Html.Kendo().Button().Name("a" + Model.ApplicationTypeName).Content("Archive").HtmlAttributes(new { type = "button", style = "height:20px;padding:1px;width:65px;" }).Enable(true).Events(e => e.Click("ArchiveApplication")))
+                    </div>
+                </div></div>
+            <div class="divOffenderPart1tr">
+                <div class="divOffenderPart2tbs" style="width:55%;"><scan style="width:50px;"></scan>
+                       <scan style="width: 100%;">&nbsp;Offender&nbsp;Agrees&nbsp;to&nbsp;Apply</scan>
+                </div>
+                <div class="divOffenderPart2tbs" style="width:45%;">
+                    @(Html.Kendo().RadioButtonFor(m=>m.App.AgreesToApply).Label("Yes").Name("App.AgreesToApply" + Model.ApplicationTypeName)
+                          .Checked((Model.App.AgreesToApply.HasValue && Model.App.AgreesToApply.Value == true ? true : false)).Value("true")
+                          .HtmlAttributes(new {@class= "agree_1_" + Model.ApplicationTypeName }))&nbsp;&nbsp;&nbsp;&nbsp;
+                    @(Html.Kendo().RadioButtonFor(m => m.App.AgreesToApply).Label("No").Name("App.AgreesToApply" + Model.ApplicationTypeName)
+                          .Checked((Model.App.AgreesToApply.HasValue && Model.App.AgreesToApply.Value == false ? true : false)).Value("false")
+                          .HtmlAttributes( new { @class = "agree_2_" + Model.ApplicationTypeName }))&nbsp;
+                </div>
+            </div>
+            <div class="divOffenderPart1tr">
+                <div class="divOffenderPart2tbs" style="width:50%;">
+                    <scan style="width: 100%; text-align: right; margin-right: 5px;">Custody Facility</scan>
+                </div>
+                <script>
+                    function ChangeFacility(e){
+                        e.sender.element[0].form['App.CustodyFacilityId'].value = kendo.toString(this.value());
+                    }
+                </script>
+               <div class="divOffenderPart2tbs" style="width:50%;">
+                    @(Html.Kendo().DropDownListFor(m => m.App.CustodyFacilityId)
+     .DataTextField("Abbr")
+     .DataValueField("FacilityID")
+     .BindTo(Model.Facilities).OptionLabel("(Any)")
+     .HtmlAttributes(new { @style = "width:150px;height:20px;" })
+     .Name("App.CustodyFacilityId" + Model.ApplicationTypeName)
+     .Events(e=>e.Change("ChangeFacility"))
+     .Enable(Model.App.IsEditable))
+                </div>
+            </div>
+            @{
+                var labelval = Model.App.AgreesToApply.HasValue ? (Model.App.AgreesToApply.Value == true ? "Applied On" : "Refused On") : "Applied or Refused";
+                var agree = Model.App.AgreesToApply.HasValue ? "" : "none";
+            }
+           <div class="divOffenderPart1tr">
+                    <div class="divOffenderPart2tbs" style="width:50%;">
+                        <scan style="width: 100%; text-align: right; margin-right: 5px;">@labelval</scan>
+                    </div>
+                    <script>
+                        function ChangeAppliedOrRefusedOnDate(e) {
+                            e.sender.element[0].form['App.AppliedOrRefusedOnDate'].value = kendo.toString(new Date(this.value()), "d");
+                       }
+                    </script>
+                    <div class="divOffenderPart2tbs" style="width:50%;">
+                        @Html.HiddenFor(m => m.App.AppliedOrRefusedOnDate, new { id= "hdAppliedOrRefusedOnDate" })
+                        @(Html.Kendo().DatePickerFor(m => m.App.AppliedOrRefusedOnDate).Format("MM/dd/yyyy").DateInput().HtmlAttributes(new { @style = "width:120px!important;height:22px!important;" })
+                            .Value(Model.App.AppliedOrRefusedOnDate).Name("App.AppliedOrRefusedOnDate" + Model.ApplicationTypeName)
+                            .Events(e => e.Change("ChangeAppliedOrRefusedOnDate")).Enable(false))
+                    </div>
+                </div>
+           <div id=@devname style="display:@apptDetails">
+                @if (Model.NeedPI)
+                {
+                    <div class="divOffenderPart1tr">
+                        <div class="divOffenderPart2tbs" style="width:50%;">
+                            <scan style="width: 100%; text-align: right; margin-right: 5px;">Phone Interview</scan>
+                        </div>
+                        <div class="divOffenderPart2tbs" style="width:50%;">
+                            @(Html.Kendo().DatePickerFor(m => m.App.PhoneInterviewDate).Format("MM/dd/yyyy").DateInput()
+                        .Value(Model.App.PhoneInterviewDate).Name("App.PhoneInterviewDate").HtmlAttributes(new { @style = "width:120px!important;height:22px!important;" })
+                        /*.Enable(false)*/)
+                        </div>
+                    </div>
+                }
+                <div class="divOffenderPart1tr">
+                    <div class="divOffenderPart2tbs" style="width:50%;float:right">
+                        <scan style="width: 100%; text-align: right; margin-right: 5px;">Outcome</scan>
+                    </div>
+                    <div class="divOffenderPart2tbs" style="width:50%;float:left;">
+                        <script>
+                function SetApplicationOutcomeID(e) {
+                    e.sender.element[0].form['App.ApplicationOutcomeID'].value = kendo.toString(this.value());
+                }
+                        </script>
+                        @(Html.Kendo().DropDownListFor(m => m.App.ApplicationOutcomeID)
+        .Name("App.ApplicationOutcomeID" + Model.ApplicationTypeName)
+        .DataTextField("Name")
+        .DataValueField("ApplicationOutcomeID")
+        .OptionLabel("(Applied)")
+        .HtmlAttributes(new { style = "max-width:150px;height:20px;" })
+        .Events(e => e.Change("SetApplicationOutcomeID"))
+        .BindTo(Model.Outcomes).Enable(Model.App.IsEditable)
+                        )
+                    </div>
+                </div>
+                <div class="divOffenderPart1tr">
+                    <div class="divOffenderPart2tbs" style="width:50%;">
+                        <scan style="width: 100%; text-align: right; margin-right: 5px;">Outcome Date</scan>
+                    </div>
+                    <script>
+                function SetApplicationOutcomeDate(e) {
+                    e.sender.element[0].form['App.OutcomeDate'].value = kendo.toString(new Date(this.value()), "d");
+                }
+                    </script>
+                    <div class="divOffenderPart2tbs" style="width:50%;">
+                        @(Html.Kendo().DatePickerFor(m => m.App.OutcomeDate).Format("MM/dd/yyyy").DateInput()
+        .Value(Model.App.OutcomeDate).Name("App.OutcomeDate" + Model.ApplicationTypeName).HtmlAttributes(new { @style= "width:120px!important;height:22px!important;" })
+        .Enable(Model.App.IsEditable).Events(e => e.Change("SetApplicationOutcomeDate")))
+                    </div>
+                </div>
+                @if (Model.Needbic)
+                {
+                    <div class="divOffenderPart1tr">
+                        <div class="divOffenderPart2tbs" style="width:50%;">
+                            <scan style="width: 100%; text-align: right; margin-right: 5px;">BIC #</scan>
+                        </div>
+                        <div class="divOffenderPart2tbs" style="width:50%;">
+                            @(Html.Kendo().TextBoxFor(m => m.App.BICNum).Name("App.BICNum").HtmlAttributes(new { @maxlength = "20", style = "height:20px;width:80%" }).Enable(Model.App.IsEditable))
+                        </div>
+                    </div>
+                    <div class="divOffenderPart1tr">
+                        <div class="divOffenderPart2tbs" style="width:50%;">
+                            <scan style="width: 100%; text-align: right; margin-right: 5px;">Issued On</scan>
+                        </div>
+                        <script>
+                        function SetApplicationIssuedOnDate(e) {
+                            e.sender.element[0].form['App.IssuedOnDate'].value = kendo.toString(new Date(this.value()), "d");
+                        }
+                        </script>
+                        <div class="divOffenderPart2tbs" style="width:50%;">
+                            @(Html.Kendo().DatePickerFor(m => m.App.IssuedOnDate).Format("MM/dd/yyyy").DateInput()
+    .Value(Model.App.IssuedOnDate).Name("App.IssuedOnDate" + Model.ApplicationTypeName).HtmlAttributes(new { @style = "width:120px!important;height:22px!important;" })
+    .Enable(Model.App.IsEditable).Events(e => e.Change("SetApplicationIssuedOnDate")))
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <script type="text/javascript">
+            $(function () {
+                var appname = @Html.Raw(Json.Encode(Model.ApplicationTypeName));
+                var appID = @Html.Raw(Json.Encode(Model.App.ApplicationID));
+                var tempDLF = $("#App_CustodyFacilityId" + appname).data("kendoDropDownList");
+                var tempDLO = $("#App_ApplicationOutcomeID" + appname).data("kendoDropDownList");
+                var tempDPR = $("#App_AppliedOrRefusedOnDate" + appname).data("kendoDatePicker");
+                var tempDPI = $("#App_PhoneInterviewDate").data("kendoDatePicker");
+                var tempDPO = $("#App_OutcomeDate" + appname).data("kendoDatePicker");
+                var tempDPS = $("#App_IssuedOnDate" + appname).data("kendoDatePicker");
+                if ($("#hdCanEditApp").val() == "False") {
+                    $("#appForm" + appname + ":input").prop('disabled', true);
+                    $("#appForm" + appname + ":button").prop('disabled', true);
+                }
+                else{
+                    RefreshApplicationPanel($("#appForm" + appname), appname, appID);
+                    EnableButtons(false, appname, appID);
+                }
+
+                $('#appForm' + appname).submit(function (e) {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    var actionText = UnsavedChanges("appForm" + appname);
+                    if(actionText.length > 0)
+                    {
+                        if(!confirm("WARNING: You have unsaved changes in " + actionText + " that will be lost if you save " + appname + " changes.\n\nIf you'd like to discard your changes and continue, click \"OK\"; otherwise, click \"Cancel\".")){
+                            e.stopPropagation();
+                            return false;
+                        }                      
+                    }
+                    var apply =($(".agree_1_" + appname).prop('checked') == true ? "'Applied On'" : "'Refused On'");
+                    if (tempDPR == undefined || tempDPR.element[0].value == "" || tempDPR.element[0].value == "__/__/____" )
+                    {
+                        alert( apply + " date is required.");
+                        return false;
+                    }
+                    if (tempDPO !== undefined && tempDPO.element[0].value !== "" && tempDPO.element[0].value !== "__/__/____" ){
+                        var diff = DateDiff(new Date(tempDPO.element[0].value), new Date(tempDPR.element[0].value));
+                        if(diff <= 0) {
+                            alert( "'Outcome Date' cannot early than " + apply + " date.");
+                            return false;
+                        }
+
+                        if (tempDLO == undefined || tempDLO.element[0].value == "")
+                        {
+                            alert("Please select an Outcome other than \"Applied\", or leave the Outcome Date blank.");
+                            return false;
+                        }
+                    }
+
+                    if ((tempDLO === undefined || tempDLO.element[0].value === "") && (tempDPO !== undefined && tempDPO.element[0].value !== "" && tempDPO.element[0].value !== "__/__/____"))
+                    {
+                        alert( "Outcomes other than \"Applied\" require an Outcome Date.");
+                        return false;
+                    }
+
+                    postFormAndReplaceDivHtml($("#" + appname + "App"), function(e){
+                        RefreshApplicationPanel($('#appForm' + appname), appname, appID);
+                        EnableButtons(false, appname, appID);
+                    });
+                    return true;
+                });
+                $('#appForm' + appname).on("change","input", function (e) {
+                    EnableButtons(true, appname, appID);
+                })
+                $('#appForm' + appname).on("click","input[type='radio']", function (e) {
+                    var screendate = $("#Inmate_ScreeningDate").val();
+                    var InfoSigned = $('#Inmate_ReleaseOfInfoSigned').prop('checked');
+                    var authchecked = $("#Inmate_AuthToRepresent").prop('checked');
+                    var AllowPartialEditAppt = (screendate !== undefined && screendate !== "" && screendate !== "__/__/____");
+                    var AllowEditAppt = AllowPartialEditAppt && InfoSigned &&  authchecked;
+                    if (e.target.value == "true"){
+                        if(!AllowPartialEditAppt || (AllowPartialEditAppt && !AllowEditAppt)){
+                            alert("AuthToRepresent and ReleaseOfInfoSigned checkboxes must be checked.");
+                            return false;
+                        }
+                    }
+                    e.target.form['App.AgreesToApply'].value = e.target.value;
+                    if(e.target.value == "true"){
+                        document.getElementById("divATA" + appname).style.display = '';
+                    }
+                    else{
+                        document.getElementById("divATA" + appname).style.display = 'none';
+                        if (tempDPI !== undefined && tempDPI.element[0].value !== "" && tempDPI.element[0].value !== "__/__/____") tempDPI.element[0].value ="__/__/____";
+                        if (tempDPO !== undefined && tempDPO.element[0].value !== "" && tempDPO.element[0].value !== "__/__/____") tempDPO.element[0].value = "__/__/____";
+                        if (tempDPS !== undefined && tempDPS.element[0].value !== "" && tempDPS.element[0].value !== "__/__/____") tempDPS.element[0].value = "__/__/____";
+                    }
+                    if (tempDLF != undefined) tempDLF.enable(true);
+                    if (tempDLO != undefined) tempDLO.enable(true);
+                    if (tempDPR != undefined) tempDPR.enable(true);
+                    if (tempDPI != undefined) tempDPI.enable(true);
+                    if (tempDPO != undefined) tempDPO.enable(true);
+                    if (tempDPS != undefined) tempDPS.enable(true);
+                    EnableButtons(true, appname, appID);
+                });
+
+                $('#link' + appname).click(function (e) {
+                    var content = this.nextElementSibling;
+                    if (content.style.display === "") {
+                        content.style.display = "none";
+                        this.innerText = "Open " + appname + " Application";
+                    } else {
+                        content.style.display = "";
+                        this.innerText = "Hide " + appname + " Application";
+                    }
+                })
+            });
+           
+            function EnableButtons(obj, fname, appID){
+                var screendate = $("#Inmate_ScreeningDate").val();
+                var buttonR = $("#r" + fname).data("kendoButton");
+                if(buttonR !== undefined)  buttonR.enable(obj);
+                var buttonS = $("#s" + fname).data("kendoButton");
+                if(buttonS !== undefined)  buttonS.enable(obj);
+                var buttonC = $("#c" + fname).data("kendoButton");
+                if(buttonC !== undefined)  buttonC.enable(obj);
+                var buttonA = $("#a" + fname).data("kendoButton");
+                if(buttonA !== undefined)  buttonA.enable(obj);
+                if(appID > 0 )
+                {
+                    if(buttonA !== undefined)  buttonA.enable(true);
+                }
+            }
+            function RefreshApplicationPanel(form, appname, appID) {
+                var editable = $("#hdIsEditable").val();
+                var screendate = $("#Inmate_ScreeningDate").val();
+                var InfoSigned = $('#Inmate_ReleaseOfInfoSigned').prop('checked');
+                var authchecked = $("#Inmate_AuthToRepresent").prop('checked');
+                var AllowPartialEditAppt = (screendate !== undefined && screendate !== "" && screendate !== "__/__/____");
+                var AllowEditAppt = AllowPartialEditAppt && InfoSigned &&  authchecked;
+                var tempDLF = $("#App_CustodyFacilityId" + appname).data("kendoDropDownList");
+                var tempDLO = $("#App_ApplicationOutcomeID" + appname).data("kendoDropDownList");
+                var tempDPR = $("#App_AppliedOrRefusedOnDate" + appname).data("kendoDatePicker");
+                var tempDPI = $("#App_PhoneInterviewDate").data("kendoDatePicker");
+                var tempDPO = $("#App_OutcomeDate" + appname).data("kendoDatePicker");
+                var tempDPS = $("#App_IssuedOnDate" + appname).data("kendoDatePicker");
+                var chform = form[0];
+                var chinput = undefined;
+                if(chform.elements['App.AgreesToApply'] !== undefined)
+                    chinput = chform.elements['App.AgreesToApply'].value;
+                $(".agree_1_" + appname).attr("disabled", false);
+                $(".agree_2_" + appname).attr("disabled", false);
+                SetDatePickerPlaceHolder($("#App_AppliedOrRefusedOnDate" + appname));
+                SetDatePickerPlaceHolder($("#App_OutcomeDate" + appname));
+                if (appname == "SSI") SetDatePickerPlaceHolder($("#App_PhoneInterviewDate"));
+                if (appname == "MediCal"){
+                    SetDatePickerPlaceHolder($("#App_IssuedOnDate" + appname));
+                    $("#App_BICNum")[0].disabled = true;
+                }
+                if (tempDLF != undefined) tempDLF.enable(false);
+                if (tempDLO != undefined) tempDLO.enable(false);
+                if (tempDPR != undefined) tempDPR.enable(false); //SetDatePickerPlaceHolder($("#App_AppliedOrRefusedOnDate"  + appname));};
+                if (tempDPI != undefined) tempDPI.enable(false); //SetDatePickerPlaceHolder($("#App_PhoneInterviewDate"));};
+                if (tempDPO != undefined) tempDPO.enable(false); //SetDatePickerPlaceHolder($("#App_OutcomeDate"  + appname));};
+                if (tempDPS != undefined) tempDPS.enable(false); //SetDatePickerPlaceHolder($("#App_IssuedOnDate" + appname));};
+
+                if (editable == "False") {
+                    $(chform).find("input, select, textarea, button").attr("disabled", true);
+                }
+                else if (AllowEditAppt || AllowPartialEditAppt) {
+                    if (chinput !== undefined && chinput !== "" && appID > 0 && AllowEditAppt) {
+                        if (tempDLF != undefined) tempDLF.enable(true);
+                        if (tempDLO != undefined) tempDLO.enable(true);
+                        if (tempDPR != undefined) tempDPR.enable(true);
+                        if (tempDPI != undefined) tempDPI.enable(true);
+                        if (tempDPO != undefined) tempDPO.enable(true);
+                        if (tempDPS != undefined) tempDPS.enable(true);
+                        if (appname == "MediCal")
+                            $("#App_BICNum")[0].disabled = false;
+                    }
+                    else if (chinput !== undefined && chinput !== "" && appID > 0 && AllowPartialEditAppt){
+                        if(chinput == "False"){
+                            $(".agree_1_" + appname).attr("disabled", true);
+                            $(".agree_2_" + appname).attr("disabled", true); 
+                            if (tempDLF != undefined) tempDLF.enable(true);
+                            if (tempDPR != undefined) tempDPR.enable(true);
+                        }
+                    }
+                }
+                else if (!AllowPartialEditAppt) {    
+                     $(".agree_1_" + appname).attr("disabled", true);
+                     $(".agree_2_" + appname).attr("disabled", true);    
+                }
+            }
+        </script>
+    }                                            

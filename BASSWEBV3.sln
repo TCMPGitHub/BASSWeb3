@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BASSWebV3", "BassWebV3\BASSWebV3.csproj", "{D5182558-4F78-4009-9C35-D7D1D003BC52}"
+	ProjectSection(ProjectDependencies) = postProject
+		{EABED8CC-9B6F-4BEB-8F14-645A9228BD0E} = {EABED8CC-9B6F-4BEB-8F14-645A9228BD0E}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BassIdentityManagement", "BassIdentityManagement\BassIdentityManagement.csproj", "{EABED8CC-9B6F-4BEB-8F14-645A9228BD0E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D5182558-4F78-4009-9C35-D7D1D003BC52}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5182558-4F78-4009-9C35-D7D1D003BC52}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5182558-4F78-4009-9C35-D7D1D003BC52}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5182558-4F78-4009-9C35-D7D1D003BC52}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EABED8CC-9B6F-4BEB-8F14-645A9228BD0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EABED8CC-9B6F-4BEB-8F14-645A9228BD0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EABED8CC-9B6F-4BEB-8F14-645A9228BD0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EABED8CC-9B6F-4BEB-8F14-645A9228BD0E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

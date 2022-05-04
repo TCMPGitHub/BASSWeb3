@@ -1,0 +1,82 @@
+﻿@model BassWebV3.ViewModels.Applications
+@using Kendo.Mvc.UI
+@Html.HiddenFor(m=>m.AppFlags.EpisodeID, new { id = "hdAppEpisodeID"})
+@Html.HiddenFor(m => m.CanEditApplication, new { id = "hdCanEditApp" })
+    <script>
+        function OpenApp(e) {
+            var appId = e.sender.element[0].id.substring(4);
+            var typeid = 2;
+            if (appId == "SSI"){
+                typeid = 0;
+            }
+            else if (appId == "VA"){
+                typeid = 1;
+            }
+            document.getElementById(appId + "Button").style.display = 'none';
+            document.getElementById(appId + "App").style.display = '';
+            
+            $.ajax({
+                url: "@Url.Action("GetApplicationBox", "EditOffender")",
+                data: { EpisodeID:$("#hdAppEpisodeID").val(), AppTypeID : typeid },
+                type: "GET",
+                dataType: "html",
+                success: function (data, textStatus, XMLHttpRequest) {
+                    $("#appForm" + appId).html(data);
+                },
+                error: function(xhr, status, error){
+                    var errorMessage = xhr.status + ': ' + xhr.statusText
+                    alert('Error - ' + errorMessage);
+                }
+            });
+        }
+        function GetEpisodeID() {
+            return { EpisodeID: $("#hdAppEpisodeID").val() };
+        }
+    </script>
+@{ 
+    var displayMediApp = Model.AppFlags.HasMediCalApp ? "" : "none";
+    var displayMediBut = Model.AppFlags.HasMediCalApp ? "none" : "";
+    var displaySSIApp = Model.AppFlags.HasSSIApp ? "" : "none";
+    var displaySSIBut = Model.AppFlags.HasSSIApp ? "none" : "";
+    var displayVAApp = Model.AppFlags.HasVAApp ? "" : "none";
+    var displayVABut = Model.AppFlags.HasVAApp ? "none" : "";
+}
+<div class="divApplicationMain" style="border: 1px lightblue solid;">
+    <div class="divOffenderPart1tab">
+        <div class="divOffenderPart1tr" style="color:#3465A4;"><b>APPLICATIONS&nbsp;</b></div>
+    </div>
+    <div class="divOffenderPart1tab">
+        <div class="divOffenderPart1tr">
+            <div class="divOffenderPart1tbh" id="MediCalApp" @*style="display:@displayMediApp;"*@>
+                @(Html.Action("GetApplicationBox", "EditOffender", new { EpisodeID = Model.AppFlags.EpisodeID, AppTypeID = 2 }))
+            </div>
+        </div>
+    </div>
+    <div class="divOffenderPart1tab">
+        <div class="divOffenderPart1tr">
+            <div class="divOffenderPart1tbh" id="SSIApp" @*style="display:@displaySSIApp;"*@>
+               @(Html.Action("GetApplicationBox", "EditOffender", new { EpisodeID = Model.AppFlags.EpisodeID, AppTypeID = 0 }))
+            </div>
+        </div>
+    </div>
+    @if (Model.AppFlags.IsVAInmate)
+    {
+    <div class="divOffenderPart1tab">
+        <div class="divOffenderPart1tr">
+            <div class="divOffenderPart1tbh" id="VAApp" @*style="display:@displayVAApp;"*@>
+                @(Html.Action("GetApplicationBox", "EditOffender", new { EpisodeID = Model.AppFlags.EpisodeID, AppTypeID = 1 }))
+            </div>
+        </div>
+    </div>
+    }
+    @if (Model.AppFlags.HasArchivedApps)
+    {
+    <div class="divOffenderPart1tab">
+        @(Html.Partial("_ApplicationList"))
+    </div>
+    }
+</div>
+
+
+
+

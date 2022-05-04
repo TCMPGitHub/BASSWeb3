@@ -1,0 +1,13 @@
+﻿@using BassWebV3.DataAccess
+
+@*<link href="~/Content/Styles/Style.css" rel="stylesheet" />*@
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+   <table style="width:100%;height:80px!important;">
+            <tr>
+                <td style="align-content:center;"><h4 style="color:@BassConstants.BkgColor;font-size:xx-large; font-weight:bold;text-shadow: -1px -1px 0 #fff, 1px 1px 0 #ccc;text-align:center;">Welcome to Bass Web @BassConstants.Environment</h4></td>
+            </tr>
+    </table>
+}

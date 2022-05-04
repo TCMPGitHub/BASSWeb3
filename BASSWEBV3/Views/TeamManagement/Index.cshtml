@@ -1,0 +1,356 @@
+﻿@using Kendo.Mvc.UI;
+@model BassWebV3.ViewModels.TeamManagement
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Team Management";
+}
+<link href='~/Content/Styles/TeamMenegement.css' rel='stylesheet' />
+
+<script type="text/x-kendo-tmpl" id="userItemTemplate">
+    <div class="user">
+        <div class="user-wrapper">
+            <dl class="user-list-details">
+                <dt class="name">#:FirstName# #:LastName#</dt>
+                @*<dd class="title">#:Title#</dd>*@
+            </dl>
+        </div>
+    </div>
+</script>
+
+<script type="text/x-kendo-tmpl" id="userBioTemplate">
+    <div>
+        <h3>ABOUT</h3>
+        <dl class="user-bio-details">
+            <dt class="name">#:FirstName# #:LastName#</dt>
+            <dd class="title">#:Title#</dd>
+            @*<dd><a href='\\#' class='bioTooltip'> >>FULL BIO <span style='display:none;'>#:Notes#</span></a></dd>*@
+        </dl>
+    </div>
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#dateFilter").kendoValidator({
+            rules: {
+                startDate: function (input) {
+                    if (input.is("#StartDate")) {
+                        startDate = kendo.parseDate(input.val());
+                        endDate = kendo.parseDate($("#EndDate").val());
+                        if (startDate > endDate) {
+                            return false;
+                        }
+                    }
+                    return true;
+                },
+                endDate: function (input) {
+                    if (input.is("#EndDate")) {
+                        startDate = kendo.parseDate($("#StartDate").val());
+                        endDate = kendo.parseDate(input.val());
+                        if (startDate > endDate) {
+                            return false;
+                        }
+                    }
+                    return true;
+                },
+            },
+            messages: {
+                startDate: "Start date should preceed the End date.",
+                endDate: "End date should not preceed the Start date."
+            }
+        });
+    });
+
+    function onListDataBound(e) {
+        this.select($(".user:first"));
+    }
+    function onCriteriaChange() {
+       var start = $("#StartDate").data("kendoDatePicker").value();
+        var end = $("#EndDate").data("kendoDatePicker").value();
+        if (start >= end)
+            return;
+        var selUser =$("#SupervisorList").data("kendoDropDownList").value();
+        if (selUser == undefined || selUser == "" || selUser == null)
+            return;
+        var userList = $("#UserList").data("kendoListView"),
+            user = userList.dataSource.getByUid(userList.select().attr("data-uid")),
+            userAppsWorked = $("#UserAppsWorked").data("kendoChart"),
+            userAverageCasesWorked = $("#UserAverageCasesWorked").data("kendoChart"),
+            userTeamWorked = $("#UserTeamWorked").data("kendoChart"),
+            userWorkedLocation = $("#UserWorkedLocation").data("kendoScheduler"),
+            startDate = $("#StartDate").data("kendoDatePicker"),
+            endDate = $("#EndDate").data("kendoDatePicker"),
+            filter = { UserID: user.UserID, StartDate: startDate.value(), EndDate: endDate.value() },
+            template = kendo.template($("#userBioTemplate").html());
+
+        $("#userBio").html(template(user));
+
+        userWorkedLocation.dataSource.read({ UserID: user.UserID, StartDate: start, EndDate: end });
+        userWorkedLocation.date(new Date(start));
+        //userWorkedLocation.dataSource.filter({ field: "UserID", operator: "eq", value: user.UserID });
+        userTeamWorked.dataSource.read(filter);
+        userAppsWorked.dataSource.read(filter);
+        userAverageCasesWorked.dataSource.read(filter);
+        userAppsWorked.redraw();
+        userAppsWorked.refresh();
+        userTeamWorked.redraw();
+        userTeamWorked.refresh();
+        userAverageCasesWorked.redraw();
+        userAverageCasesWorked.refresh();
+    }
+    function getBio(e) {
+        return e.target.find("span").text();
+    }
+    function onUserAppsWorkedDataBound(e) {
+        var data = this.dataSource.at(0);
+        if (data !== undefined)
+            $("#UserAppsWorkedLabel").text(kendo.toString(data.Current + '/' + data.Target, "d"));
+    }
+    function onUserAverageCasesWorkedDataBound(e) {
+        var categoryAxis = $('#UserAverageCasesWorked').data('kendoChart').options.categoryAxis;
+        var date1 = $("#StartDate").data("kendoDatePicker").value();
+        var date2 = $("#EndDate").data("kendoDatePicker").value();
+        categoryAxis.min = new Date(date1.getFullYear(), date1.getMonth());
+        categoryAxis.max = new Date(date2.getFullYear(), date2.getMonth() + 1);
+        categoryAxis.baseUnit = date1.getMonth() == date1.getMonth() ? "days" : "months";
+        var data = this.dataSource.aggregates();
+        if (data.UserCasesWorkdTotals) {
+            $("#UserAverageCasesWorkedLabel").text(kendo.toString(data.UserCasesWorkdTotals.average, "d"));
+        } else {
+            $("#UserAverageCasesWorkedLabel").text(kendo.toString(0, "d"));
+        }
+    }
+    function TeamChanged(e) {
+        var supervisorID = e.sender.dataItem().SupervisorID;
+
+        if (supervisorID != "")
+            $(".main-section-content").show();
+        else
+            $(".main-section-content").hide();
+
+        var userList = $("#UserList").data("kendoListView");
+        userWorkedLocation = $("#UserWorkedLocation").data("kendoScheduler"),
+        userList.dataSource.read({ SupervisorID: supervisorID });
+        //userWorkedLocation.dataSource.read();
+        userWorkedLocation.resources[0].dataSource.read({ SupervisorID: supervisorID }).then(
+                   function (e) {
+                       userWorkedLocation.view();
+                   });
+    }
+    $(window).on("resize", function () {
+        kendo.resize($("#UserTeamWorked"));
+        var containerWidth = $(".sparkline-container").parent().width();
+        $("#UserAppsWorked").data("kendoChart").setOptions({ chartArea: { width: containerWidth } });
+        $("#UserAverageCasesWorked").data("kendoChart").setOptions({ chartArea: { width: containerWidth } });
+
+        if ($("#SupervisorList").val() == "" ){
+            $(".main-section-content").hide();
+        }
+        else
+        {
+            $(".main-section-content").show();
+        }
+    });
+</script>
+
+@(Html.Kendo().Tooltip()
+    .For("#userBio")
+    .Filter("a")
+    .ContentHandler("getBio")
+)
+@(Html.HiddenFor(m=>m.UserID, new { @id = "hdTMUserID" } ))
+<div class="container-fluid">
+    <div id="main-section-header">
+        <div id="dateFilter">
+            <div class="period-wrapper" style="float:left">
+                <label for="StartDate" class="select-period">From</label>
+                @(Html.Kendo().DatePicker() .Name("StartDate")
+                      .Value(Model.FromDate).Format("MM/dd/yyyy")
+                      .HtmlAttributes(new { @style = "width:100px;padding:0px;;" })
+                      .Events(e => e.Change("onCriteriaChange"))
+                )
+                <span class="k-invalid-msg" data-for="StartDate"></span>
+                <label for="EndDate" class="select-period">To</label>
+            </div>
+            <div class="period-wrapper" style="float:left">
+                @(Html.Kendo().DatePicker().Name("EndDate")
+                      .Value(Model.ToDate).Format("MM/dd/yyyy")
+                      .Events(e => e.Change("onCriteriaChange"))
+                      .HtmlAttributes(new { @style = "width:100px;padding:0px;", @class = "rptdate" })
+                )
+                <span class="k-invalid-msg" data-for="EndDate"></span>
+            </div>
+            <div class="period-wrapper" style="float:left">
+                <label for="SupervisorList" class="select-period">Supervisors</label>
+                @(Html.Kendo().DropDownList().Name("SupervisorList")
+                    .OptionLabel("Select Team by Supervisor...")
+                    .DataTextField("SupervisorName")
+                    .DataValueField("SupervisorID")
+                    .HtmlAttributes(new { style = "width: 220px;" })
+                    .DataSource(ds => ds.Read(read => read.Action("GetSupervisorList", "TeamManagement")))
+                    .Events(evt => evt.Change("TeamChanged"))
+                )
+            </div>
+        </div>
+        <div style="clear:both;"></div>
+    </div>
+    <div class="main-section-content" style="display:none;">
+        <script>
+            function GetAppsParams(e) {
+                var userid = "0";
+                var lv = $("#UserList").data("kendoListView");
+                if (lv !== undefined && lv.select() !== undefined && lv.select().length > 0) {
+                    userid = lv.dataSource.getByUid(lv.select().attr("data-uid")).UserID;
+                }
+                return { UserID: userid, StartDate: $("#StartDate").val(), EndDate: $("#EndDate").val() };
+            }
+
+            function GetSupervisorID(e) {
+                var svid = $("#SupervisorList").val() == "" ? $("#hdTMUserID").val() : $("#SupervisorList").val();
+                return { SupervisorID: svid }
+            }
+        </script>
+        <div id="user-list" style="overflow-y: auto;">
+            <h3>TEAM MEMBERS</h3>
+            @(Html.Kendo().ListView<BassWebV3.ViewModels.TeamManagement>()
+.Name("UserList")
+.TagName("div")
+.Events(e => e.DataBound("onListDataBound").Change("onCriteriaChange"))
+.ClientTemplateId("userItemTemplate")
+.DataSource(dataSource =>
+{
+    dataSource.Read(read => read.Action("UserList", "TeamManagement").Data("GetSupervisorID"));
+    dataSource.PageSize(15);
+})
+.Selectable(s => s.Mode(ListViewSelectionMode.Single))
+            )
+        </div>
+        <div id="user-details-wrapper">
+            <div id="user-details">
+                <div id="user-about">  
+                    <div class="colspace user-about-item"></div>            
+                        <div id="userBio" class="user-about-item" style="width:25%!important;"></div>
+                        <div class="user-about-item" style="width:35%!important;">
+                            <h3>Applications Worked(Worded/Assigned)</h3>
+                            <span id="UserAppsWorkedLabel"></span>
+                            <div class="sparkline-container">
+                                @(Html.Kendo().Chart<BassWebV3.ViewModels.AppModel>()
+                            .Name("UserAppsWorked")
+                            .Theme("metro")
+                            .HtmlAttributes(new { style = "height:100px;" })
+                            .AutoBind(true)
+                            .Tooltip(true)
+                            .Events(e => e.DataBound("onUserAppsWorkedDataBound"))
+                            .DataSource(ds => ds
+                                .Read(read => read.Action("UserAppsWorked", "TeamManagement").Data("GetAppsParams"))
+                            )
+                            .Series(series =>
+                            {
+                                series.Bullet(m => m.Current, m => m.Target);
+                            })
+                            .Legend(leg => leg.Visible(false))
+                            .CategoryAxis(cat => cat.Labels(lab => lab.Visible(true)).MajorGridLines(m => m.Visible(true)).Visible(true))
+                            .ValueAxis(val => val.Numeric().Labels(lab => lab.Visible(true)).MajorGridLines(m => m.Visible(true)).MajorTicks(mT => mT.Visible(true)))
+                                )
+                            </div>
+                        </div>
+                        <div class="user-about-item" style="width:35%!important;">
+                            <h3>Monthly Average Case Worked</h3>
+                            <span id="UserAverageCasesWorkedLabel"></span>
+                            <div class="sparkline-container">
+                                @(Html.Kendo().Chart<BassWebV3.ViewModels.CasesWorded>()
+                             .Name("UserAverageCasesWorked")
+                             .Theme("metro")
+                             .Tooltip(tooltip => tooltip.Visible(true).Format("{0:d}"))
+                             .Events(e => e.DataBound("onUserAverageCasesWorkedDataBound"))
+                             .HtmlAttributes(new { style = "height:100px;" })
+                             .DataSource(ds => ds.Read(read => read.Action("UserAverageCasesWorked", "TeamManagement").Data("GetAppsParams"))
+                                                 .Aggregates(a => a.Add(m => m.UserCasesWorkdTotals).Average()))
+                            .Series(series =>
+                            {
+                                series.Line(model =>model.UserCasesWorkdTotals, categoryExpression: model => model.Date)
+                                .Width(1.5).Markers(m => m.Visible(true));
+                                //.Aggregate(ChartSeriesAggregate.Avg)
+                            })
+                             .ValueAxis(axis => axis.Numeric("avarage").Min(0).Max(100).MajorUnit(20).Line(line => line.Visible(false)))
+                             .CategoryAxis(axiss =>
+                             {
+                                 axiss.Date().BaseUnitStep(30).Min(Model.FromDate).Max(Model.ToDate).Visible(true)
+                                     .Labels(label => label.Rotation(-60))
+                                     .Crosshair(c => c.Visible(true))
+                                     .Labels(labels => labels.DateFormats(formats => formats.Days("MM/yy")));
+                             }))                                
+                        </div>
+                    </div>                  
+                    </div>
+                <div id="userStats">
+                    @(Html.Kendo().Chart<BassWebV3.ViewModels.UserAndTeamCasesworked>()
+                    .Name("UserTeamWorked")
+                    .Theme("metro")
+                    .Title(t => t.Text("REPRESENTATIVE CASES WORKED VS. TEAM CASES WORKED").Align(ChartTextAlignment.Left).Font("11px sans-serif").Color("#35373d"))
+                    .HtmlAttributes(new { style = "height:200px;" })
+                    .AutoBind(false)
+                    .Legend(l => l.Position(ChartLegendPosition.Bottom))
+                    .DataSource(ds => ds.Read(read => read.Action("UserAndTeamCasesWorked", "TeamManagement")))
+                    .Series(series =>
+                    {
+                        series.Column(model => model.UserTotalCasesWorked).CategoryField("Date").Name("User Cases").Aggregate(ChartSeriesAggregate.Sum);
+                        series.Column(model => model.TeamTotalCasesWorked).CategoryField("Date").Name("Team Cases").Aggregate(ChartSeriesAggregate.Sum);
+                    })
+                    .CategoryAxis(axis => axis
+                        .Date()
+                        .BaseUnit(ChartAxisBaseUnit.Months)
+                        .MajorGridLines(lines => lines.Visible(false))
+                    )
+                    .ValueAxis(axis => axis.Numeric()
+                        .Labels(labels => labels.Format("{0:d}").Visible(false))
+                        .MajorUnit(25000)
+                        .Line(line => line.Visible(false))
+                        .MajorGridLines(m => m.Visible(false))
+                    )
+                    .Tooltip(tooltip => tooltip
+                        .Visible(true)
+                        .Format("{0:d}")
+                    )
+                    )
+                </div>
+                <div id="userSchedule" style="height:50vh;border:0.5px solid silver;">
+                    <h3>Representative cases workded - schedule</h3>
+                    @(Html.Kendo().Scheduler<BassWebV3.ViewModels.CasesWorkedLocation>()
+        .Name("UserWorkedLocation")
+        .AutoBind(true)
+        .Date(new DateTime(Model.FromDate.Year, Model.FromDate.Month, Model.FromDate.Day))/*..Pdf(p => p.FileName("WorkingLocation.pdf"))*/
+                                                                                          //.Toolbar(t => t.Pdf()).Pdf(p => p.FileName("WorkingLocation.pdf"))
+        .Views(views =>
+        {
+            views.MonthView();
+            views.DayView();
+        })
+        .Editable(false)
+        .Timezone("Etc/UTC")
+        .HtmlAttributes(new { style = "height:45vh!important;" })
+        .Resources(resource =>
+        {
+            resource.Add(m => m.UserID)
+                .Title("Title")
+                .DataTextField("UserName")
+                .DataValueField("UserID")
+                .DataSource(dataSource =>
+                {
+                    dataSource.Read(read => read.Action("GetUsers", "TeamManagement").Data("GetSupervisorID"));
+                });
+        })
+         .DataSource(d =>
+         {
+             d.Model(model => model.Id(x => x.UserID));
+             d.Read(read => read.Action("GetLocationWorked", "TeamManagement").Data("GetAppsParams"));
+             d.ServerOperation(false);
+         }))
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--</div><!--close row-->
+<!--</div><!--close container-->

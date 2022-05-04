@@ -1,0 +1,71 @@
+﻿@*@model BASS.Models.Application*@
+@model BassIdentityManagement.Entities.ArchiveApplicationReadData
+
+<div style="padding:0px;background-color:lightskyblue;">
+    <table>
+        <tr>
+            <td class="padded alignleft" colspan="2"><strong><scan style="color: darkblue">@Model.ApplicationTypeName  Application</scan></strong></td>
+        </tr>
+        <tr>
+            <td class="padded alignright">Offender Agrees to Apply&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <td class="padded alignright buttonwidth">
+                <table class="fillwidth">
+                    <tr>
+                        <td class="halfwidth alignleft">@Html.RadioButtonFor(m => m.AgreesToApply, "true", new { @class = "nomargin", @disabled = "disabled" })&nbsp;Yes</td>
+                        <td class="halfwidth alignleft">@Html.RadioButtonFor(m => m.AgreesToApply, "false", new { @class = "nomargin", @disabled = "disabled" })&nbsp;No</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td class="padded agreed alignright">@(Model.AgreesToApply ? "Applied" : "Refused") On&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <td class="padded buttonwidth">@Html.TextBoxFor(m => m.AppliedOrRefusedOnDate, "{0:MM/dd/yyyy}", new { @disabled = "disabled" })</td>
+        </tr>
+        @if (!string.IsNullOrEmpty(Model.CustodyFacility))
+        {     
+        <tr>
+            <td class="padded agreed alignright">Cust Facility Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <td class="padded buttonwidth">@Html.TextBoxFor(m => m.CustodyFacility, new { @disabled = "disabled" })</td>
+        </tr>
+        }
+        @if (Model.PhoneInterviewDate.HasValue)
+            {
+            <tr>
+                <td class="padded agreed alignright">Phone Interview&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                <td class="padded">@Html.TextBoxFor(m => m.PhoneInterviewDate, "{0:MM/dd/yyyy}", new { @disabled = "disabled" })</td>
+            </tr>
+            }
+        @if (!string.IsNullOrEmpty(Model.Outcome))
+            {
+            <tr>
+                <td class="padded agreed alignright">Outcome&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                <td class="padded">@Html.TextBoxFor(m => m.Outcome, new { @class = "fillwidth", @disabled = "disabled" })</td>
+            </tr>
+            }
+        @if (Model.OutcomeDate.HasValue)
+            {
+            <tr>
+                <td class="padded agreed alignright">Outcome Date&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                <td class="padded agreed">@Html.TextBoxFor(m => m.OutcomeDate, "{0:MM/dd/yyyy}", new { @disabled = "disabled" })</td>
+            </tr>
+            }
+        @if (!string.IsNullOrEmpty(Model.BICNum))
+            {
+            <tr>
+                <td class="padded agreed alignright">BIC #&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                <td class="padded agreed">@Html.TextBoxFor(m => m.BICNum, new { @disabled = "disabled" })</td>
+            </tr>
+            }
+        @if (Model.IssuedOnDate.HasValue)
+            {
+            <tr>
+                <td class="padded agreed alignright">Issued On&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                <td class="padded agreed">@Html.TextBoxFor(m => m.IssuedOnDate, "{0:MM/dd/yyyy}", new { @disabled = "disabled" })</td>
+            </tr>
+            }
+    </table>
+</div>
+
+
+
+

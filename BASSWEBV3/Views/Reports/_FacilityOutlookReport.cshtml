@@ -1,0 +1,219 @@
+﻿@using Kendo.Mvc.UI
+<style>
+    .k-grid-header th.k-header {
+        white-space: pre-wrap;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .k-grid-footer td {
+        background-color: lightblue;
+    }
+</style>
+
+<script type="text/javascript">
+    $(function () {
+                var ctrl = $("#FromToDate").data("kendoDateRangePicker");
+                var datestring = "60-Day Facility Outlook Report " + kendo.toString(ctrl.options.range.start, "MM/dd/yyyy") + "-" + kendo.toString(DateAdds(60), 'MM/dd/yyyy');
+                 $("#reportfospan").html(datestring);
+                });
+                function GridFADataBound() {
+                    var grid = $("#gridFAOutLook").data("kendoGrid");
+                    grid.thead.find('th').each(function () {
+                        $(this).prop('title', $(this).data('title'));
+                    })
+                }
+                function getTotalEPRDnext60daysPct() {
+                    var gridData = $("#gridFAOutLook").data("kendoGrid").dataSource.view();
+                    var total30 = 0;
+                    var total3060 = 0;
+                    var total60 = 0;
+                    var result = 0;
+                    for (var i = 0; i < gridData.length; i++) {
+                        total30 += gridData[i].Total30EPRD;
+                        total3060 += gridData[i].TotalNext30EPRD;
+                        total60 += gridData[i].TotalEPRDnext60days;
+                    }
+                    if ((total30 + total3060) > 0)
+                        result = total60 * 100.0 / (total30 + total3060);
+
+                    return Math.round(result).toFixed(1);
+                }
+
+</script>
+
+<script>
+    function DateAdds(days) {
+        var ctrl = $("#FromToDate").data("kendoDateRangePicker");
+        var todate = new Date(ctrl.options.range.start);
+        todate.setDate(todate.getDate() + 60);
+        return todate;
+    }
+    function exportFOToExcel() {
+        //header 1
+        var ctrl = $("#FromToDate").data("kendoDateRangePicker");
+        //var todate = new Date(ctrl.options.range.start);
+        var datestring = "60-Day Facility Outlook Report " + kendo.toString(ctrl.options.range.start, "MM/dd/yyyy") + " - " + kendo.toString(DateAdds(60), 'MM/dd/yyyy');
+        var rows = [{
+            cells: [{ value: datestring, textAlign: "center", vAlign: "center", hAlign: "center", color: "#4e9a06", background: "#dcdcdc", colSpan: 10 }]
+        }];
+        rows.push({
+            cells: [
+                { background: "#BDD7EE", value: "Facility Name", bold: true, vAlign: "center", rowSpan: 2 },
+                { background: "#FFC000", value: "Total EPRD next 30 days", bold: true, vAlign: "center", rowSpan: 2 },
+                { background: "#FFC000", value: "Total EPRD next 31-60 days", bold: true, vAlign: "center", rowSpan: 2 },
+                { background: "#FFC000", value: "Total EPRD Difference  31-60 days", bold: true, vAlign: "center", rowSpan: 2 },
+                { background: "#F4B084", value: "Unknown Disposition (EPRD next 30 days)", bold: true, vAlign: "center", colSpan: 2 },
+                { background: "#F4B084", value: "Unknown Disposition (EPRD next 31-60 days)", bold: true, vAlign: "center", colSpan: 2 },
+                { background: "#C6E0B4", value: "Referrals less than 60 days before EPRD (EPRD next 60 days)", bold: true, vAlign: "center", colSpan: 2 }
+            ]
+        });
+        //header 2
+        rows.push({
+            cells: [
+                { background: "#BDD7EE", value: "Count", bold: true, vAlign: "center" },
+                { background: "#BDD7EE", value: "%", bold: true, vAlign: "center" },
+                { background: "#BDD7EE", value: "Count", bold: true, vAlign: "center" },
+                { background: "#BDD7EE", value: "%", bold: true, vAlign: "center" },
+                { background: "#BDD7EE", value: "Count", bold: true, vAlign: "center" },
+                { background: "#BDD7EE", value: "%", bold: true, vAlign: "center" }
+            ]
+        });
+
+        //data rows
+        var grid = $("#gridFAOutLook").getKendoGrid();
+        var trs = grid.dataSource;
+        var filteredDataSource = new kendo.data.DataSource({
+            data: trs.data(),
+            filter: trs.filter()
+        });
+
+        filteredDataSource.read();
+        var data = filteredDataSource.view();
+        var TTotal30EPRD = 0;
+        var TTotalNext30EPRD = 0;
+        var TTotalDiffNext30EPRD = 0;
+        var TUnknownDispNext30EPRD = 0;
+        var TUnknownDispNextNext30EPRD = 0;
+        var TTotalEPRDnext60days = 0;
+        for (var i = 0; i < data.length; i++) {
+            rows.push({
+                cells: [
+                  { value: data[i].FacilityName },
+                  { value: data[i].Total30EPRD },
+                  { value: data[i].TotalNext30EPRD },
+                  { value: data[i].TotalDiffNext30EPRD },
+                  { value: data[i].UnknownDispNext30EPRD },
+                  { value: data[i].UnknownDispNext30EPRDPct },
+                  { value: data[i].UnknownDispNextNext30EPRD },
+                  { value: data[i].UnknownDispNextNext30EPRDPct },
+                  { value: data[i].TotalEPRDnext60days },
+                  { value: data[i].TotalEPRDnext60daysPct },
+                ]
+            });
+
+            TTotal30EPRD += data[i].Total30EPRD;
+            TTotalNext30EPRD += data[i].TotalNext30EPRD;
+            TUnknownDispNext30EPRD += data[i].UnknownDispNext30EPRD;
+            TUnknownDispNextNext30EPRD += data[i].UnknownDispNextNext30EPRD;
+            TTotalEPRDnext60days += data[i].TotalEPRDnext60days;
+        }
+        rows.push({
+            cells: [
+                { background: "#ADD8E6", value: "Total:" },
+                { background: "#ADD8E6", value: TTotal30EPRD },
+                { background: "#ADD8E6", value: TTotalNext30EPRD },
+                { background: "#ADD8E6", value: TTotalNext30EPRD - TTotal30EPRD },
+                { background: "#ADD8E6", value: TUnknownDispNext30EPRD },
+                { background: "#ADD8E6", value: TTotal30EPRD === 0 ? 0 : Math.round(TUnknownDispNext30EPRD * 100.0 / TTotal30EPRD) },
+                { background: "#ADD8E6", value: TUnknownDispNextNext30EPRD },
+                { background: "#ADD8E6", value: TTotalNext30EPRD === 0 ? 0 : Math.round(TUnknownDispNextNext30EPRD * 100.0 / TTotalNext30EPRD) },
+                { background: "#ADD8E6", value: TTotalEPRDnext60days },
+                { background: "#ADD8E6", value: getTotalEPRDnext60daysPct(), vAlign: "right" }
+            ]
+        });
+
+        var workbook = new kendo.ooxml.Workbook({
+            sheets: [
+              {
+                  columns: [{ width: 250 }, { width: 160 }, { width: 160 }, { width: 150 },
+                             { width: 50 }, { width: 50 }, { width: 50 }, { width: 50 }, { width: 50 }, { width: 50 }],
+                  title: "Facility Outlook Report",
+                  rows: rows
+              }
+            ]
+        });
+
+        kendo.saveAs({
+            dataURI: workbook.toDataURL(),
+            fileName: "FacilityOutlookReport.xlsx"
+        });
+    }
+</script>
+@(Html.Kendo().Grid<BassIdentityManagement.Entities.FacilityOutlookReportData>()
+        .Name("gridFAOutLook")
+        .NoRecords("No Data Found.")
+        .Selectable(s => s.Enabled(true)).HtmlAttributes(new { @style = "height:87vh" })
+        .Events(e => e.DataBound("GridFADataBound"))
+        .ToolBar(toolbar =>
+        {
+        toolbar.Template(@<text><a class='k-button k-grid-export' title='Export to excel' href="javascript:exportFOToExcel()" style="height:25px;"><span class="k-icon k-i-excel"></span>Export to excel</a></text>);
+        })
+        .Columns(column =>
+        {
+            column.Group(g => g.HeaderTemplate(@<text><span class="greentext" id="reportfospan" style="font-weight:bold;height:25px;"></span></text>)
+.Columns(info =>
+{
+info.Bound(m => m.FacilityName).Width(250).HeaderHtmlAttributes(new { @class = "lightblue" }).HeaderTemplate(@<text>Facility Name</text>).ClientFooterTemplate("Total : ");
+info.Bound(m => m.Total30EPRD).Width(150).HeaderHtmlAttributes(new { style = "background-color: #FFC000;" }).HeaderTemplate(@<text>Total EPRD next 30 days</text>).ClientFooterTemplate("#=sum#");
+info.Bound(m => m.TotalNext30EPRD).Width(150).HeaderHtmlAttributes(new { style = "background-color: #FFC000;" }).HeaderTemplate(@<text>Total EPRD next 31-60 days</text>).ClientFooterTemplate("#=sum#");
+info.Bound(m => m.TotalDiffNext30EPRD).Width(150).HeaderHtmlAttributes(new { style = "background-color: #FFC000;" }).HeaderTemplate(@<text>Total EPRD Difference  31-60 days</text>).ClientFooterTemplate("#= sum#");
+info.Group(g1 => g1.HeaderHtmlAttributes(new { style = "background-color: #F4B084;" }).HeaderTemplate(@<text>Unknown Disposition (EPRD next 30 days)</text>)
+            .Columns(info1 =>
+            {
+                info1.Bound(m => m.UnknownDispNext30EPRD).Width(50).HeaderHtmlAttributes(new { style = "background-color: #BDD7EE;" }).HeaderTemplate(@<text>Count</text>).ClientFooterTemplate("#= sum#");
+                info1.Bound(m => m.UnknownDispNext30EPRDPct).Width(50).HeaderHtmlAttributes(new { style = "background-color: #BDD7EE;" }).HeaderTemplate(@<text>%</text>)
+                     .ClientFooterTemplate("#= kendo.toString(data.UnknownDispNext30EPRD.sum * 100 / data.Total30EPRD.sum, 'd')#");
+            }));
+info.Group(g1 => g1.HeaderHtmlAttributes(new { style = "background-color: #F4B084;" }).HeaderTemplate(@<text>Unknown Disposition (EPRD next 31-60 days)</text>)
+            .Columns(info1 =>
+            {
+                info1.Bound(m => m.UnknownDispNextNext30EPRD).Width(50).HeaderHtmlAttributes(new { style = "background-color: #BDD7EE;" }).HeaderTemplate(@<text>Count</text>).ClientFooterTemplate("#= sum#");
+                info1.Bound(m => m.UnknownDispNextNext30EPRDPct).Width(50).HeaderHtmlAttributes(new { style = "background-color: #BDD7EE;" }).HeaderTemplate(@<text>%</text>)
+                     .ClientFooterTemplate("#= kendo.toString(data.UnknownDispNextNext30EPRD.sum * 100 / data.TotalNext30EPRD.sum, 'd')#");
+            }));
+info.Group(g1 => g1.HeaderHtmlAttributes(new { style = "background-color: #C6E0B4;" }).HeaderTemplate(@<text>Referrals less than 60 days before EPRD (EPRD next 60 days)</text>)
+            .Columns(info1 =>
+            {
+                info1.Bound(m => m.TotalEPRDnext60days).Width(50).HeaderHtmlAttributes(new { style = "background-color: #BDD7EE;" }).HeaderTemplate(@<text>Count</text>).ClientFooterTemplate("#= sum#");
+info1.Bound(m => m.TotalEPRDnext60daysPct).Width(50).HeaderHtmlAttributes(new { style = "background-color: #BDD7EE;" }).HeaderTemplate(@<text>%</text>)
+                   .ClientFooterTemplate("<div>#= getTotalEPRDnext60daysPct()#</div>");
+            }));
+}));
+        })
+             .DataSource(ds => ds.Ajax()
+             .Aggregates(aggregates =>
+             {
+                 aggregates.Add(p => p.Total30EPRD).Sum().Average();
+                 aggregates.Add(p => p.TotalNext30EPRD).Sum().Average();
+                 aggregates.Add(p => p.TotalDiffNext30EPRD).Sum();
+                 aggregates.Add(p => p.UnknownDispNext30EPRD).Sum();
+                 aggregates.Add(p => p.UnknownDispNextNext30EPRD).Sum();
+                 aggregates.Add(p => p.TotalEPRDnext60days).Sum();
+             })
+            .Batch(false)
+            .ServerOperation(false)
+            .Model(m =>
+            {
+                m.Id(f => f.FacilityName);
+            })
+            .Read(r => r.Action("FacilityOutlookReportData_Read", "Reports").Data("getRptdate"))))
+
+<script>
+   $("tbody").on("click", "tr", function (e) {
+        $(this)
+           .toggleClass("selected")
+           .siblings(".selected")
+               .removeClass("selected");
+    });
+</script>

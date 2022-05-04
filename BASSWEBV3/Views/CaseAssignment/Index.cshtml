@@ -1,0 +1,831 @@
+﻿@using Kendo.Mvc.UI
+@using BassWebV3.DataAccess
+@model BassWebV3.ViewModels.SearchPane
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Case Assignment";
+}
+
+@section Scripts {
+    <style>
+        /*#assignmentPane>.k-widget.k-dropdown{
+            flex-flow:row nowrap!important;
+        }
+        #assignmentPane>.k-link .k-pager-nav{
+            margin-top:5px!important;
+        }*/
+        span.k-pager-sizes{
+            display: -webkit-inline-box!important;
+            /*margin-top:5px!important;*/
+        }
+        .k-pager-wrap .k-grid-pager .k-widget .k-floatwrap{
+            background-color:lightsteelblue;
+            height:40px;
+        }     
+        .k-grid tr td {
+             border-bottom: 0.1px solid lightgray;
+             white-space: normal;
+             font-size:12px;
+             line-height:14px!important;
+        }
+        .k-pager-numbers .k-link, .k-pager-numbers .k-state-selected, .k-pager-wrap>.k-link,k-pager-numbers .k-reset{
+            height:1.45em!important;
+            line-height:1.45em!important;
+            min-width:1.45em!important;
+            margin-top:5px!important;
+        }
+        .k-grid .k-state-selected  {
+          background-color: #3379b5 !important;
+          color: #fff;
+        }
+        .k-grid .k-alt.k-state-selected {
+          background-color: #3379b5 !important;
+          color: #fff;
+        }
+        .k-checkbox-label{
+            line-height:12px!important;
+            font-size:12px!important;
+        }
+        .k-grid .k-alt {
+           background-color: lavender; /*lavender;  specify the alternate background-color */
+        }
+        .k-loading-image {
+            background-image: url('../../Content/themes/base/Images/loadingBlueTransparent.gif');
+        }
+        .k-grid-norecords-template {
+            border:0.1px  red solid;
+            font-weight:bolder;
+            color:red;
+            top:40px;
+          }
+        .k-grid-content {
+            width:calc(100vw - 5px)!important;
+            min-height: 30vh;
+            height:calc(100vh - 280px)!important;
+            overflow:auto!important;
+        }
+        .k-grid-header-wrap {
+            width: calc(100vw - 20px)!important;
+        }
+        .k-grid-footer-wrap {
+            width: calc(100vw - 10px)!important;
+        }
+        /*.k-icon.k-i-calendar, k-icon.k-i-arrow-60-down {
+           padding: 0;
+           margin-top: -10px!important;
+         }*/
+    </style>
+}
+<div id="editContentCA">
+    <script>
+        function DatePeriodChanged(e) {
+            if (this.select() > 0) {
+                var data = this.dataItem(this.select()).Value.split(',')
+                var fromDate = kendo.toString(kendo.parseDate(addDays(new Date(), data[0])), 'MM/dd/yyyy');
+
+                var toDate = kendo.toString(kendo.parseDate(addDays(new Date(), data[1])), 'MM/dd/yyyy');
+
+                var datePickerFrom = $("#FromDate").data("kendoDatePicker");
+                datePickerFrom.value(fromDate);
+                datePickerFrom.trigger("change");
+                var datePickerTo = $("#ToDate").data("kendoDatePicker");
+                datePickerTo.value(toDate);
+                datePickerTo.trigger("change");
+            }
+            else {
+                //default to today to 180 days
+                var data = this.dataItem(this.select()).Value.split(',')
+                var fromDate = kendo.toString(kendo.parseDate(addDays(new Date(), "0")), 'MM/dd/yyyy');
+
+                var toDate = kendo.toString(kendo.parseDate(addDays(new Date(), "180")), 'MM/dd/yyyy');
+
+                var datePickerFrom = $("#FromDate").data("kendoDatePicker");
+                datePickerFrom.value(fromDate);
+                datePickerFrom.trigger("change");
+                var datePickerTo = $("#ToDate").data("kendoDatePicker");
+                datePickerTo.value(toDate);
+                datePickerTo.trigger("change");
+            }
+        }
+        function onClick(e) {
+            $("#gridCaseAssigned").data("kendoGrid").dataSource.read();
+        }
+    </script>
+    <div id="divSearchAssignment">
+        <div class="flex-item-b" style="min-height:120px!important">
+            <div class="divOffenderPart1tab">
+                <div class="divOffenderPart1tr">
+                    <div class="divOffenderPart1tb" style="width:140px;justify-content: flex-end;">@Html.Label("Custody Facility:")</div>
+                    <div class="divOffenderPart1tb" valign="bottom">
+                        @(Html.Kendo().DropDownList()
+                            .Name("FacilityID")
+                            .DataValueField("FacilityID")
+                            .DataTextField("NameWithCode")
+                            .OptionLabel("(Any)")
+                            .HtmlAttributes(new { style = "width:300px;" })
+                            .Filter(FilterType.Contains)
+                            .BindTo(Model.AllFacilities)
+                            .Height(290))
+                    </div>
+                </div>
+                <div class="divOffenderPart1tr">
+                    <div class="divOffenderPart1tb" style="width:140px;justify-content: flex-end;">
+                        @Html.Label("Release Period:")</div>
+                    <div class="divOffenderPart1tb" valign="bottom">
+                        @(Html.Kendo().DropDownList()
+                        .Name("PeriodID")
+                        .DataValueField("PeriodID")
+                        .DataTextField("Period")
+                        .OptionLabel("(Specified below)")
+                        .HtmlAttributes(new { style = "width:150px;" })
+                        .Events(e => e.Change("DatePeriodChanged"))
+                        .Filter(FilterType.Contains)
+                        .BindTo(Model.AllReleasePeriods)
+                        .Height(290))
+                    </div>
+                </div>
+                <div class="divOffenderPart1tr">
+                    <div class="divOffenderPart1tbh" style= "width:400px!important;">
+                        <div class="divOffenderPart1tb" style="width:140px;justify-content: flex-end;"><b>From: </b></div>
+                        <div class="divOffenderPart1tb">
+                            @(Html.Kendo().DatePickerFor(m => m.FromDate.Value).Format("MM/dd/yyyy")
+                                .Value(Model.FromDate.Value.ToString()).Name("FromDate").DateInput()
+                                .HtmlAttributes(new { @style = "height:1.2em;" }))
+                        </div>
+                    </div>
+                    <div class="divOffenderPart1tbh">
+                        <div class="divOffenderPart1tb" style="justify-content: flex-end;"><b>To: </b></div>
+                        <div class="divOffenderPart1tb" valign="bottom">
+                            @(Html.Kendo().DatePickerFor(m => m.ToDate.Value).Format("MM/dd/yyyy").Name("ToDate")
+                            .HtmlAttributes(new { @style = "height:1.2em;" }).DateInput())
+                            @(Html.Kendo().CheckBoxFor(m => m.IncludeLifers).Label("Lifers Only").Name("IncludeLifers").HtmlAttributes(new { @style="margin-left:10px;margin-top:5px;" }))
+                        </div>
+                    </div>
+                </div>
+                <div class="divOffenderPart1tr">
+                    <div class="divOffenderPart1tb" style="width:140px;justify-content: flex-end;">
+                        @Html.Label("Last Name/CDCR#:")
+                    </div>
+                    <div class="divOffenderPart1tb" valign="bottom">
+                        @Html.TextBoxFor(model => model.SearchString, new { id = "SearchString", @placeholder = "Enter search criteria...", @style = "width:200px;height:22px!important;", @class = "k-textbox" })
+                        @(Html.Kendo().Button()
+                            .Name("searchButton")
+                            .Icon("search")
+                            .Content("Search")
+                            .HtmlAttributes(new { type = "button", style = "height:22px; " })
+                            .Events(e => { e.Click("onClick"); }))
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="flex-item-b" style="min-height:120px!important;width:calc(((100vw / 12) * 5) + 120px);">
+            <div class="divOffenderPart1tab">
+                <div class="divOffenderPart1tr" style="width:100%;color:aquamarine;"><b>Limit by referral qualifier? (if none selected, all results will be included)</b></div>
+                <div class="divOffenderPart1tr">
+                    <div class="divOffenderPart1tbh" style="border: 0.5px darkgray solid!important;">
+                        <div class="divOffenderPart1tbv">
+                            <div>@Html.Kendo().CheckBoxFor(m => m.LongTermMedCare).Name("LongTermMedCare").Label("Long-Term Medical Care").HtmlAttributes( new { @class= "qualifier" })</div>
+                            <div>@Html.Kendo().CheckBoxFor(m => m.Hospice).Name("Hospice").Label("Hospice").HtmlAttributes(new { @class = "qualifier" })</div>
+                            <div>@Html.Kendo().CheckBoxFor(m => m.AssistedLiving).Name("AssistedLiving").Label("Assisted Living").HtmlAttributes(new { @class = "qualifier" })</div>
+                         </div>
+                        <div class="divOffenderPart1tbv">
+                            <div>@Html.Kendo().CheckBoxFor(m => m.HIVPos).Name("HIVPos").Label("CID").HtmlAttributes(new { @class = "qualifier" })</div>
+                            <div>@Html.Kendo().CheckBoxFor(m => m.ChronicIllness).Name("ChronicIllness").Label("Chronic Illness").HtmlAttributes(new { @class = "qualifier" })</div>
+                            <div>@Html.Kendo().CheckBoxFor(m => m.DSH).Name("DSH").Label("DSH").HtmlAttributes(new { @class = "qualifier" })</div>
+                        </div>
+                        <div class="divOffenderPart1tbv">
+                            <div>@Html.Kendo().CheckBoxFor(m => m.EOP).Name("EOP").Label("EOP (Severely Mentally Ill)").HtmlAttributes(new { @class = "qualifier" })</div>
+                            <div>@Html.Kendo().CheckBoxFor(m => m.PhysDisabled).Name("PhysDisabled").Label("Physical Disabled").HtmlAttributes(new { @class = "qualifier" })</div>
+                            <div>@Html.Kendo().CheckBoxFor(m => m.DevDisabled).Name("DevDisabled").Label("Developmentally Disabled").HtmlAttributes(new { @class = "qualifier" })</div>
+                        </div>
+                        <div class="divOffenderPart1tbv">
+                            <div>@Html.Kendo().CheckBoxFor(m => m.CCCMS).Name("CCCMS").Label("CCCMS (Mentally Ill)").HtmlAttributes(new { @class = "qualifier" })</div>
+                            <div>@Html.Kendo().CheckBoxFor(m => m.Elderly).Name("Elderly").Label("Elderly").HtmlAttributes(new { @class = "qualifier" })</div>
+                            <div>@Html.Kendo().CheckBoxFor(m => m.USVet).Name("USVet").Label("US Veteran").HtmlAttributes(new { @class = "qualifier" })</div>                          
+                     </div>
+                        <script>
+                            function uncheckAll() {
+                                $(".qualifier").each(function () {
+                                    if (this.checked == true)
+                                        this.checked = false;
+                                })
+                            }
+                        </script>
+                        <div class="divOffenderPart1tbv">
+                            <div>@Html.Kendo().CheckBoxFor(m => m.NoQualifiers).Name("NoQualifiers").Label("No Qualifiers (GP)").HtmlAttributes(new { @class = "qualifier" })</div>
+                            <div style="width:20px;"></div>
+                            <div>@(Html.Kendo().Button()
+                                        .Name("uncheckAllButton")
+                                        .Content("Deselect All")
+                                        .HtmlAttributes(new { type = "button", style = "height:22px;margin-top:5px!important;" })
+                                        .Events(e => { e.Click("uncheckAll"); }))</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+     </div>
+    <script>
+        function error_handler(e) {
+            if(e.status == "error"){
+                var message = e.xhr.responseText;
+                alert(message);
+            }
+        }
+
+        function GetSearchString() {
+           // <Facility>|<CDCRORLast>|<qualifier>|<lifer>
+            var lastorcdcr = $("#SearchString").val().toUpperCase();
+            var facility = $("#FacilityID").val() == "" ? 0 : $("#FacilityID").val();
+            var fromDate  = $("#FromDate").val();
+            var toDate = $("#ToDate").val();
+            var qualifier = [];
+            qualifier.length = 0;
+            var lifer = 0;
+            if ($("#IncludeLifers").prop('checked'))
+                lifer = 1;
+
+            var qual = [];
+            $(".qualifier").each(function (i, obj) {
+               if(this.checked)
+                {
+                   switch(this.name)
+                    {
+                        case "USVet":{
+                            qual.push("1");
+                            break;
+                        }
+                        case "Elderly":{
+                            qual.push("2");
+                            break;
+                        }
+                        case "CCCMS":{
+                            qual.push("3");
+                            break;
+                        }
+                        case "DevDisabled":{
+                            qual.push("4");
+                            break;
+                        }
+                        case "PhysDisabled":{
+                            qual.push("5");
+                            break;
+                        }
+                        case "EOP":{
+                            qual.push("6");
+                            break;
+                        }
+                        case "DSH":{
+                            qual.push("7");
+                            break;
+                        }
+                        case "ChronicIllness":{
+                            qual.push("8");
+                            break;
+                        }
+                        case "HIVPos":{
+                            qual.push("9");
+                            break;
+                        }
+                        case "AssistedLiving":{
+                            qual.push("10");
+                            break;
+                        }
+                        case "Hospice":{
+                            qual.push("11");
+                            break;
+                        }
+                        case "LTMedCare":{
+                            qual.push("12");
+                            break;
+                        }
+                    }
+                }
+            });
+            
+            return { FromDate: fromDate, ToDate: toDate, Facility: facility, MaybeCDCR:lastorcdcr, Lifer : lifer, Qualifier: qual.toString() }
+        }
+        function checkData(d)
+        {
+            if (d == 0)
+                return "";
+            else if (d == 1)
+                return "1.USVet";
+            else if (d == 2)
+                return "2.Elderly";
+            else if (d == 3)
+                return "3.CCCMS";
+            else if (d == 4)
+                return "4.DevDisabled";
+            else if (d == 5)
+                return "5.PhysDisabled";
+            else if (d == 6)
+                return "6.EOP";
+            else if (d == 7)
+                return "7.DSH";
+            else if (d == 8)
+                return "8.ChronicIllness";
+            else if (d == 9)
+                return "9.HIVPos";
+            else if (d == 10)
+                return "10.AssistedLiving";
+            else if (d == 11)
+                return "11.Hospice";
+            else if (d == 12)
+                return "12.LTMedCare";
+        }
+
+        function saveChanges(e) {
+            if ($("#AllBWUsers").val() == "")
+            {
+                alert("Pleae select a benefit worker.");
+                return;
+            }
+            var grid = $("#gridCaseAssigned").data("kendoGrid");
+            var selectedElements = grid.select();
+            if (selectedElements.length > 0) {
+                var arrayOfEpisoddeID = [];
+                var benefitworkerID =$("#AllBWUsers").val();
+                for (var i = 0 ; i < selectedElements.length; i++) {
+                    if(grid.dataItem(selectedElements[i]).BenefitWorkerName === "")
+                        arrayOfEpisoddeID.push(grid.dataItem(selectedElements[i]).EpisodeID);
+                }
+                if(arrayOfEpisoddeID.length > 0)
+                {
+                    if (!confirm("Save the assigned?")) {
+                        return;
+                    }
+                    $.post('/CaseAssignment/SaveGridData', $.param({ "ArrayOfEpisoddeID": arrayOfEpisoddeID,  "BenifitWorkerID" : $("#AllBWUsers").val()}, true), function(data) {
+                        $('#gridCaseAssigned').data('kendoGrid').dataSource.read();
+                        alert("Case(s) assigned successfully!")
+                    });
+                    $("#assignButton").css("display", "none");
+                    $("#unAssignButton").css("display", "none");
+                }
+                else
+                {
+                    alert("the selected cases are assigned.");
+                }
+            }
+
+            return false;
+        }
+
+        function SaveUnAssigned(e) {
+            if ($("#AllBWUsers").val() == "")
+            {
+                alert("Pleae select a benefit worker.");
+                return;
+            }
+            var grid = $("#gridCaseAssigned").data("kendoGrid");
+            var arrayOfEpisoddeID = [];
+            var selectedElements = grid.select();
+
+            if (selectedElements.length > 0) {
+                var name  = $("#AllBWUsers").data("kendoDropDownList").text()
+                var benefitworkerID =$("#AllBWUsers").val();
+                for (var i = 0 ; i < selectedElements.length; i++) {
+                    if(grid.dataItem(selectedElements[i]).BenefitWorkerName === name)
+                        arrayOfEpisoddeID.push(grid.dataItem(selectedElements[i]).EpisodeID);
+                }
+            }
+            if (!confirm("Are you sure you want to unassign " +  (arrayOfEpisoddeID  == null ? "all" :  arrayOfEpisoddeID.length) + " cases assigned to " + $("#AllBWUsers").data("kendoDropDownList").text() + "?"))
+                return;
+            $.post('/CaseAssignment/UpdateGridData', $.param({ "ArrayOfEpisoddeID": arrayOfEpisoddeID,  "BenifitWorkerID" : $("#AllBWUsers").val()}, true), function(data) {
+                $('#gridCaseAssigned').data('kendoGrid').dataSource.read();
+                alert("Case(s) unassigned successfully!")
+            });
+            $("#assignButton").css("display", "none");
+            $("#unAssignButton").css("display", "none");
+            return true;
+        }
+
+        function MakeButtonDisplay(e) {
+            $("#assignButton").css("display", "none");
+            $("#unAssignButton").css("display", "none");
+            if($("#AllBWUsers").val() !== ""){
+                var grid = $("#gridCaseAssigned").data("kendoGrid");
+                var selectedElements = grid.select();
+                var isAssign = false;
+                var isUnassign = false;
+                if(selectedElements.length > 0){
+                    var name  = $("#AllBWUsers").data("kendoDropDownList").text();
+                    for (var i = 0 ; i < selectedElements.length; i++) {
+                        if(grid.dataItem(selectedElements[i]).BenefitWorkerName === name){
+                            isUnassign = true;
+                            continue;
+                        }
+                        if(grid.dataItem(selectedElements[i]).BenefitWorkerName === ""){
+                           isAssign = true;
+                            continue;
+                       }
+                    }
+
+                }
+                if (isAssign) $("#assignButton").css("display", "");
+                if(isUnassign)  $("#unAssignButton").css("display", "");
+            }
+        }
+        function onDataBound(e) {
+            var grid = $("#gridCaseAssigned").data("kendoGrid");
+            var gridData = grid.dataSource.view();
+            for (var i = 0; i < gridData.length; i++) {
+                var currentUid = gridData[i].uid;
+                if (gridData[i].BenefitWorkerName == undefined || gridData[i].BenefitWorkerName =='') {
+                    var currenRow = grid.table.find("tr[data-uid='" + currentUid + "']");
+                    var editButton = $(currenRow).find(".k-grid-delete");
+                    editButton.hide();
+                }
+            }
+
+            //==================================
+           // Get the export link as jQuery object
+            var requestObject = (new kendo.data.transports["aspnetmvc-server"]({ prefix: "" }))
+                .options.parameterMap({
+                   page: grid.dataSource.page(),
+                   sort: grid.dataSource.sort(),
+                   filter: grid.dataSource.filter()
+               });
+
+            var thedata = encodeURIComponent(JSON.stringify(GetSearchString()));
+
+            // Get the export link as jQuery object
+            var $exportLink = grid.element.find('.export');
+            // Get its 'href' attribute - the URL where it would navigate to
+            var href = "/CaseAssignment/Export?page=1&pageSize=~&filter=~&sort=~&data=~";
+            if(grid.dataSource.filter() != undefined && grid.dataSource.filter().filters.length > 0)
+            {
+                href = "javascript:exportAssignmentToExcel()";
+            }
+            else
+            {
+                // Update the 'page' parameter with the grid's current page
+                href = href.replace(/page=([^&]*)/, 'page=' + requestObject.page || '~');
+                // Update the 'sort' parameter with the grid's current sort descriptor
+                href = href.replace(/sort=([^&]*)/, 'sort=' + requestObject.sort || '~');
+                // Update the 'pageSize' parameter with the grid's current pageSize
+                href = href.replace(/pageSize=([^&]*)/, 'pageSize=' + grid.dataSource.total());
+                //update filter descriptor with the filters applied
+                href = href.replace(/filter=([^&]*)/, 'filter=' + (requestObject.filter || '~'));
+                href = href.replace(/data=([^&]*)/, 'data=' + thedata);
+            }
+            // Update the 'href' attribute
+            $exportLink.attr('href', href);
+            //=================================================
+        }
+        function onEdit(e)
+        {
+            $("#CDCRNum").attr("readonly", true);
+        }
+
+        function EnableAssignButton(e){
+            var sel = this.select().length;
+            var dropDown = $("#AllBWUsers").data("kendoDropDownList");
+            if(sel > 0){
+                var len = dropDown.dataSource.data().length;
+                if (len < 2) {
+                    dropDown.select(1);
+                    $("#assignButton").css("display", "");
+                    $("#unAssignButton").css("display", "none");
+                }
+                else{
+                    MakeButtonDisplay();
+               }
+            }
+            else{
+                $("#assignButton").css("display", "none");
+                $("#unAssignButton").css("display", "none");
+                dropDown.select(0);
+            }
+        }
+        function DDLDataBound(e){
+            var len = e.sender.dataSource.data().length;
+            if (len < 2) {
+                e.sender.readonly();
+            }
+            else{
+                e.sender.readonly(false);
+            }
+        }
+        function QualifierFilter()
+        {
+
+        }
+        function exportAssignmentToExcel() {
+           //header
+            var rows = [{
+                cells: [
+                    { background: "#dcdcdc", value: "Qualifier", bold: true, color: "#0d3c6b", vAlign: "center" },
+                    { background: "#dcdcdc", value: "CDCR#", bold: true, color: "#0d3c6b", vAlign: "center" },
+                    { background: "#dcdcdc", value: "Offender Name", bold: true, color: "#0d3c6b", vAlign: "center" },
+                    { background: "#dcdcdc", value: "Facility Name", bold: true, color: "#0d3c6b", vAlign: "center" },
+                    { background: "#dcdcdc", value: "Release Datel", bold: true, color: "#0d3c6b", vAlign: "center" },
+                    { background: "#dcdcdc", value: "Housing", bold: true, color: "#0d3c6b", vAlign: "center" },
+                    { background: "#dcdcdc", value: "HIV/AIDS", bold: true, color: "#0d3c6b", vAlign: "center" },
+                    { background: "#dcdcdc", value: "Chronic Illness", bold: true, color: "#0d3c6b", vAlign: "center" },
+                    { background: "#dcdcdc", value: "CCCMS", bold: true, color: "#0d3c6b", vAlign: "center" },
+                    { background: "#dcdcdc", value: "EOP", bold: true, color: "#0d3c6b", vAlign: "center" },
+                    { background: "#dcdcdc", value: "Disability", bold: true, color: "#0d3c6b", vAlign: "center" },
+                    { background: "#dcdcdc", value: "Elderly", bold: true, color: "#0d3c6b", vAlign: "center" },
+                    { background: "#dcdcdc", value: "DHS", bold: true, color: "#0d3c6b", vAlign: "center" },
+                    { background: "#dcdcdc", value: "US Vet", bold: true, color: "#0d3c6b", vAlign: "center" },
+                    { background: "#dcdcdc", value: "Lifer", bold: true, color: "#0d3c6b", vAlign: "center" },
+                    { background: "#dcdcdc", value: "Assigned To", bold: true, color: "#0d3c6b", vAlign: "center" }
+                ]
+            }];
+
+            //data rows
+            var grid = $("#gridCaseAssigned").getKendoGrid();
+            var trs = grid.dataSource;
+            var filteredDataSource = new kendo.data.DataSource({
+                data: trs.data(),
+                filter: trs.filter()
+            });
+
+            filteredDataSource.read();
+            var data = filteredDataSource.view();
+
+            for (var i = 0; i < data.length; i++) {
+                 var priority = checkData(data[i].HighestCasePriority);
+                rows.push({
+                    cells: [
+                      { value: priority },
+                      { value: data[i].CDCRNum },
+                      { value: data[i].OffenderName },
+                      { value: data[i].FacilityName },
+                      { value: data[i].ReleaseDate },
+                      { value: data[i].Housing },
+                      { value: data[i].HIVPos },
+                      { value: data[i].ChronicIllness },
+                      { value: data[i].CCCMS },
+                      { value: data[i].EOP },
+                      { value: data[i].DevDisabled },
+                      { value: data[i].Elderly },
+                      { value: data[i].DSH },
+                      { value: data[i].USVet },
+                      { value: data[i].Lifer },
+                      { value: data[i].BenefitWorkerName }
+                    ]
+                });
+            }
+            var workbook = new kendo.ooxml.Workbook({
+                sheets: [
+                  {
+                      //filter: from 0 to 15
+                      columns: [
+                        { width: 60 }, { width: 60 }, { width: 120 }, { width: 40 }, { width: 70 }, { width: 120 },
+                        { width: 50 }, { width: 50 }, { width: 50 }, { width: 50 }, { width: 50 }, { width: 50 },
+                        { width: 50 }, { width: 50 }, { width: 50 }, { width: 120 }
+                      ],
+                      title: "Case Assignments",
+                      rows: rows
+                  }
+                ]
+            });
+
+            kendo.saveAs({
+                dataURI: workbook.toDataURL(),
+                fileName: "CaseAssignments.xlsx"
+            });
+        }
+        function getModel(){
+            var grid = $("#gridCaseAssigned").data("kendoGrid");
+            return encodeURIComponent(JSON.stringify(grid.columns));
+        }
+        function getData(){
+            var options = GetSearchString();
+            return encodeURIComponent(JSON.stringify(options));
+        }
+        function showLoading() {
+            var grid = $("#gridCaseAssigned").getKendoGrid();
+            kendo.ui.progress(grid, true);
+        }
+    </script>
+    
+   <div id="assignmentPane" style="width:100vw; min-width:1400px;height: calc(100vh - 185px ); ">
+        @(Html.Kendo().Grid<BassIdentityManagement.Entities.CaseAssignmentData>()
+.Name("gridCaseAssigned").AllowCopy(true)
+.NoRecords("No Case found...")
+.Reorderable(reorderable => reorderable.Columns(true))
+.Resizable(resizable => resizable.Columns(true))
+.Scrollable(a => a.Height("auto"))
+.Selectable(selectable => selectable.Mode(GridSelectionMode.Multiple))       
+.Editable(e => e.Mode(GridEditMode.InCell))
+.Events(e => { e.DataBound("onDataBound"); e.Change("EnableAssignButton"); e.Edit("onEdit"); })
+.Pageable(pageable => pageable
+.Refresh(true)
+.PageSizes(new List<object>
+    { 20, 30, 50, 100 })
+    .ButtonCount(5))
+.HtmlAttributes(new { style = "width:99vw; padding:0;height:inherit!important" })
+.Sortable(sortable => sortable.AllowUnsort(true))
+.Filterable(filterable => filterable
+        .Extra(false)
+        .Operators(operators =>
+        {
+            operators
+.ForString(str => str.Clear()
+.StartsWith("Starts with")
+.IsEqualTo("Is equal to")
+);
+        })
+ )
+.ToolBar(toolbar =>
+{
+toolbar.Template(@<text>
+            <div style="width:100%">
+                <div class="col" style="float:left"><a class="k-button export" style="height:22px;" href='@Url.Action("Export", "CaseAssignment", new { page = 1, pageSize = "~", filter = "~", sort = "~", data="~" })'><span class="k-icon k-i-excel"></span>Export To Excel</a></div>
+                @*<div class="col" style="float:left"><a class="k-button" href="javascript:exportAssignmentToExcel()"><span class="k-icon k-i-excel"></span>Export Selected</a></div>*@
+                <div class="col" style="float:left;margin-top:5px;margin-left:10px;"><label class="category-label" for="AllBWUsers" style="font-weight:bold;color:darkblue;">Benefit Worker:</label></div>
+                <div class="col" style="float:left; margin-left:5px">
+                    @(Html.Kendo().DropDownList()
+            .Name("AllBWUsers")
+            .DataValueField("UserID")
+            .DataTextField("BenefitWorkerName")
+            .Filter(FilterType.Contains)
+            .Events(e => { e.Change("MakeButtonDisplay"); e.DataBound("DDLDataBound"); })
+            .OptionLabel("Select a benefit worker ...")
+            .HtmlAttributes(new { style = "width:200px;" })
+            .DataSource(source =>
+            {
+
+                source.Read(read => read.Action("GetBWUsers", "CaseAssignment"));
+            }))
+                </div>&nbsp;&nbsp;
+                <button id="assignButton" name="create" class='k-button k-button-icontext' onClick='saveChanges();' style="display : none;height:22px!important;">
+                    Assign Case(s)
+                </button>
+                <button id="unAssignButton" class='k-button k-button-icontext' onClick='SaveUnAssigned();' style="display : none;height:22px!important;">
+                    UnAssign Case(s)
+                </button>
+            </div>
+</text>);
+})
+.Columns(column =>
+{
+    column.Bound(m => m.EpisodeID).Hidden(true);
+    column.Bound(m => m.HighestCasePriority).Title("Qualifier").Width(60).ClientTemplate("#= checkData(HighestCasePriority) #").Filterable(fs => fs.Multi(true).BindTo(
+        new[] { new { HighestCasePriority = 1 },
+                new { HighestCasePriority = 2 },
+                new { HighestCasePriority = 3 },
+                new { HighestCasePriority = 4 },
+                new { HighestCasePriority = 5 },
+                new { HighestCasePriority = 6 },
+                new { HighestCasePriority = 7 },
+                new { HighestCasePriority = 8 },
+                new { HighestCasePriority = 9 }}));
+    column.Bound(m => m.CDCRNum).Width(60).Title("CDCR#").Filterable(false);
+    column.Bound(m => m.OffenderName).Width(120).Title("Offender Name");
+    column.Bound(m => m.FacilityName).Width(40).Title("Facility Name").Filterable(f => f.Multi(true).DataSource(ds => ds.Read(r => r.Action("FilterInmatesDetailsFa_read", "Reports"))));
+    column.Bound(m => m.ReleaseDate).Format("{0:MM/dd/yyyy}").Width(60).Title("Release Date");
+    column.Bound(m => m.Housing).Width(120).Title("Housing");
+    column.Bound(m => m.HIVPos).Title("HIV/AIDS").ClientTemplate("<input type='checkbox' disabled='disabled' #= HIVPos ? checked='checked' : '' #></input>").Width(40).Filterable(false);
+    column.Bound(m => m.ChronicIllness).Title("Chronic Illness").ClientTemplate("<input type='checkbox' disabled='disabled' #= ChronicIllness ? checked='checked' : '' #></input>").Width(40).Filterable(false);
+    column.Bound(m => m.CCCMS).Title("CCCMS").ClientTemplate("<input type='checkbox' disabled='disabled' #= CCCMS ? checked='checked' : '' #></input>").Width(40).Filterable(false);
+    column.Bound(m => m.EOP).Title("EOP").ClientTemplate("<input type='checkbox' disabled='disabled' #= EOP ? checked='checked' : '' #></input>").Width(40).Filterable(false);
+    column.Bound(m => m.DevDisabled).Title("Disability").ClientTemplate("<input type='checkbox' disabled='disabled' #= DevDisabled ? checked='checked' : '' #></input>").Width(20).Filterable(false);
+    column.Bound(m => m.Elderly).Title("Elderly").ClientTemplate("<input type='checkbox' disabled='disabled' #= Elderly ? checked='checked' : '' #></input>").Width(40).Filterable(false);
+    column.Bound(m => m.DSH).Title("DHS").ClientTemplate("<input type='checkbox' disabled='disabled' #= DSH ? checked='checked' : '' #></input>").Width(40).Filterable(false);
+    column.Bound(m => m.USVet).Title("US Vet").ClientTemplate("<input type='checkbox' disabled='disabled' #= USVet ? checked='checked' : '' #></input>").Width(40).Filterable(false);
+    column.Bound(m => m.Lifer).Title("Lifer").ClientTemplate("<input type='checkbox' disabled='disabled'  #= Lifer ? checked='checked' : '' #></input>").Width(40).Filterable(false);
+    column.Bound(m => m.BenefitWorkerName).Title("Assigned To").Width(100).Visible(!Model.IncludeActiveOnly).Filterable(f => f.Multi(true).DataSource(ds => ds.Read(r => r.Action("FilterBW_read", "CaseAssignment"))).Search(true));
+    column.Command(command => { command.Destroy().Text("Unassign"); }).Width(80).Visible(!Model.IncludeActiveOnly).HtmlAttributes(new { style = "line-height:22px!important;"});
+})
+.DataSource(ds => ds.Ajax()
+        //.AutoSync(true)
+        //.Batch(true)
+        //.ServerOperation(true)
+        .PageSize(100)
+        .Events(events => { events.Error("error_handler"); /*events.RequestStart("showLoading");*/ })
+        .Model(m =>
+        {
+            m.Id(f => f.EpisodeID);
+            m.Field(field => field.Lifer).Editable(false);
+            m.Field(field => field.AssistedLiving).Editable(false);
+            m.Field(field => field.FacilityName).Editable(false);
+            m.Field(field => field.Elderly).Editable(false);
+            m.Field(field => field.ChronicIllness).Editable(false);
+            m.Field(field => field.BenefitWorkerName).Editable(false);
+            m.Field(field => field.CCCMS).Editable(false);
+            m.Field(field => field.DevDisabled).Editable(false);
+            m.Field(field => field.PhysDisabled).Editable(false);
+            m.Field(field => field.ReleaseDate).Editable(false);
+            m.Field(field => field.HighestCasePriority).Editable(false);
+            m.Field(field => field.HIVPos).Editable(false);
+            m.Field(field => field.Hospice).Editable(false);
+            m.Field(field => field.Housing).Editable(false);
+            m.Field(field => field.OffenderName).Editable(false);
+            m.Field(field => field.EOP).Editable(false);
+            m.Field(field => field.USVet).Editable(false);
+            m.Field(field => field.DSH).Editable(false);
+        })
+        .Read(r => r.Action("CaseAssignmentForAllRead", "CaseAssignment").Data("GetSearchString"))
+        .Destroy(destory => destory.Action("CaseAssignmentUnassign", "CaseAssignment"))
+    )
+        )
+    </div>
+    @*<ul id="context-menu">
+        <li id="copyText">Copy Text</li>
+        <li id="copyRow">Copy Selected Rows</li>
+    </ul>*@
+    <script type="text/javascript">
+        $(document).ready(function () {
+            SetDatePickerPlaceHolder($("#FromDate"));
+            SetDatePickerPlaceHolder($("#ToDate"));
+        });
+
+        //    function addDays(date, days) {
+        //        var result = date;
+        //        result.setDate(result.getDate() + parseInt(days));
+        //        return new Date(result);
+        //    }
+
+        //    $("#context-menu").kendoContextMenu({
+        //        target: "#gridCaseAssigned",
+        //        filter: "tr[role='row']",
+        //        select: function (e) {
+        //            if (e.item.id == "copyRow") {
+        //                var grid = $("#gridCaseAssigned").data("kendoGrid");
+        //                //get all selected cells;
+        //                var selectedRows = grid.element.find(".k-state-selected");
+        //                var firstIndex = selectedRows[0].cellIndex;
+        //                //calculte rows);
+        //                var cellindex = [];
+        //                cellindex.push(firstIndex);
+        //                for (i = 1; i < selectedRows.length; i++) {
+        //                    if (selectedRows[i].cellIndex === firstIndex)
+        //                        break;
+        //                    cellindex.push(selectedRows[i].cellIndex);
+        //                }
+        //                var lastindex = cellindex[cellindex.length - 1];
+        //                //collect selected data in rows and columns
+        //                var rowText = "";
+        //                for (m = 0; m < selectedRows.length; m++) {
+        //                    var item = "";
+        //                    for(j=0; j < cellindex.length; j++ )
+        //                    {
+        //                        if (selectedRows[m].cellIndex == cellindex[j]) {                                  
+        //                            if (selectedRows[m].cellIndex == lastindex) {
+        //                                item += selectedRows[m].innerText;
+        //                            }
+        //                            else {
+        //                                item += selectedRows[m].innerText + "\t";
+        //                                m++;
+        //                            }
+        //                        }
+        //                    }
+        //                    rowText += item + "\n";
+        //                }
+        //                new ClipboardJS('#copyRow', {
+        //                    text: function (trigger) {
+        //                        return rowText;
+        //                    }
+        //                });
+        //            }
+        //            else {
+        //                var cellindex = e.target.cells.gridCaseAssigned_active_cell.cellIndex;
+        //                var cellText = e.target.cells[cellindex].innerText;                        
+        //                new ClipboardJS('#copyText', {
+        //                    text: function (trigger) {
+        //                        return cellText;
+        //                    }
+        //                });
+        //            }
+        //        }
+        //    });
+        //    //$(document).on("mousedown", "td", function (e) {
+        //    //    if (e.button == 2) {
+        //    //        var grid = $("#gridCaseAssigned").data("kendoGrid");
+        //    //        var count = grid.select();
+        //    //        if (grid.select().length = 1) {
+        //    //            setTimeout(function () {
+        //    //                $("#gridCaseAssigned").data("kendoGrid").saveRow();
+        //    //            })
+        //    //        }
+        //    //    }
+        //    //});
+        //    //$("#gridCaseAssigned tbody").on("click", "tr", function (e) {
+        //    //    var rowElement = this;
+        //    //    var row = $(rowElement);
+        //    //    var grid = $("#gridCaseAssigned").getKendoGrid();
+        //    //    if (row.hasClass("k-state-selected")) {
+        //    //        var selected = grid.select();
+        //    //        selected = $.grep(selected,function(x){
+        //    //            var itemToRemove = grid.dataItem(row);
+        //    //            var currentItem = grid.dataItem(x);
+        //    //            return itemToRemove.OrderID != currentItem.OrderID
+        //    //        })
+        //    //        grid.clearSelection();
+        //    //        grid.select(selected);
+        //    //        e.stopPropagation();
+        //    //    }else{
+        //    //        grid.select(row)
+        //    //        e.stopPropagation();
+        //    //    } 
+        //    //});
+        //});
+    </script>
+</div>
+
+
+

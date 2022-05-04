@@ -1,0 +1,70 @@
+﻿@using Kendo.Mvc.UI
+@model BassWebV3.ViewModels.InmateData
+
+@Html.HiddenFor(m=>m.EpisodeID, new { id="hdCaseNHEpisodeID" } )
+@Html.HiddenFor(m => m.Offender.Inmate.CDCRNum, new { id = "hdCDCRNum" })
+<script>
+    function LoadSelectedTab(url, fndata, target) {
+        $.ajax({
+            url: url,
+            data: fndata,
+            cache: false,
+            type: "POST",
+            dataType: "html",
+            success: function (data, textStatus, xhr) {
+                $(target).html(data);
+                return true;
+            },
+            error: function (data, textStatus, xhr) {
+                return false;
+            }
+        });
+    }
+   
+    function ReloadTab(e) {
+        if (e.item.textContent.trim() == "Case Note List") {
+            var grid = $("#gridCaseNote").data("kendoGrid");
+            grid.dataSource.read({ EpisodeID: $("#hdCaseNHEpisodeID").val() });
+        }
+        else if(e.item.textContent.trim() == "IRP")
+        {
+            url = '@Url.Action("GetPATSIRP", "EditOffender")';
+                fndata = { CDCRNum: $("#hdCDCRNum").val(), EpisodeID: $("#hdCaseNHEpisodeID").val(), IRPID: 0 };
+                LoadSelectedTab(url, fndata, "#offendertabstrip_2");
+            }
+        //$('#offendertabstrip').data('kendoTabStrip').reload(e.item);
+    }
+
+    function swTabChanged(e) {
+        @*if (e.item.textContent.trim() == "IRP") {
+            url = '@Url.Action("GetPATSIRP", "EditOffender")';
+            fndata = { CDCRNum: $("#hdCDCRNum").val(), EpisodeID: $("#hdCaseNHEpisodeID").val(), IRPID: 0 };
+            LoadSelectedTab(url, fndata, "#offendertabstrip_2");
+         }
+        else*@
+        reloadTab(e);
+    }
+</script>
+<div id="divTabs">
+    @(Html.Kendo().TabStrip()
+              .Name("offendertabstrip").HtmlAttributes(new { style = "padding:0px!important;border:0.5 lightgray solid;" })
+              .Events(e => { e.Select("ReloadTab"); })
+              .Animation(animation =>
+                  animation.Open(effect =>
+                      effect.Fade(FadeDirection.In)))
+            .Items(tabstrip =>
+            {
+            tabstrip.Add().Text(" OFFENDER DATA ").Selected(true).HtmlAttributes(new { style = "height:18px!important;" }).Content(@<text>
+        <div class="parent-flex">
+            <div class="flex-item-b" style="overflow:hidden!important;">@Html.Partial("_OffenderData", Model.Offender)</div>
+            <div class="flex-item-a">@Html.Partial("_Applications", Model.Appliations)</div>
+            <div class="flex-item-s">@Html.Partial("_CaseNoteFile", Model.CaseNF)</div>
+        </div>
+                </text>);
+                tabstrip.Add().Text("  IRP  ").HtmlAttributes(new { style = "height:18px!important;" })
+                .LoadContentFrom(Url.Action("GetPATSIRP", "EditOffender", new { CDCRNum = Model.Offender.Inmate.CDCRNum, IRPID = 0 }));
+                tabstrip.Add().Text(" Case Note List ").HtmlAttributes(new { style = "height:18px!important;" })
+                .LoadContentFrom(Url.Action("GetCaseNoteHistory", "EditOffender", new { EpisodeId = Model.EpisodeID })).Visible(Model.ShowCaseNoteList);
+            }
+           ))
+</div>

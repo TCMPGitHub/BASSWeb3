@@ -1,0 +1,9 @@
+C:\TCMPProject\PATSWebV2\IdentityManagement\bin\Debug\IdentityManagement.dll
+C:\TCMPProject\PATSWebV2\IdentityManagement\bin\Debug\IdentityManagement.pdb
+C:\TCMPProject\PATSWebV2\IdentityManagement\bin\Debug\Dapper.dll
+C:\TCMPProject\PATSWebV2\IdentityManagement\bin\Debug\Microsoft.AspNet.Identity.Core.dll
+C:\TCMPProject\PATSWebV2\IdentityManagement\bin\Debug\Dapper.xml
+C:\TCMPProject\PATSWebV2\IdentityManagement\bin\Debug\Microsoft.AspNet.Identity.Core.xml
+C:\TCMPProject\PATSWebV2\IdentityManagement\obj\Debug\IdentityManagement.dll
+C:\TCMPProject\PATSWebV2\IdentityManagement\obj\Debug\IdentityManagement.pdb
+C:\TCMPProject\PATSWebV2\IdentityManagement\obj\Debug\IdentityManagement.csprojResolveAssemblyReference.cache

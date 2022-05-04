@@ -1,0 +1,319 @@
+﻿@using Kendo.Mvc.UI
+@using Kendo.Mvc.Extensions
+<style>
+    #gridBWProductivity>.k-grid-norecords{
+            height:73.3vh!important;
+        }
+</style>
+<script>
+    function BWGridDataBound(e) {
+        var ctrl= $("#FromToDate").data("kendoDateRangePicker");
+        var grid = $("#gridBWProductivity").data("kendoGrid");
+        var dataSource = grid.dataSource
+        grid.thead.find('th').each(function () {
+            $(this).prop('title', $(this).data('title'));
+            if (this.textContent != "App. YYYY-MM" && this.textContent != "Benefit Worker:") {
+                $(this).find('.k-header-column-menu').hide();
+            }
+        })
+        //grid.thead.find("tr.k-grouping-row").each(function (index) {
+        //        grid.collapseGroup(this);
+        //    });
+        grid.tbody.find('tr.k-grouping-row').each(function () {
+            var cells = this.cells;
+            for (i = 0; i < cells.length; i++) {
+                cells[i].style.backgroundColor = "#004f98"
+                cells[i].style.color = "#fff"
+            }
+        })
+        var gridFooter = $("#gridBWProductivity").getKendoGrid().footer;
+        var cells = gridFooter.find("td");
+        cells.css("background-color", "#004f98");
+        cells.css("color", "#fff");
+
+        if ($("#rptprodspan").html() == "")
+            $("#rptprodspan").html(kendo.toString(ctrl.options.range.start, "MM/dd/yyyy") + "-" + kendo.toString(ctrl.options.range.end, "MM/dd/yyyy"));
+
+        //==================================
+        // Get the export link as jQuery object  page: grid.dataSource.page(),
+        var requestObject = (new kendo.data.transports["aspnetmvc-server"]({ prefix: "" }))
+                .options.parameterMap({               
+                sort: grid.dataSource.sort(),
+                filter: grid.dataSource.filter()
+            });
+
+        var dataFiletr = [];
+        if (grid.dataSource.filter() !== undefined &&
+            grid.dataSource.filter().filters.length > 0) {
+            var selectItems = $("#AllRptBfUsers").data("kendoMultiSelect").dataItems();
+            for (var i = 0; i < grid.dataSource.filter().filters.length; i++) {
+                var val = grid.dataSource.filter().filters[i].value;
+                for (var j = 0; j < selectItems.length; j++) {
+                    if (val === (selectItems[j].BenefitWorkerName.substring(0, val.length - 1) + '.'))
+                        dataFiletr.push(selectItems[j].Value);
+                }
+            }
+        }
+        var val1;
+        if (dataFiletr.length > 0)
+            val1 = { FromDate: kendo.toString(ctrl.options.range.start, "MM/dd/yyyy"), ToDate: kendo.toString(ctrl.options.range.end, "MM/dd/yyyy"), BfWorkerIDs: dataFiletr.join(',') };
+        else
+            val1 = getprams();
+        var thedata = encodeURIComponent(JSON.stringify(val1));
+        // Get the export link as jQuery object
+        var $exportLink = grid.element.find('.export');
+        // Get its 'href' attribute - the URL where it would navigate to
+        var href = "/Reports/ExportBWExcel?filter=~&sort=~&data=~";
+        // Update the 'sort' parameter with the grid's current sort descriptor
+        href = href.replace(/sort=([^&]*)/, 'sort=' + requestObject.sort || '~');
+        //update filter descriptor with the filters applied
+        href = href.replace(/filter=([^&]*)/, 'filter=' + (requestObject.filter || '~'));
+        href = href.replace(/data=([^&]*)/, 'data=' + thedata);
+        // Update the 'href' attribute
+        $exportLink.attr('href', href);
+        //=================================================
+    }
+    function checkAll(el) {
+        var checked = el.checked;
+        $(el).closest("li").siblings().each(function (e) {
+            if (!$(this).hasClass("custom-class") && $(this).find("input")[0].checked != checked) {
+                $(this).find("input").click();
+                $(this).removeClass("k-state-hover");
+            }
+        })
+    }
+    var checkInputs = function (elements) {
+        elements.each(function () {
+            var element = $(this);
+            var input = element.children("input");
+
+            input.prop("checked", element.hasClass("k-state-selected"));
+        });
+    };
+    function MultipleSelectDataBound() {
+        var items = this.ul.find("li");
+        setTimeout(function () {
+            checkInputs(items);
+        });
+    }
+    function onDeselect(e) {
+        var items = $('#RptBfUsers').data("kendoMultiSelect").ul.find("li");
+        items.each(function () {
+            var element = $(this);
+            var input = element.children("input");
+            if (input.val() === e.dataItem.Value) {
+                input.prop("checked", false);
+                return;
+            }
+        });
+
+        var dataItems = $("#RptBfUsers").data("kendoMultiSelect").dataItems();
+        if (dataItems.length > 0) {
+            for (var i = 0; i < dataItems.length; i++) {
+                if (dataItems[i].Value === e.dataItem.Value) {
+                    dataItems.pop(dataItems[i]);
+                    break;
+                }
+            }
+            $("#rptprodspan").html(GetDispayClientNames(dataItems));
+        }
+    }
+    function onSelect(e) {
+        var items = $('#RptBfUsers').data("kendoMultiSelect").ul.find("li");
+        items.each(function () {
+            var element = $(this);
+            var input = element.children("input");
+            if (input.val() === e.dataItem.Value) {
+                input.prop("checked", true);
+                return;
+            }
+        });
+    }
+    function execelexport() {
+        var ds = $("#gridBWProductivity").data("kendoGrid").dataSource;
+
+        var rows = [{
+            cells: [{ value: "BenefitWorkerName" },
+              { value: "MCTotal" },
+              { value: "SSITotal" },
+              { value: "VATotal" },
+              { value: "SNPRTotal" },
+              { value: "MediCalBnp" },
+              { value: "SSIBnp" },
+              { value: "VABnp" }]
+        }];
+
+        //using fetch, so we can process the data when the request is successfully completed
+        ds.fetch(function () {
+            var data = this.data();
+            for (var i = 0; i < data.length; i++) {
+                //push single row for every record
+                rows.push({
+                    cells: [
+                       { value: data[i].BenefitWorkerName },
+                       { value: data[i].MCTotal },
+                       { value: data[i].SSITotal },
+                       { value: data[i].VATotal },
+                       { value: data[i].SNPRTotal },
+                       { value: data[i].MediCalBnp },
+                       { value: data[i].SSIBnp },
+                       { value: data[i].VABnp }]
+                })
+            }
+            var workbook = new kendo.ooxml.Workbook({
+                sheets: [
+                  {
+                      columns: [
+                        // Column settings (width)
+                        { autoWidth: true },
+                        { autoWidth: true },
+                        { autoWidth: true },
+                        { autoWidth: true },
+                        { autoWidth: true }
+                      ],
+                      // Title of the sheet
+                      title: "Benefit Worker Productivity Report",
+                      // Rows of the sheet
+                      rows: rows
+                  }
+                ]
+            });
+            //save the file as Excel file with extension xlsx
+            kendo.saveAs({ dataURI: workbook.toDataURL(), fileName: "BenefitWorkerProductivity.xlsx" });
+        });
+    }
+    function GetFilterParameter() {
+        return { BfWorkerIDs: $("#RptBfUsers").data("kendoMultiSelect").value().join(',') };
+    }
+    function SetBWDefault() {
+        var items = $("#RptBfUsers").data("kendoMultiSelect").ul.find("li");
+        checkInputs(items);
+
+        var selectItems = $("#RptBfUsers").data("kendoMultiSelect").dataItems();
+        $("#rptprodspan").html(GetDispayClientNames(selectItems));
+    }
+    function onRequestStart(e) {
+        e.preventDefault();
+        if (e.sender.data().length === 0)
+            return;
+
+        //var selectItems = $("#RptBfUsers").data("kendoMultiSelect").dataItems();
+        //if(selectItems.length == 0)
+       
+        //return false;
+    }
+</script>
+
+@(Html.Kendo().Grid<BassIdentityManagement.Entities.BWProductivityReportData>()
+               .Name("gridBWProductivity")
+               .NoRecords("No Data Found.")
+               .Sortable(s => s.AllowUnsort(false)).HtmlAttributes(new { @style = "height:calc(90vh - 30px)!important;" })
+               .Selectable(s => s.Enabled(true))
+               .Events(e => { e.DataBound("BWGridDataBound"); e.ColumnMenuInit("columnMenuInit"); })
+               .ColumnMenu(c => c.Sortable(false).Columns(true))
+               .Reorderable(reorderable => reorderable.Columns(true))
+               .Filterable()
+               .Excel(e => e.FileName("BenefitworkerProductivityRpt.xlsx").AllPages(true).Filterable(true))
+               .ToolBar(toolbar =>
+               {
+                   toolbar.Template(@<text>
+        <div class="row">
+            <div class="col" style="float:left"><a style="height:25px;" class="k-button export" href='@Url.Action("ExportExcel", "Reports", new { page = 1, pageSize = "~", filter = "~", sort = "~", data = "~" })'><span class="k-icon k-i-excel"></span>Export To Excel</a></div>
+            <div class="col" style="float:left;margin-top:5px;margin-left:10px;"><label class="category-label" for="AllRptBfUsers" style="font-weight:bold;color:darkblue;">Benefit Worker:</label></div>
+            <div class="col" style="float:left; margin-left:5px">
+                @(Html.Kendo().MultiSelect()
+.Name("RptBfUsers")
+.AutoClose(false)
+.HtmlAttributes(new { style = "width:540px" })
+.Placeholder("Select a benefit worker ...")
+.DataTextField("BenefitWorkerName")
+.DataValueField("UserID")
+.MaxSelectedItems(15)
+.ItemTemplate("<input type='checkbox' name='cb' value='#:data.UserID#' id='#:data.UserID#' /> #:data.BenefitWorkerName#")
+.Events(evt => { evt.DataBound("MultipleSelectDataBound"); evt.Close("SetBWDefault"); evt.Deselect("onDeselect"); evt.Select("onSelect"); })
+.DataSource(source =>
+{
+    source.Read(read =>
+    {
+        read.Action("GetAllUsers", "Reports");
+        read.Type(HttpVerbs.Post);
+    }).ServerFiltering(false);
+}))
+            </div>
+            <div class="col" style="float:left;margin-left:10px;margin-top:5px; color:blue;">
+                <a onclick="GetBWProductivityReport(this)" style="cursor: pointer; font-weight:bold;" title="Refresh Report">
+                    <span class="k-icon k-i-refresh"></span>
+                </a>
+            </div>
+        </div>
+                </text>);
+               })
+            .Columns(column =>
+            {
+                //column.Bound(m => m.BenefitWorkerId).Hidden();
+                column.Bound(m => m.BenefitWorkerName).Hidden();
+                column.Bound(m => m.ClientName).Width(100).Title("Client")
+                    .ClientGroupHeaderTemplate("Total")
+                    .ClientFooterTemplate("Report Total")
+                    .ClientGroupFooterTemplate("Total").FooterHtmlAttributes(new { style = "background-color:rgb(161,202,241)" });
+                column.Bound(m => m.CDCRNum).Title("CDCR#").Width(60)
+                    .ClientGroupHeaderColumnTemplate("#=count#")
+                    .ClientFooterTemplate("#=count#")
+                    .ClientGroupFooterTemplate("#=count#").FooterHtmlAttributes(new { style = "background-color:rgb(161,202,241)" });
+                column.Bound(m => m.MCTotal).Width(60).Title("MediCal Amount").Filterable(true)
+                    .ClientGroupHeaderColumnTemplate("#=sum#")
+                    .ClientFooterTemplate("#=sum#")
+                    .ClientGroupFooterTemplate("#=sum#").FooterHtmlAttributes(new { style = "background-color:rgb(161,202,241)" });
+                column.Bound(m => m.SSITotal).Width(80).Title("SSI Amount").Filterable(true)
+                    .ClientGroupHeaderColumnTemplate("#=sum#")
+                    .ClientFooterTemplate("#=sum#")
+                    .ClientGroupFooterTemplate("#=sum#").FooterHtmlAttributes(new { style = "background-color:rgb(161,202,241)" });
+                column.Bound(m => m.VATotal).Width(80).Title("VA Amount").Filterable(true)
+                    .ClientGroupHeaderColumnTemplate("#=sum#")
+                    .ClientFooterTemplate("#=sum#")
+                    .ClientGroupFooterTemplate("#=sum#").FooterHtmlAttributes(new { style = "background-color:rgb(161,202,241)" });
+                column.Bound(m => m.SNPRTotal).Width(80).Title("SNP/Refuse Amount").Filterable(true)
+                    .ClientGroupHeaderColumnTemplate("#=sum#")
+                    .ClientFooterTemplate("#=sum#")
+                    .ClientGroupFooterTemplate("#=sum#").FooterHtmlAttributes(new { style = "background-color:rgb(161,202,241)" });
+                column.Bound(m => m.MediCalBnp).Width(80).Title("MediCal BNP Amount").Filterable(true)
+                    .ClientGroupHeaderColumnTemplate("#=sum#")
+                    .ClientFooterTemplate("#=sum#")
+                    .ClientGroupFooterTemplate("#=sum#").FooterHtmlAttributes(new { style = "background-color:rgb(161,202,241)" });
+                column.Bound(m => m.SSIBnp).Width(80).Title("SSI BNP Amount").Filterable(true)
+                    .ClientGroupHeaderColumnTemplate("#=sum#")
+                    .ClientFooterTemplate("#=sum#")
+                    .ClientGroupFooterTemplate("#=sum#").FooterHtmlAttributes(new { style = "background-color:rgb(161,202,241)" });
+                column.Bound(m => m.VABnp).Width(80).Title("VA BNP Amount").Filterable(true)
+                    .ClientGroupHeaderColumnTemplate("#=sum#")
+                    .ClientFooterTemplate("#=sum#")
+                    .ClientGroupFooterTemplate("#=sum#").FooterHtmlAttributes(new { style = "background-color:rgb(161,202,241)" });
+            })
+             .Resizable(resize => resize.Columns(true))
+             .Pageable(pageable => pageable
+             .Refresh(true)
+             .PageSizes(new List<object> { 20, 30, 50, 100 })
+             .ButtonCount(5))
+             .DataSource(ds => ds
+             .Ajax()
+             .Aggregates(aggregates =>
+             {
+                 aggregates.Add(p => p.BenefitWorkerName).Count();
+                 aggregates.Add(p => p.CDCRNum).Count();
+                 aggregates.Add(p => p.MCTotal).Sum();
+                 aggregates.Add(p => p.SSITotal).Sum();
+                 aggregates.Add(p => p.VATotal).Sum();
+                 aggregates.Add(p => p.SNPRTotal).Sum();
+                 aggregates.Add(p => p.MediCalBnp).Sum();
+                 aggregates.Add(p => p.SSIBnp).Sum();
+                 aggregates.Add(p => p.VABnp).Sum();
+             })
+            .PageSize(100)
+            //.Events(events=> { events.RequestStart("onRequestStart"); })
+            .Group(g => g.Add(m => m.BenefitWorkerName))
+            .Read(r => r.Action("BWProductivityData_Read", "Reports").Data("getbwprams"))))
+
+
+
+
+

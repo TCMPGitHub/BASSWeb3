@@ -3,3 +3,6 @@
 ################################################################################
 
 /BassIdentityManagement/bin/Debug
+/BassIdentityManagement/bin/Release
+/BASSWEBV3/obj/Debug
+/BASSWEBV3/obj/Release

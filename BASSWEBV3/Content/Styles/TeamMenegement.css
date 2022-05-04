@@ -1,0 +1,313 @@
+﻿.main-section-content{
+    display:flex;
+    flex-flow:row nowrap;
+    padding:5px;
+    /*overflow:auto;*/
+}
+.container-fluid {
+   height: calc(100vh - 55px)!important;
+   padding: 0;
+   /*margin-top: -20px;*/ 
+}
+@media screen and (max-width: 1400px) {
+    .column {
+        height: auto;
+    }
+
+    .row-offcanvas {
+        position: relative;
+        -webkit-transition: all 0.25s ease-out;
+        -moz-transition: all 0.25s ease-out;
+        transition: all 0.25s ease-out;
+    }
+
+    .row-offcanvas-left .sidebar-offcanvas {
+        left: -50%;
+    }
+
+    .row-offcanvas-left.active {
+        left: 50%;
+    }
+}
+#main-section {
+    float: none;
+    width: auto;
+    overflow: hidden;
+    height: 100%;
+    background-color: #eee;
+    padding: 0;
+}
+
+    #main-section-header > h2{
+    font-size: 14px;
+    /*text-transform: uppercase;*/
+    line-height: 20px;    
+    /*margin-top: -15px;*/
+    padding-bottom: 20px;    
+}
+
+#main-section-header > h2 {
+    padding-left: 1em;
+    white-space: nowrap;
+}
+
+#main-section-header {
+    /*height: auto;*/
+    border-bottom: 1px solid #ededee;
+    -moz-box-shadow: 1px 0 4px #ededee;
+    -webkit-box-shadow: 1px 0 4px #ededee;
+    box-shadow: 1px 0 4px #ededee;
+    background-color: #fff;
+    font-size: 14px;
+    margin-bottom:0px;
+    /*margin-top:30px;*/
+}
+
+ #main-section {
+        width: 100%;
+        overflow: hidden;
+    }
+
+    #main-section-header > h2,
+    #dateFilter {
+        display: block;
+        width: 100%;
+        text-align: center;
+    }
+
+    #main-section-header > h2 {
+        padding-bottom: 15px;
+    }
+
+    #dateFilter {
+        padding-top: 10px;
+        /*padding-bottom: 10px;*/
+    }
+#user-list {
+    justify-content: flex-start;
+    height: 90%;
+    width:15%!important;
+}
+
+#user-list,
+#user-details-wrapper {
+    padding: 0;
+    /*width:85%;*/
+}
+
+#user-details-wrapper {
+    height: calc(100vh - 96px)!important;
+    width:85%;
+    padding:0px;
+    justify-content: flex-end;
+    overflow-y: auto;
+    background-color: #fff;
+}
+
+/*#user-details {
+    overflow-y: auto;
+    overflow-x: hidden;
+}*/
+
+#user-list,
+#usersList {
+    background-color: #eee;
+}
+
+#user-list h3 {
+    padding: 2.5em 2.727em;
+    font-size: 11px;
+    color: #35373d;
+    border-bottom: 1px solid #dbdbdb;
+}
+
+.user-wrapper {
+    border-top: 1px solid #f3f3f3;
+    border-bottom: 1px solid #dbdbdb;
+    /*padding: 1.25em 0;*/
+    padding: 0;
+    margin-left: 2.5em;
+}
+
+.user.k-state-selected {
+    background-color: #6abd2d;
+}
+
+.user.k-state-selected .user-wrapper{
+    border-top: 1px solid #6abd2d;
+    border-bottom: 1px solid #6abd2d;
+}
+
+#usersList {
+    border: none;
+    overflow: auto;
+    height: 100%;
+    /*height: calc(100% - 154px);*/
+}
+#user-details{
+    height:inherit;
+}
+#user-details-wrapper {
+    border: none;
+    /*overflow: auto;*/
+}
+
+.name {
+    font-size: 12px;
+    color: #35373d;
+}
+
+.title {
+    font-size: 9px;
+    line-height: 9px;
+    color: #8a8b8f;
+    text-transform: uppercase; 
+    display: inline-block;   
+}
+
+.phone {
+    font-size: 10px;
+    line-height: 10px;
+    color: #35373d;
+}
+
+
+.k-state-selected .name,
+.k-state-selected .title {
+    color: #fff;
+}
+
+.bioTooltip {
+    font-size: 9px;
+    line-height: 9px;
+}
+@media screen and (min-width: 768px) and (max-width:992px)  { 
+    #userQuarterSalesLabel,
+    #userAverageSalesLabel {
+        font-size: 24px;
+    }
+
+    .select-period {
+        margin: 0;
+    }
+}
+#userQuarterSalesLabel,
+#userAverageSalesLabel {
+    font-size: 36px;
+    display: inline-block;
+    margin: 0 auto 10px;
+}
+
+.user-list-image,
+.user-details-image,
+.user-list-details,
+.user-bio-details {
+    display: inline-block;
+}
+.sparkline-container {
+  position: relative;
+}
+.user-list-image {
+    border-radius: 30px;
+    margin-right: 5px;
+}
+
+.user-details-image {
+    border-radius: 45px;
+    border: 2px solid #737374;   
+    margin-right: 20px;
+}
+
+#user-about {
+    display:flex;
+    flex-flow:row nowrap;
+    border-bottom: 1px solid #eaeaeb;
+    justify-content:flex-start;
+    /*height:100px;*/
+}
+.colspace{
+    width:20px!important;   
+}
+.user-about-item{
+    align-content:space-around;
+    padding:10px;
+}
+
+#user-about h3,
+#userSchedule h3,
+.section-header{
+    font-size: 11px;
+    color: #35373d;
+    text-transform: uppercase;
+    /*padding-bottom: 1.091em;*/
+    /*padding: 5px 0;*/
+}
+
+#userSchedule {
+    padding-left: 20px;
+    padding-bottom: 10px;
+    padding-right:10px;
+    background-color: #fff;
+}
+
+.placeholder {
+    margin-bottom: 20px;
+}
+
+.user-list-details,
+.user-bio-details {
+    vertical-align: middle;
+}
+/*.user-bio-details dl{
+    line-height: 64px;
+    margin: 4px auto;
+}*/
+.user-bio-details dt{
+    font-size: 18px;
+    line-height: 18px;
+    margin: 4px auto;
+}
+
+.user-bio-details dd {
+    margin: 4px auto;  
+}
+
+.period-wrapper {
+    display: inline-block;
+}
+
+.select-period {
+    margin-right: 0.833em;
+    margin-left: 2.500em;
+    text-transform: uppercase;  
+    font-weight: normal;
+}
+
+/* Kendo widgets */
+.k-sparkline {
+    display: inline-block;
+    width: 100%;
+}
+
+.k-tooltip {
+    width: 200px;
+}
+
+ .k-scheduler-toolbar .k-state-selected .k-link{
+     background-color:#6abd2d;
+ }
+
+.k-event, .k-task-complete {
+    border-color: #7ea700;
+    background: #7ea700 0 -257px none repeat-x;
+    color: #fff;   
+}
+ .k-scheduler-content{
+     height:38vh;
+ }
+/*increase the height of the month view cells*/
+.k-scheduler-monthview .k-scheduler-table td
+{
+    height: 10.5em;
+}
+ 

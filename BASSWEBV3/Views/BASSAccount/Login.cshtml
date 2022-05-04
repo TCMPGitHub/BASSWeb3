@@ -1,0 +1,82 @@
+﻿@using Kendo.Mvc.UI;
+@using Kendo.Mvc.Extensions;
+@model BassIdentityManagement.Entities.LoginInfo
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Log in";
+}
+<style>
+    .k-icon.k-i-eye {
+        background: none;
+    }
+</style>
+<div class="loginformAlign">
+    @using (Html.BeginForm("Login", "BASSAccount", new { ReturnUrl = ViewBag.ReturnUrl}, FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        <center>
+           <div style="border:lightgray 1px solid;width: 500px;">
+                <div style="height:5vh"></div>
+                <table id="logbox">
+                    <tr id="logindiv1">
+                        <td>
+                            <scan class="redtext" style="margin-left:20px;">*</scan>@(Html.LabelFor(m => m.UserName))
+                        </td>
+                        <td width="247">
+                            @(Html.Kendo().TextBoxFor(m => m.UserName).Name("UserName").HtmlAttributes(new { @autofocus = "autofocus", @type = "text", onkeypress = "IgnoreEnterKey(event)", style = "float:left;width:247px;border:0.5px lightgray solid!important;border-radius:4px;text-indent:0.3em!important;" }))
+                        </td>
+                    </tr>
+                    <tr><td style="height:10px;"></td></tr>
+                    <tr id="logindiv2">
+                        <td><scan class="redtext" style="margin-left:20px;">*</scan>@Html.LabelFor(m => m.Password)</td>
+                        <td>
+                            <span class="k-textbox k-space-right" style="border:none;width: 247px;height:30px;">
+                                @(Html.Kendo().TextBoxFor(m => m.Password).Name("password")
+                              .HtmlAttributes(new { @type = "password", onkeyup = "EnterKey(event)", @style= "border:0.1px lightgray solid!important;height:inherit!important;padding:0px;width:247px;text-indent:0.3em!important;" }))
+                                <span class="k-icon k-i-eye" style="visibility:hidden"></span>
+                            </span>
+                            <script>
+                                $('.k-i-eye').hover(function functionName() {
+                                    //Change the attribute to text
+                                    if ($('#password').val() == "")
+                                        return;
+                                    $('#password').attr('type', 'text');
+                                }, function () {
+                                    //Change the attribute back to password
+                                    $('#password').attr('type', 'password');
+                                });
+                                function EnterKey(e) {
+                                    if (e.keyCode === 13) {
+                                        $("#Login").trigger('click');
+                                    }
+                                    else {
+
+                                        if ($('#password').val() == "")
+                                            $('.k-i-eye').css('visibility', 'hidden');
+                                        else
+                                            $('.k-i-eye').css('visibility', 'visible');
+                                    }
+                                }
+                            </script>
+                        </td>
+                    </tr>
+                    <tr><td style="height:30px"></td></tr>
+                    <tr id="logindiv3"><td colspan="3" class="alignright"><b>@(Html.Kendo().Button().Name("Login").Content("Log in"))</b></td></tr>
+                </table>
+                <div style="height:5vh"></div>
+            </div>
+            <div class="redtext">
+                @Html.ValidationSummary(true)
+            </div>
+        </center>
+    }
+    </div>
+
+    @*//<script type="text/javascript">
+        //$('#loginForm').css('margin-top', ($(window).height() * 0.10 ));
+        //$('#loginForm').css('min-height', $(window).height() * 0.5);
+    </script>*@
+
+
+

@@ -1,0 +1,551 @@
+﻿@using Kendo.Mvc.UI
+@model BassWebV3.ViewModels.ReportsIndex
+<style>
+    .k-grid-content>.k-grid-norecords>.k-grid-norecords-template{
+        top:0;
+        text-align:center;
+        height:80px;
+        margin-top:2px;
+    }
+    #gridInmatesProductivity .k-virtual-scrollable-wrap table table {
+        min-width: initial;
+    }
+    .k-grid-content-expander{
+        width:calc(inherit - 20px)!important;
+    }
+</style>
+<script type="text/javascript">
+    function GridDataBound(e) {
+        var grid = $("#gridInmatesProductivity").data("kendoGrid");
+        var dataSource = grid.dataSource
+        grid.thead.find('th').each(function () {
+            $(this).prop('title', $(this).data('title'));
+            if (this.textContent != "App. YYYY-MM" && this.textContent != "Benefit Worker Name") {
+                $(this).find('.k-header-column-menu').hide();
+            }
+        })
+
+        var ctrl = $("#FromToDate").data("kendoDateRangePicker");
+        if($("#rptprodspan").html() == "")
+            $("#rptprodspan").html(kendo.toString(ctrl.options.range.start, "MM/dd/yyyy") + "-" + kendo.toString(ctrl.options.range.end, "MM/dd/yyyy"));
+
+        //==================================
+        // Get the export link as jQuery object  page: grid.dataSource.page(),
+        var requestObject = (new kendo.data.transports["aspnetmvc-server"]({ prefix: "" }))
+            .options.parameterMap({
+                sort: grid.dataSource.sort(),
+                filter: grid.dataSource.filter()
+            });
+
+        var dataFiletr = [];
+        if (grid.dataSource.filter() !== undefined &&
+            grid.dataSource.filter().filters.length > 0)
+        {
+            var selectItems = $("#AllRptBfUsers").data("kendoMultiSelect").dataItems();
+            for (var i = 0; i < grid.dataSource.filter().filters.length; i++)
+            {
+                var val = grid.dataSource.filter().filters[i].value;
+                for(var j=0; j< selectItems.length; j++){
+                    if (val === (selectItems[j].BenefitWorkerName.substring(0, val.length - 1) + '.'))
+                        dataFiletr.push(selectItems[j].Value);
+                }
+            }
+        }
+        var val1;
+        if (dataFiletr.length > 0)
+            val1 = { FromDate: kendo.toString(ctrl.options.range.start, "MM/dd/yyyy"), ToDate: kendo.toString(ctrl.options.range.end, "MM/dd/yyyy"), BfWorkerIDs: dataFiletr.join(',') };
+        else
+            val1 = getprams();
+        var thedata = encodeURIComponent(JSON.stringify(val1));
+        // Get the export link as jQuery object
+        var $exportLink = grid.element.find('.export');
+        // Get its 'href' attribute - the URL where it would navigate to
+        var href = "/Reports/ExportExcel?filter=~&sort=~&data=~";
+        // Update the 'sort' parameter with the grid's current sort descriptor
+        href = href.replace(/sort=([^&]*)/, 'sort=' + requestObject.sort || '~');
+        //update filter descriptor with the filters applied
+        href = href.replace(/filter=([^&]*)/, 'filter=' + (requestObject.filter || '~'));
+        href = href.replace(/data=([^&]*)/, 'data=' + thedata);
+        // Update the 'href' attribute
+        $exportLink.attr('href', href);
+        //=================================================
+    }
+    function GetFilterParameter() {
+        return { BfWorkerIDs: $("#AllRptBfUsers").data("kendoMultiSelect").value().join(',') };
+    }
+    function SetDefault() {
+        var items = $("#AllRptBfUsers").data("kendoMultiSelect").ul.find("li");
+        checkInputs(items);
+
+        var selectItems = $("#AllRptBfUsers").data("kendoMultiSelect").dataItems();
+        $("#rptprodspan").html(GetDispayClientNames(selectItems));
+    }
+
+    function columnMenuInit(e) {
+        if (e.field === "AppDate" ) {
+            var mylist = e.container.find(".k-columns-item>ul");
+            var listitems = mylist.children('li').get();
+
+            $(listitems).find("input").click(function (e) {
+                if (!$(this).hasClass("custom-class")) {
+                    var allChecked = $(this).closest("ul").find("li.k-item input:checked").length == $(this).closest("ul").find("li.k-item input").length;
+                }
+            })
+           //$("<li class='custom-class'><span class='k-link'><input type='checkbox'  checked onclick='checkAll(this)'/>SelectAll</span></li>").insertBefore(e.container.find(".k-columns-item>ul>li").first());
+        }
+
+        if (e.field === "BenefitWorkerName") {
+            e.container.find(".k-menu")[0].firstChild.style.display = 'none';
+        }
+        //$("<li class='custom-class'><span class='k-link'><input type='checkbox'  checked onclick='checkAll(this)'/>SelectAll</span></li>").insertBefore(e.container.find(".k-columns-item>ul>li").first());
+    }
+    function checkAll(el) {
+        var checked = el.checked;
+        $(el).closest("li").siblings().each(function (e) {
+            if (!$(this).hasClass("custom-class") && $(this).find("input")[0].checked != checked) {
+                $(this).find("input").click();
+                $(this).removeClass("k-state-hover");
+            }
+        })
+    }
+    var checkInputs = function (elements) {
+        elements.each(function () {
+            var element = $(this);
+            var input = element.children("input");
+
+            input.prop("checked", element.hasClass("k-state-selected"));
+        });
+    };
+    function MultipleSelectDataBound() {
+        var items = this.ul.find("li");
+        setTimeout(function () {
+            checkInputs(items);
+        });
+    }
+    function onDeselect(e) {
+        var items = $('#AllRptBfUsers').data("kendoMultiSelect").ul.find("li");
+        items.each(function () {
+            var element = $(this);
+            var input = element.children("input");
+            if (input.val() === e.dataItem.Value) {
+                input.prop("checked", false);
+                return;
+            }
+        });
+
+        var dataItems = $("#AllRptBfUsers").data("kendoMultiSelect").dataItems();
+       if (dataItems.length > 0)
+        {
+            for(var i = 0; i <dataItems.length; i++ ){
+                if(dataItems[i].Value === e.dataItem.Value){
+                    dataItems.pop(dataItems[i]);
+                    break;
+               }
+            }
+            $("#rptprodspan").html(GetDispayClientNames(dataItems));
+        }
+    }
+    function onSelect(e) {
+        var items = $('#AllRptBfUsers').data("kendoMultiSelect").ul.find("li");
+        items.each(function () {
+            var element = $(this);
+            var input = element.children("input");
+            if (input.val() === e.dataItem.Value) {
+                input.prop("checked", true);
+                return;
+            }
+        });
+    }
+    function exportProdRptToExcel() {
+        //header 1
+        var datestring = $("#rptprodspan").html();
+        var rows = [{
+            cells: [
+                { color: "#0d3c6b", value: "App. YYYY-MM", bold: true, vAlign: "center", rowSpan: 4, wrap: true },
+                { color: "#0d3c6b", value: "Benefit Worker Name", bold: true, vAlign: "center", rowSpan: 4, wrap: true },
+                { value: datestring, textAlign: "center", bold: true, vAlign: "center", hAlign: "center", color: "#4e9a06", colSpan: 36, Wrap: true }]
+        }];
+        rows.push({
+            cells: [
+                { color: "#0d3c6b", value: "Offender Info", bold: true, vAlign: "center", hAlign: "center", colSpan: 9 },
+                { color: "#0d3c6b", value: "Notes In Timeframe", bold: true, vAlign: "center", hAlign: "center", colSpan: 28 },
+            ]
+        });
+        rows.push({
+            cells: [
+                { color: "#0d3c6b", wrap: true, value: "CDCR#", bold: true, vAlign: "center", hAlign: "center", rowSpan: 2 },
+                { color: "#0d3c6b", wrap: true, value: "EPRD", bold: true, vAlign: "center", hAlign: "center", rowSpan: 2 },
+                { color: "#0d3c6b", wrap: true, value: "Screening Date", bold: true, vAlign: "center", hAlign: "center", rowSpan: 2 },
+                { color: "#0d3c6b", wrap: true, value: "Application Date", bold: true, vAlign: "center", hAlign: "center", colSpan: 3 },
+                { color: "#0d3c6b", wrap: true, value: "App/Note Discrepancy", bold: true, vAlign: "center", hAlign: "center", colSpan: 3 },
+                { color: "#0d3c6b", wrap: true, value: "Case Assigned", bold: true, vAlign: "center", hAlign: "center", rowSpan: 2 },
+                { color: "#0d3c6b", wrap: true, value: "Face to Face", bold: true, vAlign: "center", hAlign: "center", rowSpan: 2 },
+                { color: "#0d3c6b", wrap: true, value: "TCMP Chrono", bold: true, vAlign: "center", hAlign: "center", rowSpan: 2 },
+                { color: "#0d3c6b", wrap: true, value: "Case Mgmt.", bold: true, vAlign: "center", hAlign: "center", rowSpan: 2 },
+                { color: "#0d3c6b", wrap: true, value: "Status Check/Update", bold: true, vAlign: "center", hAlign: "center", rowSpan: 2 },
+                { color: "#0d3c6b", wrap: true, value: "CTR File Rev.", bold: true, vAlign: "center", hAlign: "center", rowSpan: 2 },
+                { color: "#0d3c6b", wrap: true, value: "MEDC File Rev.", bold: true, vAlign: "center", hAlign: "center", rowSpan: 2 },
+                { color: "#0d3c6b", wrap: true, value: "MediCal", bold: true, vAlign: "center", hAlign: "center", colSpan: 3 },
+                { color: "#0d3c6b", wrap: true, value: "SSI", bold: true, vAlign: "center", hAlign: "center", colSpan: 3 },
+                { color: "#0d3c6b", wrap: true, value: "VA", bold: true, vAlign: "center", hAlign: "center", colSpan: 3 },
+                { color: "#0d3c6b", wrap: true, value: "SNP Refused", bold: true, vAlign: "center", hAlign: "center", rowSpan: 2 },
+                { color: "#0d3c6b", wrap: true, value: "SNP Other", bold: true, vAlign: "center", hAlign: "center", rowSpan: 2 },
+                { color: "#0d3c6b", wrap: true, value: "CID Created", bold: true, vAlign: "center", hAlign: "center", rowSpan: 2 },
+                { color: "#0d3c6b", wrap: true, value: "CID Delivd.", bold: true, vAlign: "center", hAlign: "center", rowSpan: 2 },
+                { color: "#0d3c6b", wrap: true, value: "Outcome Letter", bold: true, vAlign: "center", hAlign: "center", rowSpan: 2 },
+                { color: "#0d3c6b", wrap: true, value: "Telephone Interview", bold: true, vAlign: "center", hAlign: "center", rowSpan: 2 },
+                { color: "#0d3c6b", wrap: true, value: "Exit Interview", bold: true, vAlign: "center", hAlign: "center", rowSpan: 2 },
+                { color: "#0d3c6b", wrap: true, value: "Release County", bold: true, vAlign: "center", hAlign: "center", rowSpan: 2 },
+                { color: "#0d3c6b", wrap: true, value: "Release To", bold: true, vAlign: "center", hAlign: "center", rowSpan: 2 },
+                { color: "#0d3c6b", wrap: true, value: "Apply Facility", bold: true, vAlign: "center", hAlign: "center", colSpan: 3 },
+            ]
+        });
+        rows.push({
+            cells: [
+                { color: "#0d3c6b", wrap: true, value: "Medi-Cal", bold: true, vAlign: "center", hAlign: "center" },
+                { color: "#0d3c6b", wrap: true, value: "SSI", bold: true, vAlign: "center", hAlign: "center" },
+                { color: "#0d3c6b", wrap: true, value: "VA", bold: true, vAlign: "center", hAlign: "center" },
+                { color: "#0d3c6b", wrap: true, value: "Medi", bold: true, vAlign: "center", hAlign: "center" },
+                { color: "#0d3c6b", wrap: true, value: "SSI", bold: true, vAlign: "center", hAlign: "center" },
+                { color: "#0d3c6b", wrap: true, value: "VA", bold: true, vAlign: "center", hAlign: "center" },
+                { color: "#0d3c6b", wrap: true, value: "Code", bold: true, vAlign: "center", hAlign: "center" },
+                { color: "#0d3c6b", wrap: true, value: "APP", bold: true, vAlign: "center", hAlign: "center" },
+                { color: "#0d3c6b", wrap: true, value: "BNP", bold: true, vAlign: "center", hAlign: "center" },
+                { color: "#0d3c6b", wrap: true, value: "Code", bold: true, vAlign: "center", hAlign: "center" },
+                { color: "#0d3c6b", wrap: true, value: "APP", bold: true, vAlign: "center", hAlign: "center" },
+                { color: "#0d3c6b", wrap: true, value: "BNP", bold: true, vAlign: "center", hAlign: "center" },
+                { color: "#0d3c6b", wrap: true, value: "Code", bold: true, vAlign: "center", hAlign: "center" },
+                { color: "#0d3c6b", wrap: true, value: "APP", bold: true, vAlign: "center", hAlign: "center" },
+                { color: "#0d3c6b", wrap: true, value: "BNP", bold: true, vAlign: "center", hAlign: "center" },
+                { color: "#0d3c6b", wrap: true, value: "Medi", bold: true, vAlign: "center", hAlign: "center" },
+                { color: "#0d3c6b", wrap: true, value: "SSI", bold: true, vAlign: "center", hAlign: "center" },
+                { color: "#0d3c6b", wrap: true, value: "VA", bold: true, vAlign: "center", hAlign: "center" }
+            ]
+        });
+
+        //data rows
+        var grid = $("#gridInmatesProductivity").getKendoGrid();
+        var trs = grid.dataSource;
+        var filteredDataSource = new kendo.data.DataSource({
+            data: trs.data(),
+            filter: trs.filter()
+        });
+
+        filteredDataSource.read();
+        var data = filteredDataSource.view();
+        var TCDCR = 0;
+        var TCaseAssigned = 0;
+        var TFaceToFace = 0;
+        var TTcmpChrono = 0;
+        var TCaseManage = 0;
+        var TStatusCheckUpdate = 0;
+        var TCTRFileRev = 0;
+        var TMedcFileRev = 0;
+        var TMedApp = 0;
+        var TMedBNP = 0;
+        var TSSIApp = 0;
+        var TSSIBNP = 0;
+        var TVAApp = 0;
+        var TVABNP = 0;
+        var TSNPRefused = 0;
+        var TSNPOther = 0;
+        var TCIDCreated = 0;
+        for (var i = 0; i < data.length; i++) {
+            rows.push({
+                cells: [
+                  { value: data[i].AppDate },
+                  { value: data[i].BenefitWorkerName },
+                  { value: data[i].CDCRNum },
+                  { value: data[i].EPRD },
+                  { value: data[i].ScreeningDate },
+                  { value: data[i].MediCalDate },
+                  { value: data[i].SsiDate },
+                  { value: data[i].VaDate },
+                  { value: data[i].MediCalDiscrepancy ? 1 : 0 },
+                  { value: data[i].SsiDiscrepancy ? 1 : 0 },
+                  { value: data[i].VaDiscrepancy ? 1 : 0 },
+                  { value: data[i].CaseAssigned },
+                  { value: data[i].FaceToFace },
+                  { value: data[i].TcmpChrono },
+                  { value: data[i].CaseManagement },
+                  { value: data[i].StatusCheckOrUpdate },
+                  { value: data[i].CentralFileReview },
+                  { value: data[i].MedicalFileReview },
+                  { value: data[i].MediCalCode },
+                  { value: data[i].MediCalSubmission },
+                  { value: data[i].MediCalBnp },
+                  { value: data[i].SSICode },
+                  { value: data[i].SsiSubmission },
+                  { value: data[i].SSIBnp },
+                  { value: data[i].VACode },
+                  { value: data[i].VaSubmission },
+                  { value: data[i].VABnp },
+                  { value: data[i].ServicesNotProvidedRefused },
+                  { value: data[i].ServicesNotProvidedOther },
+                  { value: data[i].CidCreated },
+                  { value: data[i].CidDelivered },
+                  { value: data[i].OutcomeLetter },
+                  { value: data[i].TelInterview },
+                  { value: data[i].ExtInterview },
+                  { value: data[i].County },
+                  { value: data[i].ReleaseTo },
+                  { value: data[i].MediCalFa },
+                  { value: data[i].SSIFa },
+                  { value: data[i].VAFa }
+                ]
+            });
+
+            TCDCR ++;
+            TCaseAssigned += data[i].CaseAssigned;
+            TFaceToFace += data[i].FaceToFace;
+            TTcmpChrono += data[i].TcmpChrono;
+            TCaseManage += data[i].CaseManagement;
+            TStatusCheckUpdate += data[i].StatusCheckOrUpdate;
+            TCTRFileRev += data[i].CentralFileReview;
+            TMedcFileRev += data[i].MedicalFileReview;
+            TMedApp += data[i].MediCalSubmission;
+            TMedBNP += data[i].MediCalBnp;
+            TSSIApp += data[i].SsiSubmission;
+            TSSIBNP += data[i].SSIBnp;
+            TVAApp += data[i].VaSubmission;
+            TVABNP += data[i].VABnp;
+            TSNPRefused += data[i].ServicesNotProvidedRefused;
+            TSNPOther += data[i].ServicesNotProvidedOther;
+            TCIDCreated += data[i].CidCreated;
+        }
+
+        rows.push({
+            cells: [
+                { background: "#ADD8E6", value: "Total:", colSpan: 2, textAlign: "center", bold: true },
+                { background: "#ADD8E6", value: TCDCR },
+                { background: "#ADD8E6", value: "", colSpan:8 },
+                { background: "#ADD8E6", value: TCaseAssigned },
+                { background: "#ADD8E6", value: TFaceToFace },
+                { background: "#ADD8E6", value: TTcmpChrono },
+                { background: "#ADD8E6", value: TCaseManage },
+                { background: "#ADD8E6", value: TStatusCheckUpdate },
+                { background: "#ADD8E6", value: TCTRFileRev },
+                { background: "#ADD8E6", value: TMedcFileRev },
+                { background: "#ADD8E6", value: "" },
+                { background: "#ADD8E6", value: TMedApp },
+                { background: "#ADD8E6", value: TMedBNP },
+                { background: "#ADD8E6", value: "" },
+                { background: "#ADD8E6", value: TSSIApp },
+                { background: "#ADD8E6", value: TSSIBNP },
+                { background: "#ADD8E6", value: "" },
+                { background: "#ADD8E6", value: TVAApp },
+                { background: "#ADD8E6", value: TVABNP },
+                { background: "#ADD8E6", value: TSNPRefused },
+                { background: "#ADD8E6", value: TSNPOther },
+                { background: "#ADD8E6", value: TCIDCreated },
+                { background: "#ADD8E6", value: "", colSpan: 9}
+            ]
+        });
+
+        var workbook = new kendo.ooxml.Workbook({
+            sheets: [
+              {
+                  columns: [{ width: 70 }, { width: 100 }, { width: 70 }, { width: 70 }, { width: 70 },
+                            { width: 70 }, { width: 70 }, { width: 70 }, { width: 50 }, { width: 50 },
+                             { width: 50 }, { width: 50 }, { width: 50 }, { width: 50 }, { width: 50 },
+                              { width: 50 }, { width: 50 }, { width: 50 }, { width: 50 }, { width: 50 },
+                               { width: 50 }, { width: 50 }, { width: 50 }, { width: 50 }, { width: 50 },
+                                { width: 50 }, { width: 50 }, { width: 50 }, { width: 50 }, { width: 50 },
+                                 { width: 50 }, { width: 50 }, { width: 70 }, { width: 50 }, { width: 50 },
+                                  { width: 50 }, { width: 50 }, { width: 50 }
+                  ],
+                  title: "Productivity",
+                  rows: rows
+              }
+            ]
+        });
+
+        kendo.saveAs({
+            dataURI: workbook.toDataURL(),
+            fileName: "ProductivityReport.xlsx"
+        });
+    }
+    function GetAppDateFilter(e) {
+        e.kendoAutoComplete({
+            dataSource: AppDates
+        });
+    }
+    function GetBenefitFilter(e) {
+        e.kendoAutoComplete({
+            dataSource: BenefitWorkerNames
+        });
+    }
+    function onRequestStart(e) {
+        var selectItems = $("#AllRptBfUsers").data("kendoMultiSelect").dataItems();
+        if (selectItems.length == 0) {
+            e.preventDefault();
+        }
+        return false;
+    }
+</script>
+
+@(Html.Kendo().Grid<BassIdentityManagement.Entities.ProductivityReportRowDetail>()
+.Name("gridInmatesProductivity")
+.NoRecords("No Data Found.")
+.Scrollable(sc => sc.Height("auto"))
+.Sortable(s => s.AllowUnsort(false)).HtmlAttributes(new { @style = "height:85.4vh;" })
+.Selectable(s => s.Enabled(true))
+.Events(e => { e.DataBound("GridDataBound"); e.ColumnMenuInit("columnMenuInit"); })
+.Groupable()
+.ColumnMenu(c => c.Sortable(false).Columns(true))
+.Reorderable(reorderable => reorderable.Columns(true))
+.Filterable()
+//.Excel(e => e.FileName("InmatesReleaseProductivityRpt.xlsx").AllPages(true).Filterable(true))
+.ToolBar(toolbar =>
+{
+    toolbar.Template(@<text>
+        <div id="pdHeader" class="row">
+            @*<div class="col" style="float:left"><a class="k-button export" href='@Url.Action("ExportExcel", "Reports", new { page = 1, pageSize = "~", filter = "~", sort = "~", data="~" })'><span class="k-icon k-i-excel" style="height:25px!important;"></span>Export To Excel</a></div>*@
+            <div class="col" style="float:left;height:25px;"><a class="k-button" style="height:25px;" href="javascript:exportProdRptToExcel()"><span class="k-icon k-i-excel"></span>Export to Excel</a></div>
+            @*<div class="col" style="float:left"><a class="k-button k-button-icontext k-grid-excel" href="#"><span class="k-icon k-i-excel"></span>Export to Excel</a></div>*@
+            <div class="col" style="float:left;margin-top:5px;margin-left:10px;"><label class="category-label" for="AllRptBfUsers" style="font-weight:bold;color:darkblue;">Benefit Worker:</label></div>
+            <div class="col" style="float:left; margin-left:5px">
+                @(Html.Kendo().MultiSelect()
+              .Name("AllRptBfUsers")
+              .AutoClose(false)
+              .HtmlAttributes(new { style = "width:540px;height:25px;" })
+              .Placeholder("Select a benefit worker ...")
+              .DataTextField("BenefitWorkerName")
+              .DataValueField("UserID")
+              .MaxSelectedItems(15)
+              .ItemTemplate("<input type='checkbox' name='cb' value='#:data.UserID#' id='#:data.UserID#' /> #:data.BenefitWorkerName#")
+              .Events(evt => { evt.DataBound("MultipleSelectDataBound"); evt.Close("SetDefault"); evt.Deselect("onDeselect"); evt.Select("onSelect"); })
+              .DataSource(source =>
+              {
+                  source.Read(read =>
+                  {
+                      read.Action("GetAllUsers", "Reports");
+                      read.Type(HttpVerbs.Post);
+                  }).ServerFiltering(false);
+              }))
+        </div>
+        <div class="col" style="float:left;margin-left:10px;margin-top:5px; color:blue;">
+            <a onclick="GetProductivityReport(this)" style="cursor: pointer; font-weight:bold;" title="Refresh Report">
+                <span class="k-icon k-i-refresh"></span>
+            </a>
+        </div>
+    </div>
+    </text>);
+})
+     .Resizable(resize => resize.Columns(true))
+             .Pageable(pageable => pageable
+             .Refresh(true)
+             .PageSizes(new List<object> { 20, 30, 50, 100 })
+             .ButtonCount(5))
+    .Columns(column =>
+    {
+        column.Bound(m => m.RptProdATID).Hidden(true).IncludeInMenu(false);
+        column.Bound(m => m.AppDate).Title("App. YYYY-MM").IncludeInMenu(false).Filterable(ftb => ftb.Multi(true).UI("GetAppDateFilter"));
+        column.Bound(m => m.BenefitWorkerName).Title("Benefit Worker Name").IncludeInMenu(false).Filterable(ftb =>ftb.Multi(true).UI("GetBenefitFilter"));
+        column.Group(g => g.HeaderTemplate(@<text><span id="rptprodspan" class="greentext"></span></text>)
+.Columns(info =>
+{
+    info.Group(g1 => g1.Title("Offender Info").Width(300)
+        .Columns(subinfo =>
+        {
+            subinfo.Bound(sb => sb.CDCRNum).Title("CDCR#").ClientFooterTemplate("Total: ").Filterable(false).IncludeInMenu(false);
+            subinfo.Bound(sb => sb.EPRD).Title("EPRD").ClientFooterTemplate("#=count#").Filterable(false).IncludeInMenu(false);
+            subinfo.Bound(sb => sb.ScreeningDate).Title("Screening Date").Filterable(false).IncludeInMenu(false); ;
+            subinfo.Group(g2 => g2.Title("Application Date").HeaderHtmlAttributes( new { @class="k-date-filter" }).Columns(sublv2 =>
+            {
+                sublv2.Bound(sb2 => sb2.MediCalDate).Format("{0:MM-dd-yyyy}").Title("Medi-Cal").Filterable(false).IncludeInMenu(false);
+                sublv2.Bound(sb2 => sb2.SsiDate).Format("{0:MM-dd-yyyy}").Title("SSI").Filterable(false).IncludeInMenu(false);
+                sublv2.Bound(sb2 => sb2.VaDate).Format("{0:MM-dd-yyyy}").Title("VA App").Filterable(false).IncludeInMenu(false);
+            }));
+            subinfo.Group(g2 => g2.Title("App/Note Discrepancy")
+               .Columns(sublv2 =>
+               {
+                   sublv2.Bound(sb2 => sb2.MediCalDiscrepancy).Title("Medi").ClientTemplate("# if(MediCalDiscrepancy) {#1#} else {#0#}#").Filterable(false).IncludeInMenu(false);
+                   sublv2.Bound(sb2 => sb2.SsiDiscrepancy).Title("SSI").ClientTemplate("# if(SsiDiscrepancy) {#1#} else {#0#}#").Filterable(false).IncludeInMenu(false);
+                   sublv2.Bound(sb2 => sb2.VaDiscrepancy).Title("VA").ClientTemplate("# if(VaDiscrepancy) {#1#} else {#0#}#").Filterable(false).IncludeInMenu(false);
+               }));
+        }));
+    info.Group(g1 => g1.Title("Notes In Timeframe")
+              .Columns(subinfo =>
+              {
+                  subinfo.Bound(sb => sb.CaseAssigned).Title("Case Assigned").ClientFooterTemplate("#=sum#").Filterable(false);
+                  subinfo.Bound(sb => sb.FaceToFace).Title("Face to Face").ClientFooterTemplate("#=sum#").Filterable(false);
+                  subinfo.Bound(sb => sb.TcmpChrono).Title("TCMP Chrono").ClientFooterTemplate("#=sum#").Filterable(false);
+                  subinfo.Bound(sb => sb.CaseManagement).Title("Case Mgmt.").ClientFooterTemplate("#=sum#").Filterable(false);
+                  subinfo.Bound(sb => sb.StatusCheckOrUpdate).Title("Status Check / Update").ClientFooterTemplate("#=sum#").Filterable(false);
+                  subinfo.Bound(sb => sb.CentralFileReview).Title("CTR File Rev.").ClientFooterTemplate("#=sum#").Filterable(false);
+                  subinfo.Bound(sb => sb.MedicalFileReview).Title("MEDC File Rev.").ClientFooterTemplate("#=sum#").Filterable(false);
+                  subinfo.Group(g2 => g2.Title("MediCal")
+                      .Columns(sublv2 =>
+                      {
+                          sublv2.Bound(sb2 => sb2.MediCalCode).Title("Code").Filterable(false);
+                          sublv2.Bound(sb2 => sb2.MediCalSubmission).Title("APP").ClientFooterTemplate("#=sum#").Filterable(false);
+                          sublv2.Bound(sb2 => sb2.MediCalBnp).Title("BNP").ClientFooterTemplate("#=sum#").Filterable(false);
+                      }));
+                  subinfo.Group(g2 => g2.Title("SSI")
+                      .Columns(sublv2 =>
+                      {
+                          sublv2.Bound(sb2 => sb2.SSICode).Title("Code").Filterable(false);
+                          sublv2.Bound(sb2 => sb2.SsiSubmission).Title("APP").ClientFooterTemplate("#=sum#").Filterable(false);
+                          sublv2.Bound(sb2 => sb2.SSIBnp).Title("BNP").ClientFooterTemplate("#=sum#").Filterable(false);
+                      }));
+                  subinfo.Group(g2 => g2.Title("VA")
+                   .Columns(sublv2 =>
+                   {
+                       sublv2.Bound(sb2 => sb2.VACode).Title("Code").Filterable(false);
+                       sublv2.Bound(sb2 => sb2.VaSubmission).Title("APP").ClientFooterTemplate("#=sum#").Filterable(false);
+                       sublv2.Bound(sb2 => sb2.VABnp).Title("BNP").ClientFooterTemplate("#=sum#").Filterable(false);
+                   }));
+                  subinfo.Bound(sb => sb.ServicesNotProvidedRefused).Title("SNP Refused").ClientFooterTemplate("#=sum#").Filterable(false);
+                  subinfo.Bound(sb => sb.ServicesNotProvidedOther).Title("SNP Other").ClientFooterTemplate("#=sum#").Filterable(false);
+                  subinfo.Bound(sb => sb.CidCreated).Title("CID Created").ClientFooterTemplate("#=sum#").Filterable(false);
+                  subinfo.Bound(sb => sb.CidDelivered).Title("CID Delivd.").Filterable(false);
+                  subinfo.Bound(sb => sb.OutcomeLetter).Title("Outcome Letter").Filterable(false);
+                  subinfo.Bound(sb => sb.TelInterview).Title("Telephone Interview").Filterable(false);
+                  subinfo.Bound(sb => sb.ExtInterview).Title("Exit Interview").Filterable(false);
+                  subinfo.Bound(sb => sb.County).Title("Release County").Filterable(false);
+                  subinfo.Bound(sb => sb.ReleaseTo).Title("Release To").Filterable(false).IncludeInMenu(false);
+                  subinfo.Group(g2 => g2.Title("Apply Facility")
+                      .Columns(sublv2 =>
+                      {
+                          sublv2.Bound(sb2 => sb2.MediCalFa).Title("Medi").Filterable(false).IncludeInMenu(false);
+                          sublv2.Bound(sb2 => sb2.SSIFa).Title("SSI").Filterable(false).IncludeInMenu(false);
+                          sublv2.Bound(sb2 => sb2.VAFa).Title("VA").Filterable(false).IncludeInMenu(false);
+                      }));
+              }));
+}));
+    })
+    .DataSource(ds => ds.Ajax()
+    .PageSize(100)
+    .Aggregates(aggregates =>
+    {
+        aggregates.Add(p => p.EPRD).Count();
+        aggregates.Add(p => p.CaseAssigned).Sum();
+        aggregates.Add(p => p.FaceToFace).Sum();
+        aggregates.Add(p => p.TcmpChrono).Sum();
+        aggregates.Add(p => p.CaseManagement).Sum();
+        aggregates.Add(p => p.StatusCheckOrUpdate).Sum();
+        aggregates.Add(p => p.CentralFileReview).Sum();
+        aggregates.Add(p => p.MedicalFileReview).Sum();
+        aggregates.Add(p => p.MediCalSubmission).Sum();
+        aggregates.Add(p => p.MediCalBnp).Sum();
+        aggregates.Add(p => p.SsiSubmission).Sum();
+        aggregates.Add(p => p.SSIBnp).Sum();
+        aggregates.Add(p => p.VaSubmission).Sum();
+        aggregates.Add(p => p.VABnp).Sum();
+        aggregates.Add(p => p.ServicesNotProvidedRefused).Sum();
+        aggregates.Add(p => p.ServicesNotProvidedOther).Sum();
+        aggregates.Add(p => p.CidCreated).Sum();
+    })
+        //.Batch(true)
+        //.Events(e=>e.RequestStart("onRequestStart"))
+        //.ServerOperation(true)
+        .Model(m =>
+        {
+            m.Id(f => f.BenefitWorkerName);
+        })
+        .Read(r => r.Action("InmatesProductivityData_Read", "Reports").Data("getprams"))))
+
+
+
+

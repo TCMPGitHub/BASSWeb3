@@ -1,0 +1,219 @@
+﻿@model BassWebV3.ViewModels.UserAssignment
+@using Kendo.Mvc.UI
+
+<style>
+    .k-grid-header th.k-header > .k-link {
+        min-height: 15px;
+        line-height: 15px;
+    }
+
+    .widget div {
+        padding: 2px;
+        min-height: 20px;
+    }
+    .k-grid {
+      font-size: 12px;
+    }
+    .k-grid td {
+        border: 0.5px lightgray solid;
+        border-width: 0.5px 0 0.5px 0.5px;
+        padding: .2em .1em;
+        overflow: hidden;
+        line-height: 1.4em; 
+        vertical-align: middle;
+        text-overflow: ellipsis;
+    }
+    .k-grid tbody .k-button {
+        min-width: 0px;
+        width: 16px;
+        min-height: 15px;
+        height: 15px;
+    }
+
+    .k-grid-content .k-button {
+        width: 12px;
+        height: 12px;
+        border: none;
+        min-width: 0 !important;
+        border-radius: 0;
+        display: inline-block;
+        font: normal normal normal 10px/1 FontAwesome;
+        font-size: inherit;
+        text-rendering: auto;
+        -webkit-font-smoothing: antialiased;
+        position: relative;
+    }
+
+        .k-grid-content .k-button::before {
+            text-indent: 0;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%,-50%);
+        }
+
+    .k-header k-grid-toolbar k-grid-top {
+        height: 25px !important;
+    }
+
+    .difference {
+        background-color: green;
+    }
+   
+   .dot {
+      height: 15px;
+      width:  15px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .redcolor{
+        background-color:red;
+    }
+    .greencolor{
+        background-color:green;
+    }
+    .warncolor{
+        background-color:#ff9966;
+    }
+    
+</style>
+
+<script type="text/javascript">
+    $(document).keydown(function (e) {
+        var doPrevent;
+        if (e.keyCode == 8) {
+            var d = e.srcElement || e.target;
+            if (d.tagName.toUpperCase() == 'INPUT' || d.tagName.toUpperCase() == 'TEXTAREA') {
+                doPrevent = d.readOnly || d.disabled;
+            }
+            else
+                doPrevent = true;
+        }
+        else
+            doPrevent = false;
+
+        if (doPrevent)
+            e.preventDefault();
+    });
+    function CaseDataBound(e) {
+        var grid = e.sender;
+        var data = grid.dataSource.data();
+        $.each(data, function (i, row) {
+             if (CompareDates(row.SomsReleaseDate, row.ReleaseDate) != 0) {
+                    $('tr[data-uid="' + row.uid + '"] td:eq(8)').css("background-color", "green");
+                    $('tr[data-uid="' + row.uid + '"] td:eq(8)').css("font-weight", "bold");
+                    $('tr[data-uid="' + row.uid + '"] td:eq(8)').css("color", "white");
+                    $('tr[data-uid="' + row.uid + '"] td:eq(7)').css("background-color", "green");
+                    $('tr[data-uid="' + row.uid + '"] td:eq(7)').css("font-weight", "bold");
+                    $('tr[data-uid="' + row.uid + '"] td:eq(7)').css("color", "white");
+                }
+                if (row.SomsCustFacilityName != row.CustFacilityName) {
+                    $('tr[data-uid="' + row.uid + '"] td:eq(6)').css("background-color", "green");
+                    $('tr[data-uid="' + row.uid + '"] td:eq(6)').css("font-weight", "bold");
+                    $('tr[data-uid="' + row.uid + '"] td:eq(6)').css("color", "white");
+                    $('tr[data-uid="' + row.uid + '"] td:eq(5)').css("background-color", "green");
+                    $('tr[data-uid="' + row.uid + '"] td:eq(5)').css("font-weight", "bold");
+                    $('tr[data-uid="' + row.uid + '"] td:eq(5)').css("color", "white");
+                }
+                if (row.RedFlag == '1') {
+                    $('tr[data-uid="' + row.uid + '"]').css("background-color", "red");
+                }
+                else if (row.RedFlag == '2') {
+                    $('tr[data-uid="' + row.uid + '"]').css("background-color", "#ff9966");
+                }
+            });
+    }
+    function NavClientLink(CDCRNums) {
+       var result = "";
+        var lastorcdcr = CDCRNums;
+        var facility = $("#FacilityID").val();
+        var bf = $("#UserID").val();
+        var pgChecked = "1";
+        for (i = 0; i < $("[type=radio]").length; i++) {
+            if ($("[type=radio]")[i].checked) {
+                pgChecked = $("[type=radio]")[i].value;
+                break;
+            }
+        }
+        //<LastOrCDCR>|<Facility>|<BenefitWorkerId>|<ProgramStatus>
+        var searchString = lastorcdcr + "|" + facility + "|" + bf + "|" + pgChecked;
+        $("#AllSearchResults").data("kendoDropDownList").dataSource.read({ text: searchString });
+    }
+    function BuildNavClientLink(e) {
+        var result = "";
+        var temp =kendo.format("<a href='#' onclick=\"NavClientLink('{0}')\"'>" + e + "</a>", e);
+        result = temp;
+        return result;
+    }
+    function GetBenefitWorkerID() {
+        //var id = 0;
+        //if ($("#AllBfUsers").val().length > 0)
+        //    id = $("#AllBfUsers").val();
+        //else if ($("#hdUserBFW").val() == "True")
+        //    id = $("#hdUserID").val();
+        return { BenefitWorkerID: $("#UserID").val() };
+    }
+
+</script>
+
+@(Html.Kendo().Grid<BassIdentityManagement.Entities.BenefitWorkerAssignedCase>()
+      .Name("gridMyAssignments")
+      .NoRecords("No Assignment found...")
+      .Sortable(sortable => sortable.AllowUnsort(true))
+      .Events(e => { e.DataBound("CaseDataBound");  })
+      .Filterable(filterable => filterable
+        .Extra(false)
+        .Operators(operators =>
+        {
+            operators
+.ForString(str => str.Clear()
+.StartsWith("Starts with")
+.IsEqualTo("Is equal to")
+);
+        })
+       )
+      .Columns(columns =>
+      {
+          columns.Bound(f => f.EpisodeID).Hidden();
+          columns.Bound(f => f.CDCRNum).Title("CDCR#").Width(60).HeaderHtmlAttributes(new { style = "font-weight:bold; color:darkblue;text-align:center;" }).ClientTemplate("#= BuildNavClientLink(CDCRNum)#");
+          columns.Bound(f => f.ClientName).Title("Offender Name").Width(160).HeaderHtmlAttributes(new { style = "font-weight:bold; color:darkblue;text-align:center;" });
+          columns.Bound(f => f.Housing).Title("Housing").Width(120).HeaderHtmlAttributes(new { style = "font-weight:bold; color:darkblue;text-align:center;" });
+          columns.Bound(f => f.MHClass).Title("MHClass/SOMS Codes").Width(100).HeaderHtmlAttributes(new { style = "font-weight:bold; color:darkblue;text-align:center;" });
+          columns.Group(group => group.Title("Custody Facility").HeaderHtmlAttributes(new { style = "font-weight:bold; color:darkblue;text-align:center;" })
+          .Columns(inis =>
+          {
+              inis.Bound(x => x.SomsCustFacilityName).Title("SOMS").Width(50).HeaderHtmlAttributes(new { style = "font: italic small-caps bold 10px/4 cursive;" }).Filterable(false);
+              inis.Bound(x => x.CustFacilityName).Title("BASS").Width(50).HeaderHtmlAttributes(new { style = "font: italic small-caps bold 10px/4 cursive;" }).Filterable(false);
+          }));
+          columns.Group(group => group.Title("Release Date").HeaderHtmlAttributes(new { style = "font-weight:bold; color:darkblue;text-align:center;" })
+          .Columns(r =>
+          {
+              r.Bound(y => y.SomsReleaseDate).Format("{0:MM/dd/yyyy}").Title("SOMS").Width(75).HeaderHtmlAttributes(new { style = "font: italic small-caps bold 10px/4 cursive;" }).Filterable(false);
+              r.Bound(y => y.ReleaseDate).Format("{0:MM/dd/yyyy}").Title("BASS").Width(75).HeaderHtmlAttributes(new { style = "font: italic small-caps bold 10px/4 cursive;" }).Filterable(false);
+          }));
+          columns.Bound(f => f.Apps).Title("Application").Width(80).HeaderHtmlAttributes(new { style = "font-weight:bold; color:darkblue;text-align:center;" }).HtmlAttributes(new { style = "line-height:14px!important;padding:0px;" });
+          columns.Bound(f => f.AppStatus).Title("Disposition").Width(160).HeaderHtmlAttributes(new { style = "font-weight:bold; color:darkblue;text-align:center;" }).HtmlAttributes(new { style = "line-height:14px!important;padding:0px;" });
+      })
+       .Sortable(sortable => sortable.AllowUnsort(true))
+        .Scrollable(a => a.Height(280))
+       //.HtmlAttributes(new { style = "height:320px;" })
+       .Resizable(resizable => resizable.Columns(true))
+       .DataSource(dataSource => dataSource
+          .Ajax()
+          //.PageSize(20)
+          .Model(m => { m.Id(f => f.EpisodeID); })
+          .Read(read => read.Action("MyAssignmentRead", "EditOffender").Data("GetBenefitWorkerID"))
+      )
+)
+<table style="border-style:none;height:15px!important;font-size:11px;padding:0;">
+    <tr style="height:15px!important;border-style:none;">
+        <td style="height:8px!important;border-style:none;"><span class="dot redcolor"></span></td>
+        <td style="height:8px!important;border-style:none;width:220px!important;"><span style="color:white;">Inmate has application older than 120 days.</span></td>
+        <td style="height:8px!important;border-style:none;"><span class="dot greencolor"></span></td>
+        <td style="height:8px!important;border-style:none;width:250px!important;"><span style="color:white;">Inmate data in BASS is different than in SOMs.</span></td>
+        <td style="height:8px!important;border-style:none;"><span class="dot warncolor"></span></td>
+        <td style="height:8px!important;border-style:none;"><span style="color:white;">Inmate has no application.</span></td>
+    </tr>
+</table>
+
+

@@ -1,0 +1,296 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Edit Offender";
+}
+@using BassWebV3.DataAccess
+@using Kendo.Mvc.UI
+@model BassWebV3.ViewModels.OffenderApplicationViewOnly
+<html>
+<body>
+    @section Scripts {
+        <style>
+            .k-grid-header th.k-header {
+                white-space: pre-wrap;
+                text-align: center;
+                vertical-align: middle;
+                font-weight: bold;
+                color: darkblue !important;
+                line-height: 0.9em;
+            }
+
+            .widget div {
+                padding: 1px;
+                min-height: 22px;
+            }
+
+            div.main-content.widget {
+                height: inherit;
+            }
+
+            div.k-grid-content.k-auto-scrollable {
+                height: calc(100vh - 220px) !important;
+            }
+        </style>
+        @*<script>
+                 var SEARCH_LIMIT = @BassConstants.EditOffenderSearchLimit;
+            </script>*@
+    }
+    <div id="bassOffender">
+        <div id="main-content widget" style="width:100vw; min-width:1400px; background-color:cornflowerblue;">
+            <table height="44" width="100%">
+                <tr>
+                    <td align="right" width="80px"><b>County&nbsp;of&nbsp;Release</b></td>
+                    <td width="80px">
+                        <script>
+                        function CountyChange(e) {
+                            var object = this.dataItem(this.select());
+                            var id = (object == undefined || object.CountyID == "") ? 0 : object.CountyID;
+                            var grid  =  $("#gridAppSet").data("kendoGrid");
+                            grid.dataSource.read({ EpisodeID: 0, ApplicationID:-1, CountyID: id });
+
+                            var ddl = $("#AllSelectedOffenderEpisodeResult").data("kendoDropDownList");
+                            if(ddl.dataSource.data().length > 0){
+                                ddl.dataSource.data([]); // clears dataSource
+                                ddl.text(""); // clears visible text
+                                ddl.value(""); // clears invisible value
+                            }
+                            var ddl1 = $("#AllSearchResults").data("kendoDropDownList");
+                            if(ddl1.dataSource.data().length > 0){
+                                ddl1.dataSource.data([]);
+                                ddl1.text("");
+                                ddl1.value("");
+                            }
+                        }
+                        </script>
+                        @(Html.Kendo().DropDownListFor(m => m.ReleaseCountyID)
+                    .Name("AllCounties")
+                    .DataValueField("CountyID")
+                    .DataTextField("Name")
+                    .OptionLabel("Select County ...")
+                    .HtmlAttributes(new { style = "width:150px;height:20px;text-align:left;mergin-right:20px;fload:right" })
+                    .Filter(FilterType.Contains)
+                    .Height(290)
+                    .Value("-1")
+                    .Events(e => { e.Change("CountyChange"); })
+                    .DataSource(source =>
+                    {
+                        source.Read(read => read.Action("GetAllCounties", "EditOffender")).ServerFiltering(true);
+                    }))
+                    </td>
+                    <td align="right" width="140x">@Html.Label("Last Name/CDCR#:")</td>
+                    <td height="25px" width="300x">
+                        <script>
+                            function onClick(e) {
+                            var lastorcdcr = $("#SearchString").val();
+                            if(lastorcdcr == ""){
+                                return;
+                            }
+                            else{
+                                //<LastOrCDCR>
+                                var searchString  = lastorcdcr.toUpperCase();
+                                var ddlOffender = $("#AllSearchResults").data("kendoDropDownList");
+                                if(ddlOffender != null && ddlOffender != undefined)
+                                    ddlOffender.dataSource.read({text : searchString});
+                                var dropdown = $("#AllCounties").data("kendoDropDownList");
+                                if (dropdown !== undefined && dropdown.dataSource._data.length > 0)
+                                {
+                                    dropdown.select(0);
+                                }
+                            }
+                        }
+                        function onOffenderDataBound(e) {
+                            var defaultItem = e.sender.dataSource.at(0);
+                            if(defaultItem == undefined || defaultItem == null)
+                            {
+                                if($("#AllCounties").val() == "")
+                                     alert("No Episode Found.");
+                                //e.preventDefault();
+                                return;
+                            }
+                            var dropdown = $("#AllSearchResults").data("kendoDropDownList");
+                            if(dropdown != undefined)
+                            {
+                                dropdown.select(1);
+                                dropdown.trigger("change");
+                            }
+                        }
+                        function SearchDataBound(e) {
+                            var dropdown = $("#AllSelectedOffenderEpisodeResult").data("kendoDropDownList");
+                            if(dropdown == undefined || dropdown.dataSource._data.length ==0 )
+                            {
+                                if($("#AllCounties").val() == "")
+                                     alert("No Data Found!");
+                                return false;
+                            }
+                            dropdown.select(1);
+                            dropdown.trigger("change");
+                        }
+                        function filterOffender(){
+                            return { EpisodeID : $("#AllSearchResults").val() };
+                        }
+                        function SearchDataChanged(e) {
+                            var selectedSearchResult= $("#AllSelectedOffenderEpisodeResult").val();
+                            if(selectedSearchResult == "")
+                            {
+                                e.preventDefault();
+                                return;
+                            }
+                            var grid  = $('#gridAppSet').data('kendoGrid');
+                            grid.dataSource.read({ EpisodeID : selectedSearchResult, ApplicationTypeID: -1, CountyID:-1  })
+                            grid.refresh();
+                        }
+                        function GetEpisodeID(){
+                            return { EpisodeID : $("#AllSelectedOffenderEpisodeResult").val(), ApplicationTypeID:-1, CountyID : -1 };
+                        }
+                        function GetAppParameters(obj)
+                        {
+                            return { EpisodeID : $("#AllSelectedOffenderEpisodeResult").val(), ApplicationTypeID : obj };
+                        }
+                        </script>
+                        @Html.TextBoxFor(model => model.SearchString, new { id = "SearchString", @placeholder = "Enter search criteria...", @style = "width:200px;", @class = "k-textbox" })
+                        @(Html.Kendo().Button()
+                    .Name("searchButton")
+                    .Icon("search")
+                    .Content("Search")
+                    .HtmlAttributes(new { type = "button", style = "height:28px; " })
+                    .Events(e => { e.Click("onClick"); }))
+
+                    </td>
+                    <td align="right" width="100px">@Html.Label("Search Result:")</td>
+                    <td width="285">
+                        @(Html.Kendo().DropDownListFor(m => m.EpisodeID)
+                    .Name("AllSearchResults")
+                    .DataValueField("Value")
+                    .DataTextField("Text")
+                    .OptionLabel("Select result ...")
+                    .HtmlAttributes(new { style = "width:280px;height:20px;text-align:left;mergin-right:20px;fload:right" })
+                    .Filter(FilterType.Contains)
+                    .Height(290)
+                    .Value(Model.EpisodeID.ToString())
+                    .Events(e => { e.DataBound("onOffenderDataBound"); })
+                    .DataSource(source =>
+                    {
+                        source.Read(read => read.Action("GetAllApplicationSearchResults", "EditOffender")).ServerFiltering(true);
+                    }))
+
+                    </td>
+                    <td>
+                        @(Html.Kendo().DropDownListFor(m => m.EpisodeID)
+.Name("AllSelectedOffenderEpisodeResult")
+.DataValueField("Value")
+.DataTextField("Text")
+.OptionLabel("Select Episode ...")
+.MinLength(1)
+.HtmlAttributes(new { style = "width:200px;height:20px;text-align:left; margin-left:5px;" })
+.Height(290)
+.Value(Model.EpisodeID.ToString())
+.Events(e => { e.Change("SearchDataChanged"); e.DataBound("SearchDataBound"); })
+.DataSource(source =>
+{
+    source.Read(read =>
+    {
+        read.Action("GetAllOffenderEpisodes", "EditOffender").Data("filterOffender");
+    }).ServerFiltering(true);
+}).Enable(false).AutoBind(false).CascadeFrom("AllSearchResults"))
+                    </td>
+                </tr>
+            </table>
+            <div id="applicationViewonlyPanel" class="widget" style="padding:1px;height:inherit;width:inherit;">
+                @(Html.Kendo().Grid<BassWebV3.ViewModels.ApplicationReadonly>()
+        .Name("gridAppSet").NoRecords("No Benefit application found ...")
+        .HtmlAttributes(new { @style = "background-color: aliceblue;height:inherit;width:inherit;" })
+        .Columns(column =>
+        {
+            column.Bound(p => p.ApplicationID).Hidden();
+            column.Bound(p => p.ApplicationTypeID).Hidden();
+            column.Bound(p => p.EpisodeID).Hidden();
+            column.Bound(p => p.CDCRNum).Width(50).Title("CDCR#").Filterable(false);
+            column.Bound(p => p.ClientName).Width(120).Title("Client Name").Filterable(false);
+            column.Bound(p => p.ReleaseCountyName).Width(80).Title("County of Release").Filterable(false);
+            column.Bound(p => p.ApplicationTypeName).Title("Coverage Name").Width(80)
+                             .Filterable(ftb => ftb.Multi(true)
+                             .BindTo(new[] { new { ApplicationTypeName = "SSI" }, new { ApplicationTypeName = "VA" }, new { ApplicationTypeName = "Medi-Cal" } }));
+            column.Group(g => g.Title("Applied/Refused")
+              .Columns(col =>
+              {
+                  col.Bound(cp => cp.AgreesToApply).Title("Applied").Width(60).ClientTemplate("<input type='checkbox' disabled='disabled' #= AgreesToApply ? checked='checked' :'' # />").Filterable(false);
+                  col.Bound(cp => cp.AgreesToApply).Title("Refused").Width(60).ClientTemplate("<input type='checkbox' disabled='disabled' #= !AgreesToApply ? checked='checked' :'' # />").Filterable(false);
+              }));
+            column.Bound(p => p.AppliedOrRefusedOnDate).Format("{0:MM/dd/yyyy}").Title("Applied/Refused Date").Width(80).Filterable(false);
+            column.Bound(p => p.OutCome).Title("Outcome").Width(80).Filterable(ftb => ftb.Multi(true)
+                             .BindTo(new[] { new { OutCome = "Approved" }, new { OutCome = "Denied" },new { OutCome = "Reinstated" },
+                                     new { OutCome = "Incomplete"}, new { OutCome = "Pre-Approved" },new { OutCome = "Pending" },
+                                     new { OutCome = "Not Qualified" }}));
+            column.Bound(p => p.OutcomeDate).Format("{0:MM/dd/yyyy}").Title("Outcome Date").Width(80).Filterable(false);
+            column.Bound(p => p.IssuedOnDate).Format("{0:MM/dd/yyyy}").Title("Issued Date").Width(80).Filterable(false);
+            column.Bound(p => p.PhoneInterviewDate).Format("{0:MM/dd/yyyy}").Title("Phone Interview Date").Width(80).Filterable(false);
+            column.Bound(p => p.ArchivedOnDate).Format("{0:MM/dd/yyyy}").Title("Archived Date").Width(80).Filterable(false);
+            column.Bound(p => p.BICNum).Title("BIC Number").Width(120).Filterable(false);
+        })
+    //.ClientDetailTemplateId("hcbenefittemplate")
+    .Scrollable(a => a.Enabled(true))
+    .Sortable(s => s.Enabled(true)).Filterable(f => f.Enabled(true))
+    .Resizable(resize => resize.Columns(true))
+    .Pageable(pageable => pageable
+        .Refresh(true)
+        .PageSizes(new List<object> { 5, 10, 20, 30, 50 })
+        .ButtonCount(5))
+    .DataSource(dataSource => dataSource
+        .Ajax()
+        .ServerOperation(false)
+        .Read(read => read.Action("OffenderBenefitRead", "EditOffender").Data("GetEpisodeID"))
+        .PageSize(50)
+        .Model(model =>
+        {
+            model.Id(g => g.ApplicationID);
+        })))
+                <script id="hcbenefittemplate" type="text/kendo-tmpl">
+                    @(Html.Kendo().Grid<BassWebV3.ViewModels.ApplicationReadonly>()
+   .Name("grid_#=ApplicationTypeID#")
+   .Resizable(r => r.Columns(true))
+       .Columns(columns =>
+       {
+           columns.Bound(p => p.ApplicationTypeID).Hidden();
+           columns.Group(g => g.Title("Applied/Refused")
+                  .Columns(col =>
+                  {
+                      col.Bound(cp => cp.AgreesToApply).Title("Applied").Width(60).ClientTemplate("<input type='checkbox' disabled='disabled' \\#= AgreesToApply ? checked='checked' :'' \\# />");
+                      col.Bound(cp => cp.AgreesToApply).Title("Refused").Width(60).ClientTemplate("<input type='checkbox' disabled='disabled' \\#= !AgreesToApply ? checked='checked' :'' \\# />");
+                  }));
+           columns.Bound(s => s.AppliedOrRefusedOnDate).Format("{0:MM/dd/yyyy}").Title("Applied/Refused Date").Width(100);
+           columns.Bound(s => s.OutCome).Title("Outcome").Width(100);
+           columns.Bound(s => s.OutcomeDate).Format("{0:MM/dd/yyyy}").Title("Outcome Date").Width(100);
+           columns.Bound(s => s.IssuedOnDate).Format("{0:MM/dd/yyyy}").Title("Issued Date").Format("{0:MM/dd/yyyy}").Width(100);
+           columns.Bound(p => p.PhoneInterviewDate).Format("{0:MM/dd/yyyy}").Title("Phone Interview Date").Width(100);
+           columns.Bound(p => p.ArchivedOnDate).Format("{0:MM/dd/yyyy}").Title("Archived Date").Width(100);
+           columns.Bound(s => s.BICNum).Title("BIC Number").Width(100);
+       }).DataSource(dataSource => dataSource
+                 .Ajax()
+                 .Read(read => read.Action("HierarchyBinding_Application", "EditOffender").Data("GetAppParameters('#=ApplicationTypeID#')"))
+              )
+              .Pageable(p => p.Refresh(true).PreviousNext(false).Numeric(false))
+                //.ToClientTemplate()
+                    )
+
+                </script>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $('.k-i-refresh').click(function () {
+            var ddlOffender = $("#AllSearchResults").data("kendoDropDownList");
+            var id = "0";
+            var cid = "0";
+            if (ddlOffender != null && ddlOffender != undefined)
+                id = $("#AllSearchResults").data("kendoDropDownList").value();
+
+            cid = $("#AllCounties").data("kendoDropDownList").value();
+
+            var grid = $('#gridAppSet').data('kendoGrid');
+            grid.dataSource.read({ EpisodeID: id, ApplicationTypeID: -1, CountyID: cid })
+            grid.refresh();
+      });
+</script>
+</body>
+
+</html>

@@ -1,0 +1,167 @@
+﻿@model BassWebV3.ViewModels.DocUpload
+@using Kendo.Mvc.UI;
+
+<style>
+    .k-grid-header th.k-header > .k-link {
+        min-height: 10px;
+        line-height: 10px;
+    }
+
+    .widget div {
+        padding: 1px;
+        min-height: 20px;
+    }
+
+    /*#gridupload > .k-grid-content {
+        height: 110px !important;
+    }*/
+
+    .k-grid tbody .k-button {
+        min-width: 0px;
+        width: 16px;
+        min-height: 15px;
+        height: 15px;
+    }
+
+    .k-grid td {
+        line-height: 0.8em;
+    }
+
+    .k-grid-content .k-button {
+        width: 14px;
+        height: 12px;
+        border: none;
+        min-width: 0 !important;
+        border-radius: 0;
+        display: inline-block;
+        font: normal normal normal 10px/1 FontAwesome;
+        font-size: inherit;
+        text-rendering: auto;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-indent: -10000px;
+        position: relative;
+    }
+
+        .k-grid-content .k-button::before {
+            text-indent: 0;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%,-50%);
+        }
+
+        /*.k-widget .k-upload .k-header .k-upload-empty{
+            width:95%;
+        }*/
+        .k-grid-content .k-button.k-grid-delete {
+            background: url('../../Content/themes/base/images/trash.ico') no-repeat;
+        }
+
+        /*.k-grid-content .k-button.k-grid-delete::before {
+            content: "\f1f8";
+            background-image: url('../../Content/themes/base/images/trash.ico');
+        }*/
+    /*.fillwidth { width: 90%; }*/
+
+    .k-header k-grid-toolbar k-grid-top {
+        height: 18px !important;
+    }
+</style>
+
+<script>
+
+           function insertPopupCaption(e) {
+               if (e.model.isNew()) {
+                   $('.k-window-title').text("Add New Case Note");
+               }
+           }
+           function fileDataBound(e) {
+               var grid = e.sender;
+               if (grid.dataSource.total() == 0) {
+                   var colCount = grid.columns.length;
+                   $(e.sender.wrapper)
+                       .find('tbody')
+                       .append('<tr class="kendo-data-row"><td colspan="' + colCount + '" class="no-data" style="text-align:center;">No File Uploaded Yet...</td></tr>');
+               }
+           };
+           function getDeleteTooltipContent(e) {
+               var row = e.target.closest("tr");
+               var grid = $("#gridFileUpload").getKendoGrid();
+               return "Delete ";
+           }
+           function CloseFileList(e){
+               e.preventDefault();
+
+               var upload = $("#files").data("kendoUpload");
+               upload.removeAllFiles();
+           }
+</script>
+<script type="text/javascript">
+          function onUploadSuccess() {
+                    // Force the rebinding of the Grid on successful upload
+                $("#gridFileUpload").data("kendoGrid").dataSource.read();
+          }
+          $("#clearAll").on('click', function (e) {
+              e.preventDefault();
+
+              var upload = $("#files").data("kendoUpload");
+              upload.clearAllFiles();
+          })
+</script>
+
+@(Html.Kendo().Tooltip()
+                        .For("#gridFileUpload")
+                        .Filter(".k-grid-delete")
+                        .ContentHandler("getDeleteTooltipContent")
+)
+
+<div class="divOffenderPart1tr">
+    @if (!Model.ViewOnly)
+    {
+        <div class="divOffenderPart1tb" style="width:95%">
+
+            @(Html.Kendo().Upload()
+                      .Name("files")
+                      .Async(a => a.Save("SaveUploadFile", "EditOffender", new { EpisodeId = Model.EpisodeId }).AutoUpload(true))
+                      .HtmlAttributes(new { style = "height:20px; float:left" })
+                      .Events(e => { e.Success("onUploadSuccess"); })
+                      .Validation(validation => { validation.MaxFileSize(1048576000); validation.AllowedExtensions(new string[] { ".pdf" }); })
+                      .Messages(m => m.Select("Select File..."))
+                      .Multiple(false)
+                      .ShowFileList(true)  // Hide the file list as we're displaying uploaded files in the Grid
+            )
+
+        </div>
+        <div class="divOffenderPart1tb">
+            <button id="clearAll" class="k-button" style="height:22px;">Clear</button>
+        </div>
+    }
+</div>
+@(Html.Kendo().Grid<BassIdentityManagement.Entities.UploadedFiles>()
+      .Name("gridFileUpload")
+      .Events(e => e.DataBound("fileDataBound"))
+      .Columns(columns =>
+      {
+          columns.Bound(f => f.ID).Hidden();
+          columns.Bound(f => f.UploadDate).Format("{0:MM/dd/yyyy}").Title("Upload Date").Width(90);
+          columns.Bound(f => f.FileName).ClientTemplate("<a href='" + Url.Action("Download", "EditOffender") + "/#= ID#'>#= FileName #</a>")
+                      .Title("File name").Width(140).HtmlAttributes(new { style = "white-space: normal;font-size:12px;line-height:12px!important;" });
+          columns.Bound(f => f.UploadBy).Title("Upload By").Width(100);
+          columns.Command(command => command.Destroy()).Width(30).Visible(!Model.ViewOnly);
+      })
+       .Sortable(sortable => sortable.AllowUnsort(true))
+        //.Scrollable(a => a.Height(160))
+        .Navigatable()
+        .HtmlAttributes(new { style = "height:180px;" })
+        .DataSource(dataSource => dataSource
+          .Ajax()
+          .Model(m => m.Id(f => f.ID))
+          .Read(read => read.Action("FilesRead", "EditOffender", new { EpisodeId = Model.EpisodeId }))
+          .Destroy(update => update.Action("FilesDestroy", "EditOffender"))
+      )
+)
+
+
+
+

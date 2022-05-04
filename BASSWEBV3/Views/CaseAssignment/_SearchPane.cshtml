@@ -1,0 +1,99 @@
+﻿@model BassWebV3.ViewModels.SearchPane
+@using Kendo.Mvc.UI
+
+@using (Html.BeginForm("Search", "CaseAssignment", FormMethod.Post, new { @id = "searchForm" }))
+{
+    <div class="parent-flex">
+      <div class="flex-item-b">
+       <div class="divOffenderPart1tab">
+        <div class="divOffenderPart1tr">Institution</div>
+        <div class="divOffenderPart1tr">
+            <div class="divOffenderPart1tb">Custody Facility</div>
+            <div class="divOffenderPart1tb">
+                @(Html.Kendo().DropDownListFor(m => m.SelectedFacilityID).BindTo(Model.AllFacilities)
+                        .DataTextField("NameWithCode")
+                        .DataValueField("FacilityID")
+                        .Value(Model.SelectedFacilityID.HasValue ? Model.SelectedFacilityID.ToString() : ""))
+            </div>
+            <div class="divOffenderPart1tr">
+                <div class="divOffenderPart1tb">Release Period</div>
+                <div class="divOffenderPart1tb">
+                    @(Html.Kendo().DropDownListFor(m => m.SelectedReleasePeriod)
+                       .Name("ReleasePeriod")
+                       .DataTextField("ReleasePeriod")
+                       .DataValueField("ReleasePeriodID").BindTo(Model.AllReleasePeriods))
+                </div>
+            </div>
+            <div class="divOffenderPart1tr">
+                <div class="divOffenderPart1tab">
+                    <div class="divOffenderPart1tr">
+                        <div class="divOffenderPart1tb">From&nbsp;</div>
+                        <div class="divOffenderPart1tb">@Html.TextBoxFor(m => m.FromDate, "{0:MM/dd/yyyy}", new { @size = "10", @maxlength = "10", @class = "datepicker-any" })</div>
+                        <div class="divOffenderPart1tb">To&nbsp;</div>
+                        <div class="divOffenderPart1tb">@Html.TextBoxFor(m => m.ToDate, "{0:MM/dd/yyyy}", new { @size = "10", @maxlength = "10", @class = "datepicker-any" })</div>
+                        <div class="divOffenderPart1tb">@Html.CheckBoxFor(m => m.IncludeLifers)Include Lifers</div>
+                        <div class="divOffenderPart1tb"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="divOffenderPart1tr">
+                <div class="divOffenderPart1tab">
+                    <div class="divOffenderPart1tr"></div>
+                </div>
+            </div>
+            <div class="divOffenderPart1tr">
+                <div class="divOffenderPart1tab">Last Name/CDCR #</div>   
+                <div class="divOffenderPart1tab">
+                    @(Html.Kendo().TextBoxFor(m => m.SearchString).HtmlAttributes(new { @placeholder = "Enter search criteria..." }))
+                    <button type="submit" class="halfwidth">Search&nbsp;Cases&nbsp;&#8680;</button>
+                </div>
+            </div>
+        </div>
+        </div>
+      </div>
+        <div class="flex-item-m">
+            <div class="divOffenderPart1tab">
+                <div class="divOffenderPart1tr">Limit by referral qualifier? (if none selected, all results will be included)</div>
+                <div class="divOffenderPart1tr">
+                    <div class="divOffenderPart1tbh" id="qualifiersTable">
+                        <div class="divOffenderPart1tr">
+                            <div>@Html.CheckBoxFor(m => m.NoQualifiers)No Qualifiers (GP)</div>
+                            <div>@Html.CheckBoxFor(m => m.LongTermMedCare)Long-Term Medical Care</div>
+                            <div>@Html.CheckBoxFor(m => m.Hospice)Hospice</div>
+                        </div>
+                        <div class="divOffenderPart1tr">
+                            <div>@Html.CheckBoxFor(m => m.AssistedLiving)Assisted Living</div>
+                            <div>@Html.CheckBoxFor(m => m.HIVPos)HIV Positive</div>
+                            <div>@Html.CheckBoxFor(m => m.ChronicIllness)Chronic Illness</div>
+                        </div>
+                        <div class="divOffenderPart1tr">
+                            <div>@Html.CheckBoxFor(m => m.EOP)EOP (Severely Mentally Ill)</div>
+                            <div>@Html.CheckBoxFor(m => m.PhysDisabled)Physically Disabled</div>
+                            <div>@Html.CheckBoxFor(m => m.DevDisabled)Developmentally Disabled</div>
+                        </div>
+                        <div class="divOffenderPart1tr">
+                            <div>@Html.CheckBoxFor(m => m.CCCMS)CCCMS (Mentally Ill)</div>
+                            <div>@Html.CheckBoxFor(m => m.Elderly)Elderly (Age 65+)</div>
+                            <div>@Html.CheckBoxFor(m => m.USVet)US Veteran</div>
+                        </div>
+                        <div class="divOffenderPart1tr">
+                            <div>@Html.CheckBoxFor(m => m.DSH)DSH</div>
+                            <div></div>
+                            <div><button id="selectNone" type="button" class="halfwidth">Select None</button></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="divOffenderPart1tr">
+                    <div class="row">
+                        <div class="cell halfwidth topbottompadded">
+                            <button id="selectNone" type="button" class="halfwidth">Select None</button>@*<button id="selectAll" type="button" class="halfwidth">Select All</button>*@
+                        </div>
+                        <div class="cell alignright topbottompadded">
+                            <button type="submit" class="halfwidth">Search&nbsp;Cases&nbsp;&#8680;</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

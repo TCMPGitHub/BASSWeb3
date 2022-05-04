@@ -1,0 +1,173 @@
+﻿@model BassWebV3.ViewModels.CaseNoteFiles
+@using Kendo.Mvc.UI;
+@Html.HiddenFor(m => m.EpisodeID, new { id = "hdCFHEpisodeID" })
+<div>
+    <style>
+        .deleted {
+            background: red;
+        }
+    </style>
+    <script>
+        function insertPopupCaption(e) {
+            if (e.model.isNew()) {
+                e.container.kendoWindow("title", "Add New Case Note");
+            }
+        }
+        function gridDataBound(e) {
+            var grid = e.sender;
+            if (grid.dataSource.total() == 0) {
+                var colCount = grid.columns.length;
+                $(e.sender.wrapper)
+                    .find('tbody')
+                    .append('<tr class="kendo-data-row"><td colspan="' + colCount + '" class="no-data" style="text-align:center;">No Case Note Yet...</td></tr>');
+            }
+            else {
+                var items = grid.items();
+                items.each(function (index) {
+                    var dataItem = grid.dataItem(this);
+                    if (dataItem.ActionStatus == 10) {
+                        this.className += " deleted";
+                    }
+                })
+            }
+        }
+
+        function typeFilter(element) {
+            element.kendoDropDownList({
+                dataSource: {
+                    transport: {
+                        read: {
+                            url: "@Url.Action("FilterCaseNoteType_read", "EditOffender")",
+                            data: { EpisodeID: $("#hdCFHEpisodeID").val() }
+                        },
+                    }
+                },
+                optionLabel: "--Select Type--"
+            });
+        }
+        function reasonFilter(element) {
+            element.kendoDropDownList({
+                dataSource: {
+                    transport: {
+                        read: {
+                            url: "@Url.Action("FilterCaseNoteTypeReason_read", "EditOffender")",
+                            data: { EpisodeID: $("#hdCFHEpisodeID").val() }
+                    },
+                }
+            },
+                optionLabel: "--Select Type--"
+        });
+        }
+        function RefreshGrid(e) {
+            if (e.type == "create" || e.type == "update") {
+                var grid = $("#gridCaseNoteHis").data("kendoGrid");
+                grid.dataSource.read({ EpisodeID: $("#hdCFHEpisodeID").val() });
+            }
+        }
+        function getEditTooltipContent(e) {
+            var row = e.target.closest("tr");
+            var grid = $("#gridCaseNoteHis").getKendoGrid();
+            return "Edit ";
+        }
+        function getDeleteTooltipContent(e) {
+            var row = e.target.closest("tr");
+            var grid = $("#gridCaseNoteHis").getKendoGrid();
+            return "Delete ";
+        }
+        function NoteCanEdit(dataItem) {
+            return (dataItem.NoteCanEdit && dataItem.ActionStatus != 10);
+        }
+    </script>
+    @(Html.Kendo().Tooltip()
+                    .For("#gridCaseNoteHis")
+                    .Filter(".k-grid-edit")
+                    .ContentHandler("getEditTooltipContent")
+    )
+
+    @(Html.Kendo().Tooltip()
+                    .For("#gridCaseNoteHis")
+                    .Filter(".k-grid-delete")
+                    .ContentHandler("getDeleteTooltipContent")
+    )
+   
+    @(Html.Kendo().Grid<BassIdentityManagement.Entities.CaseNoteData>
+        ()
+        .Name("gridCaseNoteHis")
+        //.HtmlAttributes(new { style = "height:85vh;" })
+        .Scrollable(s => s.Height("74vh"))
+        .Selectable()
+        .Events(e => { e.DataBound("gridDataBound"); e.Edit("insertPopupCaption"); })
+        .ToolBar(toolbar => { toolbar.Create().Text("Add New Note"); })
+        .ClientDetailTemplateId("notetemplate")
+        @*.ToolBar(toolbar => toolbar.Excel().Text("Export To Excel")).Excel(exl => exl.FileName("CaseNote.xlsx").Filterable(true).AllPages(true))*@
+        .Editable(editable => editable.Mode(GridEditMode.PopUp).TemplateName("_NewNote").Window(w => w.Title("Edit Case Note").Width(700).Height(250)))
+        .Sortable(sortable => sortable.AllowUnsort(true))
+        .Filterable(filterable => filterable
+        .Extra(false)
+        .Operators(operators =>
+        {
+            operators
+            .ForString(str => str.Clear()
+            .StartsWith("Starts with")
+            .IsEqualTo("Is equal to")
+            );
+        })
+        )
+        .Navigatable()
+        .Columns(columns =>
+        {
+            columns.Bound(o => o.CaseNoteID).Hidden();
+            columns.Bound(o => o.UserID).Hidden();
+            columns.Bound(o => o.CaseNoteTypeID).Hidden();
+            columns.Bound(o => o.CaseNoteTraceID).Hidden();
+            columns.Bound(o => o.CaseNoteTypeReasonID).Hidden();
+            columns.Bound(f => f.EventDate).Title("Date").Format("{0:MM/dd/yyyy}").Width(60);
+            columns.Bound(f => f.CaseNoteType).Title("Type").Width(90).Filterable(fs => fs.UI("typeFilter"));
+            columns.Bound(f => f.CaseNoteTypeReason).Title("Reason").Width(100).Filterable(fs => fs.UI("reasonFilter"));
+            columns.Bound(f => f.Text).Width(200).ClientTemplate("<textarea class='textareaforcasemanngement'  readonly='readonly' style='width:100%'>#= Text#</textarea>").Title("Note"); ;
+            columns.Bound(f => f.CreatedBy).Title("Creator").Width(100);
+            columns.Bound(f => f.CreateDate).Title("Creat Date").Format("{0:MM/dd/yyyy hh:mm tt}").Width(100);
+            columns.Command(command => { command.Edit().Text(" ").Visible("NoteCanEdit"); command.Destroy().Text(" ").Visible("NoteCanEdit"); }).Width(45);
+        })
+        .Pageable()
+        .DataSource(ds => ds.Ajax()
+            .Batch(true)
+            .ServerOperation(false)          
+            .PageSize(100)
+            .Events(e => { e.RequestEnd("RefreshGrid"); })
+            .Model(m =>
+            {
+                m.Id(f => f.CaseNoteID);
+                m.Field(f => f.CaseNoteTraceID).Editable(false);
+                m.Field(f => f.CaseNoteTypeID);
+                m.Field(f => f.CaseNoteTypeReasonID).DefaultValue(null);
+                m.Field(f => f.Text).DefaultValue("");
+                m.Field(f => f.EventDate).DefaultValue(DateTime.Now);
+            })
+            .Read(r => r.Action("CaseNoteHisRead", "EditOffender", new { EpisodeId = Model.EpisodeID }))
+            .Create(c => c.Action("CaseNoteCreate", "EditOffender", new { EpisodeId = Model.EpisodeID }))
+            .Destroy(d => d.Action("CaseNoteDelete", "EditOffender", new { EpisodeId = Model.EpisodeID }))
+            .Update(u => u.Action("CaseNoteUpdate", "EditOffender", new { EpisodeId = Model.EpisodeID }))))
+
+    <script id="notetemplate" type="text/kendo-tmpl">
+        @(Html.Kendo().Grid<BassIdentityManagement.Entities.CaseNoteData>()
+            .Name("grid_#=CaseNoteTraceID#") // template expression, to be evaluated in the master context
+            .Columns(columns =>
+            {
+                columns.Bound(o => o.EventDate).Format("{0:MM/dd/yyyy}").Title("Entered Date").Width(80);
+                columns.Bound(o => o.CaseNoteType).Width(100);
+                columns.Bound(o => o.CaseNoteTypeReason).Width(160);
+                columns.Bound(o => o.Text).ClientTemplate("<textarea class='textareaforcasemanngement'  readonly='readonly' style='width:100%'>\\#= Text \\#</textarea>").Title("Note");
+                columns.Bound(o => o.CreatedBy).Width(140).Title("Entered By");
+            })
+            .DataSource(dataSource => dataSource
+                .Ajax()
+                .PageSize(5)
+                .Read(read => read.Action("HierarchyBinding_Note", "EditOffender", new { EpisodeID = Model.EpisodeID, CaseNoteTraceId = "#=CaseNoteTraceID#" }))
+            )
+            .Pageable()
+            .Sortable()
+            .ToClientTemplate()
+        )
+    </script>
+</div>

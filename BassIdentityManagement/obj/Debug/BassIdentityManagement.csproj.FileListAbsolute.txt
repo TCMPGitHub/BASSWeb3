@@ -27,6 +27,6 @@ C:\TCMPGitHub\BASSWeb3\BassIdentityManagement\bin\Debug\System.Security.Claims.d
 C:\TCMPGitHub\BASSWeb3\BassIdentityManagement\bin\Debug\Antlr3.Runtime.xml
 C:\TCMPGitHub\BASSWeb3\BassIdentityManagement\bin\Debug\Dapper.xml
 C:\TCMPGitHub\BASSWeb3\BassIdentityManagement\bin\Debug\Microsoft.AspNet.Identity.Core.xml
-C:\TCMPGitHub\BASSWeb3\BassIdentityManagement\obj\Debug\BassIdentityManagement.csprojResolveAssemblyReference.cache
 C:\TCMPGitHub\BASSWeb3\BassIdentityManagement\obj\Debug\BassIdentityManagement.dll
 C:\TCMPGitHub\BASSWeb3\BassIdentityManagement\obj\Debug\BassIdentityManagement.pdb
+C:\TCMPGitHub\BASSWeb3\BassIdentityManagement\obj\Debug\BassIdentityManagement.csprojResolveAssemblyReference.cache

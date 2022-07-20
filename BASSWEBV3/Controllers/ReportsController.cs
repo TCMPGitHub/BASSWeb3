@@ -910,7 +910,7 @@ namespace BassWebV3.Controllers
         {
             string query = @"SELECT UserID, (LastName + ', ' + FirstName + ' ' + ISNULL(MiddleName, ''))BenefitWorkerName FROM dbo.[User]
                           WHERE IsBenefitWorker = 1 AND IsActive = 1";
-            var result = SqlHelper.ExecuteCommands<AssignmentUserList>(query);
+            var result = SqlHelper.ExecuteCommands<AssignmentUserList>(query, 1);
             return Json(result, JsonRequestBehavior.AllowGet);
         }
         private void ChangeCellStyle(ExportCellStyle e)
@@ -997,7 +997,7 @@ namespace BassWebV3.Controllers
         public ActionResult FilterInmatesDetailsFa_read()
         {
             var query = @"SELECT FacilityID, (OrgCommonID + '-' + Name)NameWithCode, Abbr FROM dbo.Facility WHERE ISNULL(Disabled, 0) = 0";
-            var result = SqlHelper.ExecuteCommands<Facility>(query);
+            var result = SqlHelper.ExecuteCommands<Facility>(query, 1);
             return Json(result, JsonRequestBehavior.AllowGet);
         }
         private List<InmatesReleaseDetailsReportData> GetInmatesDetailsReport(DateTime StartDate, DateTime EndDate, int Details)

@@ -166,6 +166,8 @@
                             function  ReloadOffenderData(){
                                 $.when(showLoadWindow("\r\nLoading page...", 0)).then(function () {
                                     kendo.ui.progress($('#loadWindow'), true);
+                                    if($('#loadWindow').data('kendoWindow') !== undefined)                                                       
+                                        $('#loadWindow').data('kendoWindow').close();
                                     //$('#popupWindow .confirm_no').trigger('click');
                                 });
                                 $("#hdInmateEpisodeID").val($("#RefEpisode").val());
@@ -495,17 +497,16 @@
                             .HtmlAttributes(new { style = "height:22px!important;width:115px!important;" }))
             </div>
                 <div class="divOffenderPart1tb" style="width:300px;"><span style="width:150px;"></span><b>Release&nbsp;Date&nbsp;Changes</b></div>
-                <div class="divOffenderPart1tb" style="height:22px!important;">
-    @(Html.Kendo().Grid<BassWebV3.DataAccess.BassConstants.ReleaseDateChanges>()
+                <div class="divOffenderPart1tb" style="height:22px!important;background-color:white;">
+    @(Html.Kendo().Grid(Model.SomsReleaseDates)
                           .Name("SomsReleaseDates")
-                          .HtmlAttributes(new { style = "max-height:150px;disabled:true;border: 1px solid #e7e7e7;" })
+                          .HtmlAttributes(new { style = "max-height:150px;disabled:true;border: 1px solid #e7e7e7;background-color:white;" })
                           .Selectable(s => s.Enabled(true))
                           .Columns(columns =>
                           {
                               columns.Bound(o => o.FileDate).Title("Date Changed").Format("{0:MM/dd/yyyy}").Width(90);
                               columns.Bound(o => o.ScheduledReleaseDate).Title("Release Date").Format("{0:MM/dd/yyyy}").Width(90);
-                          })
-                          .DataSource(dataSource => dataSource.Ajax().Read(r => r.Action("GetReleaseDateChangs", "EditOffender", new { CDCNo = Model.Inmate.CDCRNum }))
+                          }).DataSource(dataSource => dataSource.Ajax().Read(r => r.Action("GetReleaseDateChangs", "EditOffender", new { EpisodeID = Model.Inmate.EpisodeID }))
                                                    ))
     @*@(Html.Kendo().ListBox()
         .Name("optional").HtmlAttributes(new { style = "max-height:80px;disabled:true;line-height:18px;width:180px;" })

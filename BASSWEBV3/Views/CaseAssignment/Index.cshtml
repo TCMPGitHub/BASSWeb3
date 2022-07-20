@@ -226,13 +226,15 @@
         </div>
      </div>
     <script>
+        $("#gridCaseAssigned").click(function (e) {
+            MakeButtonDisplay();
+        })
         function error_handler(e) {
             if(e.status == "error"){
                 var message = e.xhr.responseText;
                 alert(message);
             }
         }
-
         function GetSearchString() {
            // <Facility>|<CDCRORLast>|<qualifier>|<lifer>
             var lastorcdcr = $("#SearchString").val().toUpperCase();
@@ -385,7 +387,7 @@
                 var name  = $("#AllBWUsers").data("kendoDropDownList").text()
                 var benefitworkerID =$("#AllBWUsers").val();
                 for (var i = 0 ; i < selectedElements.length; i++) {
-                    if(grid.dataItem(selectedElements[i]).BenefitWorkerName === name)
+                    if(grid.dataItem(selectedElements[i]).BenefitWorkerName === name.trim())
                         arrayOfEpisoddeID.push(grid.dataItem(selectedElements[i]).EpisodeID);
                 }
             }
@@ -399,7 +401,24 @@
             $("#unAssignButton").css("display", "none");
             return true;
         }
+        function UnAssignCase(e) {
+            var arrayOfEpisoddeID = [];
+            var selectedElements = this.dataItem($(e.currentTarget).closest("tr"));
 
+            var name = selectedElements.BenefitWorkerName;
+            var benefitworkerID = selectedElements.BenefitWorkerID;
+            arrayOfEpisoddeID.push(selectedElements.EpisodeID);
+            if (!confirm("Are you sure you want to unassign " + selectedElements.CDCRNum + " which was assigned to " + name + "?"))
+                return;
+            $.post('/CaseAssignment/UpdateGridData', $.param({ "ArrayOfEpisoddeID": arrayOfEpisoddeID, "BenifitWorkerID": benefitworkerID }, true), function (data) {
+                $('#gridCaseAssigned').data('kendoGrid').dataSource.read();
+                alert("Case(s) unassigned successfully!")
+                $("#assignButton").css("display", "none");
+                $("#unAssignButton").css("display", "none");
+            });
+
+            return true;
+        }
         function MakeButtonDisplay(e) {
             $("#assignButton").css("display", "none");
             $("#unAssignButton").css("display", "none");
@@ -411,14 +430,18 @@
                 if(selectedElements.length > 0){
                     var name  = $("#AllBWUsers").data("kendoDropDownList").text();
                     for (var i = 0 ; i < selectedElements.length; i++) {
-                        if(grid.dataItem(selectedElements[i]).BenefitWorkerName === name){
+                        if (grid.dataItem(selectedElements[i]).BenefitWorkerName === "") {
+                            isAssign = true;
+                            continue;
+                        }
+                        if(grid.dataItem(selectedElements[i]).BenefitWorkerName !== ""){
                             isUnassign = true;
                             continue;
                         }
-                        if(grid.dataItem(selectedElements[i]).BenefitWorkerName === ""){
-                           isAssign = true;
-                            continue;
-                       }
+                       // if(grid.dataItem(selectedElements[i]).BenefitWorkerName === ""){
+                       //    isAssign = true;
+                       //     continue;
+                       //}
                     }
 
                 }
@@ -431,6 +454,9 @@
             var gridData = grid.dataSource.view();
             for (var i = 0; i < gridData.length; i++) {
                 var currentUid = gridData[i].uid;
+                if (gridData[i].RedFlag == "1") {
+                    $('tr[data-uid="' + currentUid + '"]').css("background-color", "red");
+                }
                 if (gridData[i].BenefitWorkerName == undefined || gridData[i].BenefitWorkerName =='') {
                     var currenRow = grid.table.find("tr[data-uid='" + currentUid + "']");
                     var editButton = $(currenRow).find(".k-grid-delete");
@@ -477,25 +503,38 @@
         {
             $("#CDCRNum").attr("readonly", true);
         }
-
-        function EnableAssignButton(e){
+        function EnableAssignButton(e) {
             var sel = this.select().length;
             var dropDown = $("#AllBWUsers").data("kendoDropDownList");
-            if(sel > 0){
-                var len = dropDown.dataSource.data().length;
-                if (len < 2) {
-                    dropDown.select(1);
+            var len = dropDown.dataSource.data().length;
+            if (len < 2) {
+                dropDown.select(1);
+            }
+            if(sel == 0) {
+                $("#assignButton").css("display", "none");
+                $("#unAssignButton").css("display", "none");
+            }
+            else if(sel ==1)
+            {            
+                var row = this.dataItem(this.select());
+                if (row.BenefitWorkerName.length > 0)
+                {
+                    alert("The selected case was assigned.");
+                    $("#assignButton").css("display", "none");
+                    $("#unAssignButton").css("display", "");
+                    return;
+                }
+                else{
                     $("#assignButton").css("display", "");
                     $("#unAssignButton").css("display", "none");
                 }
-                else{
-                    MakeButtonDisplay();
-               }
             }
             else{
-                $("#assignButton").css("display", "none");
-                $("#unAssignButton").css("display", "none");
-                dropDown.select(0);
+                MakeButtonDisplay();
+            //else{
+            //    $("#assignButton").css("display", "none");
+            //    $("#unAssignButton").css("display", "none");
+            //    dropDown.select(0);
             }
         }
         function DDLDataBound(e){
@@ -596,6 +635,9 @@
             var options = GetSearchString();
             return encodeURIComponent(JSON.stringify(options));
         }
+        function editVisible(dataItem) {
+            return dataItem.BenefitWorkerName.length > 0;
+        }
         function showLoading() {
             var grid = $("#gridCaseAssigned").getKendoGrid();
             kendo.ui.progress(grid, true);
@@ -664,6 +706,7 @@ toolbar.Template(@<text>
 .Columns(column =>
 {
     column.Bound(m => m.EpisodeID).Hidden(true);
+    column.Bound(m => m.BenefitWorkerID).Hidden(true);
     column.Bound(m => m.HighestCasePriority).Title("Qualifier").Width(60).ClientTemplate("#= checkData(HighestCasePriority) #").Filterable(fs => fs.Multi(true).BindTo(
         new[] { new { HighestCasePriority = 1 },
                 new { HighestCasePriority = 2 },
@@ -674,7 +717,7 @@ toolbar.Template(@<text>
                 new { HighestCasePriority = 7 },
                 new { HighestCasePriority = 8 },
                 new { HighestCasePriority = 9 }}));
-    column.Bound(m => m.CDCRNum).Width(60).Title("CDCR#").Filterable(false);
+    column.Bound(m => m.CDCRNum).Width(60).Title("CDCR#").ClientTemplate("#=CDCRNum#<span id='temp' style='float: right;' onclick='test()'></span>").Filterable(false);
     column.Bound(m => m.OffenderName).Width(120).Title("Offender Name");
     column.Bound(m => m.FacilityName).Width(40).Title("Facility Name").Filterable(f => f.Multi(true).DataSource(ds => ds.Read(r => r.Action("FilterInmatesDetailsFa_read", "Reports"))));
     column.Bound(m => m.ReleaseDate).Format("{0:MM/dd/yyyy}").Width(60).Title("Release Date");
@@ -689,7 +732,7 @@ toolbar.Template(@<text>
     column.Bound(m => m.USVet).Title("US Vet").ClientTemplate("<input type='checkbox' disabled='disabled' #= USVet ? checked='checked' : '' #></input>").Width(40).Filterable(false);
     column.Bound(m => m.Lifer).Title("Lifer").ClientTemplate("<input type='checkbox' disabled='disabled'  #= Lifer ? checked='checked' : '' #></input>").Width(40).Filterable(false);
     column.Bound(m => m.BenefitWorkerName).Title("Assigned To").Width(100).Visible(!Model.IncludeActiveOnly).Filterable(f => f.Multi(true).DataSource(ds => ds.Read(r => r.Action("FilterBW_read", "CaseAssignment"))).Search(true));
-    column.Command(command => { command.Destroy().Text("Unassign"); }).Width(80).Visible(!Model.IncludeActiveOnly).HtmlAttributes(new { style = "line-height:22px!important;"});
+    column.Command(command => { command.Custom("Unassign").Click("UnAssignCase").Visible("editVisible"); }).Width(80).Visible(!Model.IncludeActiveOnly);
 })
 .DataSource(ds => ds.Ajax()
         //.AutoSync(true)

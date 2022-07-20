@@ -76,10 +76,6 @@ namespace BassWebV3.DataAccess
                 return appName + " (" + appVersion + ") - " + appCopyRight;
             }
         }
-        public class ReleaseDateChanges
-        {
-            public DateTime FileDate { get; set; }
-            public DateTime? ScheduledReleaseDate { get; set; }
-        }
+        
     }
 }

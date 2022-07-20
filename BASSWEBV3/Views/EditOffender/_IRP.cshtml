@@ -123,8 +123,8 @@
                                         DisableInputFields("#irpform :input", edit);
                                         var id = (object == undefined || object.IRPID == "") ? 0 : object.IRPID;
                                         $.ajax({
-                                            url: "@Url.Action("GetPATSIRP", "EditOffender")",
-                                            data: { CDCRNum: cdcr, IRPID: id },
+                                            url: "@Url.Action("GetIRP", "EditOffender")",
+                                            data: { CDCRNum: cdcr, EpisodeID:0, IRPID: id },
                                           cache: false,
                                            type: "POST",
                                        dataType: "html",

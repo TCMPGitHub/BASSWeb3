@@ -184,10 +184,11 @@ public static class SqlHelper
             }
             return recordList;
         }
-        public static List<object> GetMultiRecordsets<T>(string spName, List<ParameterInfo> parameters, List<string> ObjectSets)
+        public static List<object> GetMultiRecordsets<T>(string spName, List<ParameterInfo> parameters, List<string> ObjectSets, int dbc)
         {
             List<object> recordList = new List<object>();
-            using (SqlConnection objConnection = new SqlConnection(Utils.ConnectionString()))
+            var ut = new Utils(dbc);
+            using (SqlConnection objConnection = new SqlConnection(ut.ConnectString))
             {
                 objConnection.Open();
                 DynamicParameters p = null;
@@ -232,6 +233,30 @@ public static class SqlHelper
                                         recordList.Add(set.FirstOrDefault());
                                         break;
                                     }
+                                case "BHRIRP":
+                                    {
+                                        var set = multipleResults.Read<BHRIRPData>();
+                                        recordList.Add(set.FirstOrDefault());
+                                        break;
+                                    }
+                                case "IdentifiedBarriersToIntervention":
+                                    {
+                                        var set = multipleResults.Read<IdentifiedBarriersToIntervention>();
+                                        recordList.Add(set.ToList());
+                                        break;
+                                    }
+                                case "BarrierFrequency":
+                                    {
+                                        var set = multipleResults.Read<BarrierFrequency>();
+                                        recordList.Add(set.ToList());
+                                        break;
+                                    }
+                                case "BHRIRPAdditionInfo":
+                                    {
+                                        var set = multipleResults.Read<BHRIRPAdditionInfo>();
+                                        recordList.Add(set.FirstOrDefault());
+                                        break;
+                                    }
                             }
                         }
                     }
@@ -273,7 +298,7 @@ public static class SqlHelper
                         {
                             if (i == 0)
                             {
-                                recordList.Add((dynamic)multipleResults.Read<IRPSet>());
+                                recordList.Add((dynamic)multipleResults.Read<BHRIRPData>());
                             }
                             else
                             {                 
@@ -405,12 +430,12 @@ public static class SqlHelper
                                         recordList.Add(set);
                                         break;
                                     }
-                                case "SomsReleaseDates":
-                                    {
-                                        var set = multipleResults.Read<string>();
-                                        recordList.Add(set);
-                                        break;
-                                    }
+                                //case "SomsReleaseDates":
+                                //    {
+                                //        var set = multipleResults.Read<ReleaseDateChanged>();
+                                //        recordList.Add(set.ToList());
+                                //        break;
+                                //    }
                             }
                         }
                     }
@@ -525,10 +550,11 @@ public static class SqlHelper
             }
             return success;
         }
-        public static int ExecuteQueryWithReturnValue(string SqlQery)
+        public static int ExecuteQueryWithReturnValue(string SqlQery, int dbc)
         {
             int newId = 0;
-            using (SqlConnection objConnection = new SqlConnection(Utils.ConnectionString()))
+            var ut = new Utils(dbc);
+            using (SqlConnection objConnection = new SqlConnection(ut.ConnectString))
             {
                 try
                 {
@@ -550,10 +576,11 @@ public static class SqlHelper
             }
             return newId;
         }
-        public static int ExecuteCommand(string query)
+        public static int ExecuteCommand(string query, int dbc)
         {
             int success = 0;
-            using (SqlConnection objConnection = new SqlConnection(Utils.ConnectionString()))
+            Utils ut = new Utils(dbc); 
+            using (SqlConnection objConnection = new SqlConnection(ut.ConnectString))
             {
                 try
                 {
@@ -600,10 +627,11 @@ public static class SqlHelper
             }
             return success;
         }
-        public static List<T> ExecuteCommands<T>(string query)
+        public static List<T> ExecuteCommands<T>(string query, int dbc)
         {
             List<T> recordList = new List<T>();
-            using (SqlConnection objConnection = new SqlConnection(Utils.ConnectionString()))
+            Utils ut = new Utils(dbc);
+            using (SqlConnection objConnection = new SqlConnection(ut.ConnectString))
             {
                 try
                 {

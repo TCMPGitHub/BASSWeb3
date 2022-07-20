@@ -166,7 +166,7 @@ namespace BASSWEBV3.Controllers
                 }
                 else
                 {
-                    var id = BassIdentityManagement.Data.SqlHelper.ExecuteQueryWithReturnValue(string.Format("SELECT UserID FROM dbo.[User] WHERE UserName='{0}'", HttpContext.Application["LoginUserName"]));
+                    var id = BassIdentityManagement.Data.SqlHelper.ExecuteQueryWithReturnValue(string.Format("SELECT UserID FROM dbo.[User] WHERE UserName='{0}'", HttpContext.Application["LoginUserName"]),1);
                     UserController.RecordPageLoad(id, RouteData.Values["controller"].ToString(),
                     RouteData.Values["action"].ToString(), HttpContext.Request.HttpMethod, IpAddress);
                 }

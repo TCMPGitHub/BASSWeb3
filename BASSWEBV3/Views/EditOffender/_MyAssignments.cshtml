@@ -75,7 +75,9 @@
     .warncolor{
         background-color:#ff9966;
     }
-    
+    .yellowcolor{
+        background-color:yellow;
+    }
 </style>
 
 <script type="text/javascript">
@@ -118,9 +120,10 @@
                 if (row.RedFlag == '1') {
                     $('tr[data-uid="' + row.uid + '"]').css("background-color", "red");
                 }
-                else if (row.RedFlag == '2') {
+                else if (row.RedFlag == '2')
                     $('tr[data-uid="' + row.uid + '"]').css("background-color", "#ff9966");
-                }
+                else if (row.RedFlag == '3')
+                    $('tr[data-uid="' + row.uid + '"]').css("background-color", "yellow");
             });
     }
     function NavClientLink(CDCRNums) {
@@ -206,13 +209,15 @@
       )
 )
 <table style="border-style:none;height:15px!important;font-size:11px;padding:0;">
-    <tr style="height:15px!important;border-style:none;">
+    <tr style="height:10px!important;border-style:none;">
         <td style="height:8px!important;border-style:none;"><span class="dot redcolor"></span></td>
-        <td style="height:8px!important;border-style:none;width:220px!important;"><span style="color:white;">Inmate has application older than 120 days.</span></td>
+        <td style="height:8px!important;border-style:none;width:200px!important;"><span style="color:white;">Less than 95 days from import date.</span></td>
         <td style="height:8px!important;border-style:none;"><span class="dot greencolor"></span></td>
-        <td style="height:8px!important;border-style:none;width:250px!important;"><span style="color:white;">Inmate data in BASS is different than in SOMs.</span></td>
+        <td style="height:8px!important;border-style:none;width:220px!important;"><span style="color:white;">Data in BASS is different than in SOMs.</span></td>
         <td style="height:8px!important;border-style:none;"><span class="dot warncolor"></span></td>
-        <td style="height:8px!important;border-style:none;"><span style="color:white;">Inmate has no application.</span></td>
+        <td style="height:8px!important;border-style:none;width:160px!important;"><span style="color:white;">Inmate has no application.</span></td>
+        <td style="height:8px!important;border-style:none;"><span class="dot yellowcolor"></span></td>
+        <td style="height:8px!important;border-style:none;width:220px!important;"><span style="color:white;">Inmate has application older than 120 days.</span></td>
     </tr>
 </table>
 

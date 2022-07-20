@@ -128,6 +128,10 @@ namespace BassIdentityManagement.Entities
         public DateTime? DOB { get; set; }
         public string MhStatus { get; set; }
         public string PrintDate { get; set; }
-
+    }
+    public class ReleaseDateChanged
+    {
+        public DateTime FileDate { get; set; }
+        public DateTime? ScheduledReleaseDate { get; set; }
     }
 }

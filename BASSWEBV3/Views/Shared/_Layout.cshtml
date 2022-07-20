@@ -79,10 +79,7 @@
                 <header style="height:30px;">
                     @using (Html.BeginForm("Logout", "BassAccount", FormMethod.Post, new { @id = "logoutForm" }))
                     { @Html.AntiForgeryToken() }
-                    @*@if (ViewBag.ControllerID == @BassConstants.ControllerID.EditOffender)
-                        {*@
-                                <div id="loadingDialog" class="hidden ui-dialog" title="Loading ... please wait"></div>
-                            @*}*@
+                    <div id="loadingDialog" class="hidden ui-dialog" title="Loading ... please wait"></div>
                     <div class="editHeaderItem">
                         <div class="editHeaderItem1">
                             @if (ViewBag.IsAppViewOnly == false)
@@ -108,9 +105,9 @@
                         }
                         </div>
                         <div class="editHeaderItem2">
-                            <span id="loading" class="hidden greentext"><strong>[Loading]</strong>&nbsp;&nbsp;</span>Logged in as <strong>@ViewBag.CurrentUser.UserName</strong>&nbsp;&nbsp;
+                            <span id="loading" class="hidden waitingtext"><strong>[Loading]</strong>&nbsp;&nbsp;</span><span style="color:greenyellow">Logged in as </span><span style="color:green;"><strong>@ViewBag.CurrentUser.UserName</strong></span>&nbsp;&nbsp;
                             @(Html.Kendo().Button().Name("logoutButton").Content("Logout")@*.Icon("logout")*@.Events(e => e.Click("Logout"))
-                                  .HtmlAttributes(new { style = "width:60px;height:22px;/*background-color:darkblue;color:white;*/" }))
+                                  .HtmlAttributes(new { style = "width:60px;height:22px;background-color:darkblue;color:white;" }))
                           </div>
                     </div>
                 </header>

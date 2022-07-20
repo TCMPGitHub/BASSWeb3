@@ -214,6 +214,7 @@
     <Compile Include="ViewModels\ApplicationReadonly.cs" />
     <Compile Include="ViewModels\Applications.cs" />
     <Compile Include="ViewModels\AssignmentPane.cs" />
+    <Compile Include="ViewModels\BHRIRPViewModel.cs" />
     <Compile Include="ViewModels\CaseNotes.cs" />
     <Compile Include="ViewModels\DocUpload.cs" />
     <Compile Include="ViewModels\InmateData.cs" />
@@ -998,6 +999,7 @@
     <Content Include="Views\EditOffender\_IRP.cshtml" />
     <Content Include="Views\TeamManagement\Index.cshtml" />
     <Content Include="Views\EditOffender\ViewAppOnly.cshtml" />
+    <Content Include="Views\EditOffender\_BHRIRP.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />

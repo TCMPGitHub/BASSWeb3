@@ -42,51 +42,60 @@ function is_valid_date(value) {
         }
     }
 }
+function onIrpdblclick(e, edit) {
+    //var editable = e.target.readOnly;
+    var popupHtml =
+        '<div id="IRPTextMsg" class="k-editor-dialog k-popup-edit-form k-edit-form-container" style="width:auto;">' +
+          '<div style="padding: 0 1em;">' +
+            '<p><textarea cols="60" rows="10" style="width:98%;"' + (edit ? '' : 'readOnly=readOnly') + '"></textarea></p>' +
+          '</div>' +
+          '<div class="k-edit-buttons k-state-default">' +
+            '<button class="k-dialog-insert k-button k-primary"' + (edit ? '' : 'disabled=true') + '>Add</button>' +
+            '<button class="k-dialog-close k-button">Cancel</button></div>' +
+       '</div>';
+    // Create a modal Window from a new DOM element.
+    var popupWindow = $(popupHtml)
+    .appendTo(document.body)
+    .kendoWindow({
+        // Modality is recommended in this scenario.
+        modal: true,
+        width: 800,
+        resizable: false,
+        title: "Insert to " + e.target.placeholder,
+        // Ensure the opening animation.
+        visible: false,
+        replace: true,
+        close: function (e) { e.sender.destroy(); },
+        // Remove the Window from the DOM after closing animation is finished.
+        deactivate: function (e) {
+            if ($('#IRPTextMsg').data('kendoWindow') !== undefined)
+                $('#IRPTextMsg').data('kendoWindow').close();
+            e.sender.destroy();
+        }
+    }).data("kendoWindow")
+    .center().open();
 
-function TextarePopup(e, edit, color) {
-    edit = (edit && e.target.className.indexOf("alwayReadonly") < 0);
-    var object = "<textarea id='notebox' name='notebox' style='width: 99%; height: 100%; background-color:white; font-size:16px;' onKeyUp = 'TAKeyUp(event)'></textarea>";
-    var ttl = (edit) ? (e.target.value.length == 0 ? "Add Note" : "Edit Note") : "View Note";
-    var buttons = {
-        "1": { id: 'close', text: 'Close(Esc)', click: function () { $(this).dialog("close"); }, "class": "ui-dialog-button" }
-    };
-    //Add another button to that object if some condition is true
-    if (edit) {
-        buttons = {
-            "1": { id: 'close', text: 'Close(Esc)', click: function () { $(this).dialog("close"); }, "class": "ui-dialog-button" },
-            "2": { id: 'save', text: 'Save(Ctrl+q)', click: function () {
-                    var val = $("#notebox").val();
-                    if (val.length > 0) {
-                        if (val.length > e.target.maxLength) {
-                            NotifyMessage("The input string exceeds the maximum size: " + e.target.maxLength);
-                            return;
-                        }
-                        val = remove_non_ascii(val);
-                    }
-                    e.target.value = val;
-                    $(this).dialog("close"); }, "class": "ui-dialog-button" }
-        };
+    var existText = $("#" + e.target.id).val();
+    var newval = "";
+    if (existText.length > 0) {
+        popupWindow.element.find("textarea").val(existText);
     }
-    
-    if (edit == false)
-        object = "<textarea id='notebox' name='notebox' style='width: 99%; height: 100%; background-color:white; font-size:16px;' readonly='readonly' ></textarea>";
-
-    $("#pdfdialog").html(object)
-        .dialog({
-            modal: true,
-            width: '80vw',
-            height: 400,
-            title: ttl,
-            resizable: true,
-            responsive: true,
-            dialogClass: color,
-            buttons: buttons,
-            closeText: ''
-        });
+    // Insert the new content in the Editor when the Insert button is clicked.
+    popupWindow.element.find(".k-dialog-insert").click(function () {
+        var newval = popupWindow.element.find("textarea").val();
+        $("#" + e.target.id).val(newval)
+        if (existText !== newval)
+            $("#" + e.target.id).trigger("change");
+    });    
+    // Close the Window when any button is clicked.
+    popupWindow.element.find(".k-edit-buttons button").click(function () {
+        // Detach custom event handlers to prevent memory leaks.
+        popupWindow.element.find(".k-edit-buttons button").off();
+        popupWindow.close();
+    });
    
-    document.getElementById("notebox").value =e.target.value; 
-    return;
 }
+
 function SetDatePickerPlaceHolder(obj) {
     if (obj !== undefined && obj.length > 0) {
         var picker = obj.kendoDatePicker({ dateInput: true }).data('kendoDatePicker');
@@ -168,7 +177,6 @@ function postFormAndReplaceDivHtml(formObj, successCallback) {
     }
     url = form.action;
     submission = serialize(form);
-    
     $.ajax({
         type: 'POST',
         url: url,
@@ -176,8 +184,13 @@ function postFormAndReplaceDivHtml(formObj, successCallback) {
         cache: false,
         dataType: "Html",
         success: function (data, status, xhr) {
-            formObj.html(data);
-            if (successCallback !== undefined) successCallback();
+            if (formObj[0].id.indexOf('irpform') > 0) {
+                $("#" + formObj[0].id).replaceWith(data);
+            }
+            else {
+                formObj.html(data);
+            }
+           if (successCallback !== undefined) successCallback();
         }.bind(this),
         error: function (data, textStatus, xhr) {
             return false;

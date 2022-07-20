@@ -1,7 +1,7 @@
 ﻿@using Kendo.Mvc.UI
 @model BassWebV3.ViewModels.InmateData
 
-@Html.HiddenFor(m=>m.EpisodeID, new { id="hdCaseNHEpisodeID" } )
+@Html.HiddenFor(m=>m.EpisodeID, new { id= "hdCaseNHEpisodeID" } )
 @Html.HiddenFor(m => m.Offender.Inmate.CDCRNum, new { id = "hdCDCRNum" })
 <script>
     function LoadSelectedTab(url, fndata, target) {
@@ -28,20 +28,14 @@
         }
         else if(e.item.textContent.trim() == "IRP")
         {
-            url = '@Url.Action("GetPATSIRP", "EditOffender")';
-                fndata = { CDCRNum: $("#hdCDCRNum").val(), EpisodeID: $("#hdCaseNHEpisodeID").val(), IRPID: 0 };
+            url = '@Url.Action("GetIRP", "EditOffender")';
+                fndata = { CDCRNum: $("#hdCDCRNum").val(), EpisodeID : 0, IRPID: 0 };
                 LoadSelectedTab(url, fndata, "#offendertabstrip_2");
             }
         //$('#offendertabstrip').data('kendoTabStrip').reload(e.item);
     }
 
     function swTabChanged(e) {
-        @*if (e.item.textContent.trim() == "IRP") {
-            url = '@Url.Action("GetPATSIRP", "EditOffender")';
-            fndata = { CDCRNum: $("#hdCDCRNum").val(), EpisodeID: $("#hdCaseNHEpisodeID").val(), IRPID: 0 };
-            LoadSelectedTab(url, fndata, "#offendertabstrip_2");
-         }
-        else*@
         reloadTab(e);
     }
 </script>
@@ -62,7 +56,7 @@
         </div>
                 </text>);
                 tabstrip.Add().Text("  IRP  ").HtmlAttributes(new { style = "height:18px!important;" })
-                .LoadContentFrom(Url.Action("GetPATSIRP", "EditOffender", new { CDCRNum = Model.Offender.Inmate.CDCRNum, IRPID = 0 }));
+                .LoadContentFrom(Url.Action("GetIRP", "EditOffender", new { CDCRNum = Model.Offender.Inmate.CDCRNum, EpisodeID = 0, IRPID = 0 }));
                 tabstrip.Add().Text(" Case Note List ").HtmlAttributes(new { style = "height:18px!important;" })
                 .LoadContentFrom(Url.Action("GetCaseNoteHistory", "EditOffender", new { EpisodeId = Model.EpisodeID })).Visible(Model.ShowCaseNoteList);
             }

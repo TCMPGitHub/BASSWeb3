@@ -73,6 +73,7 @@ namespace BassIdentityManagement.Entities
         [Required]
         [Display(Name = "Lifer")]
         public bool Lifer { get; set; }
+        public string RedFlag { get; set; }
     }
 }
     //public class AssignmentHistoryData

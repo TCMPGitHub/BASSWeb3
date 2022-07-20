@@ -24,16 +24,33 @@ namespace BassIdentityManagement.Entities
         CaseAssigned,
         TCMPChrono,
         OutcomeLetter,
-        Other,
-        CollateralContact,
-        CIDSPCreated,
-        CIDSPDelivered,
-        ScanUploadDocs,
+        ScanUploadDocs = 18,
         StatusUpdate,
-        CIDSPNotDelivered,
-        CIDRefusal,
-        CIDUnavailableInaccessible
-    }
+        CIDServices = 23
+    //CentralFileReview = 0,
+    //CaseManagement = 1,
+    //ExitInterview,
+    //FaceToFace,
+    //MedicalFileReview,
+    //MediCal,
+    //ServicesNotProvided,
+    //PharmacyFileReview,
+    //SSI,
+    //TelephoneInterview,
+    //VA,
+    //CaseAssigned,
+    //TCMPChrono,
+    //OutcomeLetter,
+    //Other,
+    //CollateralContact,
+    //CIDSPCreated,
+    //CIDSPDelivered,
+    //ScanUploadDocs,
+    //StatusUpdate,
+    //CIDSPNotDelivered,
+    //CIDRefusal,
+    //CIDUnavailableInaccessible
+}
     public enum LegacyActionTypeID : short
     {
         Other = 0,

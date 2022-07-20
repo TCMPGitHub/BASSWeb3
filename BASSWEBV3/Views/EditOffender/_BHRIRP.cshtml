@@ -1,0 +1,345 @@
+﻿@using Kendo.Mvc.UI
+@model BassWebV3.ViewModels.BHRIRPViewModel
+@using (Html.BeginForm("SaveBHRIRP", "EditOffender", FormMethod.Post, new
+{
+    @id = "bhrirpform",
+    @name = "BHR INDIVIDUALIZED REINTEGRATION PLAN (IRP)",
+    @style = "background-color:aliceblue;height:99%;border:1px lightblue solid;padding:0px;overflow:auto;"
+}))
+{
+    <div id="appointmentdiv" class="color-danger" style="height:100%;width:99.5%;">
+        @Html.HiddenFor(m => m.IRP.EpisodeID, new { id = "hdIRPEpisodeID" })
+        @Html.HiddenFor(m => m.CanEdit, new { @id = "hdIRPEditable" })
+        @Html.HiddenFor(m => m.IRP.IsLastBIRPSet, new { id = "hdIsLastBIRPSet" })
+        @Html.HiddenFor(m => m.IRP.CurrentPhaseStatus, new { id = "hdcurrstatus" })
+        @{
+            var show = (Model.IRP.IRPList != null && Model.IRP.IRPId > 0) ? "visible" : "hidden";
+        }
+        <table style="background-color:transparent;min-width:600px">
+            <tr>
+                <td style="width:55vw;">
+                    <table>
+                        <tr style="line-height: 10px !important;"><td id="customers">@Html.Label("STATE OF CALIFORNIA", new { style = "float:left;font-size:12px;" })</td></tr>
+                        <tr style="line-height: 10px !important;"><td>@Html.Label("INDIVIDUALIZED REINTEGRATION PLAN (IRP)", new { style = "float:left;font-weight:bold;font-size:14px;" })</td></tr>
+                        <tr style="line-height: 10px !important;">
+                            <td>
+                                @*<a style="visibility:@show;" href="javascript:printPATSPDF(@Model.IRP.EpisodeID, @Model.IRP.IRPId, 'BHR INDIVIDUALIZED REINTEGRATION PLAN (IRP)','color-danger')">
+                                    <img style="width:22px; height:22px;margin-top:-5px;" title="Print Case IRP" src='@Url.Content("~/Content/images/printer-icon.png")' />
+                                </a>*@
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td style="width:50vw;">
+                    <table id="gird" class="k-grid table-bordered" style="width:100%;background-color:white; min-width:600px;">
+                        <tr style="background-color:silver;height:10px!important;font-size:small;text-align:center;border-color:black" class="k-grid-header k-header table-bordered">
+                            <th style="text-align:left;height:11px!important;width:100px;font-size:10px">IRP DATE:</th>
+                            @*<th style="text-align:left;height:11px!important;width:100px;font-size:10px">ASSESSMENT DATE:</th>*@
+                            <th colspan="5" style="text-align:center;height:11px!important;width:250px;font-size:10px">CURRENT PHASE STATUS:</th>
+                        </tr>
+                        <tr style="text-align:left;">
+                            <td style="font-size:11px">
+                                <script>
+                                    function PopulatePreviousBHRIRPSet(e) {
+                                        if (this.select() == 0) {
+                                            DisableAllInputFields("#bhrirpform :input", $("#hdIRPEditable").val(), false);
+                                            return;
+                                        }
+                                        var object = this.dataItem(this.select());
+                                        var id = (object == undefined || object.IRPID == "") ? 0 : object.IRPID;
+                                        $.ajax({
+                                            url: "@Url.Action("GetIRP", "EditOffender")",
+                                            data: {
+                                                CDCRNum: "",
+                                                EpisodeID: $("#hdIRPEpisodeID").val(),
+                                                IRPID: id
+                                            },
+                                        cache: false,
+                                        type: "POST",
+                                        dataType: "html",
+
+                                        success: function (data, textStatus, XMLHttpRequest) {
+                                            $("#bhrirpform").replaceWith(data); // HTML DOM replace
+                                        }
+                                    })
+                                    }
+                                    function IBTIDateChanged(e) {
+                                        var id = $("#" + e.sender.element[0].id).data("kendoDropDownList").value();
+                                        $("#hdIBTI" + e.sender.element[0].id.substring(6)).val(id);
+                                    }
+                                    function BFDateChanged(e) {
+                                        var id = $("#" + e.sender.element[0].id).data("kendoDropDownList").value();
+                                        $("#hdBF" + e.sender.element[0].id.substring(10)).val(id);
+                                    }
+                                </script>
+                                @(Html.Kendo().DropDownListFor(m => m.IRP.IRPId)
+                .Name("AllIRPDates")
+                .OptionLabel("Select Dates...")
+                .DataTextField("IRPDate")
+                .DataValueField("IRPID")
+                .HtmlAttributes(new { style = "width:120px;text-align:left;", @class = "neverDisable" })
+                .Filter(FilterType.Contains)
+                .Height(290)
+                .Events(e => { e.Change("PopulatePreviousBHRIRPSet"); })
+                .DataSource(source =>
+                {
+                    source.Read(read => read.Action("GetBHRIRPDateList", "EditOffender", new { EpisodeID = Model.IRP.EpisodeID }));
+                }))
+                            </td>
+                            @*<td>
+                                @(Html.Kendo().DatePickerFor(m => m.IRP.AssessmentDate).Format("MM/dd/yyyy")
+                                  .HtmlAttributes(new
+                                  {
+                                      @style = "width:120px",
+                                      @id = "irpDate",
+                                      @class = "input-group irpdp"
+                                  }))
+                        </td>*@
+                        <td>&nbsp;@(Html.Kendo().CheckBoxFor(m => m.IRP.CurrentPhaseStatus).Checked(Model.IRP.CurrentPhaseStatus == 1).Label("Prioritization").HtmlAttributes(new { @style = "text-align:center;border-right:none;", @class = "phaseStatus", id = "currstatus1", value = "1" }))</td>
+                        <td>&nbsp;@(Html.Kendo().CheckBoxFor(m => m.IRP.CurrentPhaseStatus).Checked(Model.IRP.CurrentPhaseStatus == 2).Label("Stabilization").HtmlAttributes(new { @style = "text-align:center;border-right:none;border-left:none;", @class = "phaseStatus", id = "currstatus2", value = "2" }))</td>
+                        <td>&nbsp;@(Html.Kendo().CheckBoxFor(m => m.IRP.CurrentPhaseStatus).Checked(Model.IRP.CurrentPhaseStatus == 3).Label("Activation").HtmlAttributes(new { @style = "text-align:center;border-right:none;border-left:none;", @class = "phaseStatus", id = "currstatus3", value = "3" }))</td>
+                        <td>&nbsp;@(Html.Kendo().CheckBoxFor(m => m.IRP.CurrentPhaseStatus).Checked(Model.IRP.CurrentPhaseStatus == 4).Label("Sustainability").HtmlAttributes(new { @style = "text-align:center;border-right:none;border-left:none;", @class = "phaseStatus", id = "currstatus4", value = "4" }))</td>
+                        <td>&nbsp;@(Html.Kendo().CheckBoxFor(m => m.IRP.CurrentPhaseStatus).Checked(Model.IRP.CurrentPhaseStatus == 5).Label("Maintenance").HtmlAttributes(new { @style = "text-align:center;border-left:none;", @class = "phaseStatus", id = "currstatus5", value = "5" }))</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+    &nbsp;&nbsp;<B>**Readiness to change codes:</B>  <span style="font-size:12px;color:darkorange;">PC – Pre-contemplation; C- Contemplation; P- Preparation; A- Action; M-Maintenance; R- Regress</span>
+        <div id="divBHRIRP" style="overflow-x:auto;">   
+            <table id="gird" class="k-grid" style="background-color:white;width:100%;resize:both;">
+                <tr style="background-color:silver;font-size:small;text-align:center" class="k-grid-header k-header table-bordered">
+                    <th rowspan="2" style="text-align:center;width:150px;">PRESENTING NEED</th>
+                    <th colspan="3" style="text-align:center;width:75px;">LEVEL OF NEED</th>
+                    <th colspan="3" style="text-align:center;width:330px;">Identified High/Urgent Needs Require ST Plan</th>
+                    <th rowspan="2" colspan="3" style="text-align:center;width:90px;">READINESS FOR CHANGE**</th>
+                    <th colspan="3" style="text-align:center;width:330px;">Identified High/Urgent Needs Require LT Plan</th>
+                    <th rowspan="2" style="text-align:center;width:110px;">Identified Barriers to Intervention</th>
+                    <th rowspan="2" style="text-align:center;width:110px;">Barrier Frequency</th>
+                </tr>
+                <tr style="text-align:center; background-color:silver;font-size:small;" class="k-grid-header k-header table-bordered">
+                    <th style="width:25px;text-align:center">None</th>
+                    <th style="width:25px;text-align:center">Non-Urgent</th>
+                    <th style="width:25px;text-align:center">High / Urgent</th>
+                    <th style="width:110px!important;text-align:center">Short Term (ST) Goal</th>
+                    <th style="width:110px!important;text-align:center">Planned ST Intervention</th>
+                    <th style="text-align:center;width:110px;">Date ST Goal Met</th>
+                    <th style="width:110px!important;text-align:center">Long Term (LT) Goal</th>
+                    <th style="width:110px!important;text-align:center">Planned LT Intervention</th>
+                    <th style="text-align:center;width:110px;">Date LT Goal Met</th>
+                </tr>
+                @for (int i = 0; i < Model.IRP.IRPList.Count; i++)
+                {
+                    @Html.HiddenFor(m => m.IRP.IRPList[i].NeedId)
+                    @Html.HiddenFor(m => m.IRP.IRPList[i].NeedName)
+                    @Html.HiddenFor(m => m.IRP.IRPList[i].NeedLevel, new { @id = "hdNL" + i.ToString() })
+                    @Html.HiddenFor(m => m.IRP.IRPList[i].ReadingForCharge, new { @id = "hdRFC" + i.ToString() })
+                    @Html.HiddenFor(m => m.IRP.IRPList[i].BarrierFrequencyID, new { @id = "hdBF" + i.ToString() })
+                    @Html.HiddenFor(m => m.IRP.IRPList[i].IdentifiedBarriersToInterventionID, new { @id = "hdIBTI" + i.ToString() })
+                    if (i == 4 || i > 5 && i < 9 || i == 10 || i > 11 && i < 15) {
+                        continue;
+                    }
+                    <tr>
+                        <td valign="top" style="line-height:14px;">
+                            <div style="font-size:12px;line-height:14px;width:150px;">
+                                @Html.Raw(string.Format("<b>{0}.   {1}</b>", Model.IRP.IRPList[i].NeedId, Model.IRP.IRPList[i].NeedName))
+                            </div>
+                        </td>
+                        <td>@(Html.Kendo().CheckBoxFor(m => m.IRP.IRPList[i].NeedLevel).Checked(Model.IRP.IRPList[i].NeedLevel == 1).HtmlAttributes(new { @style = "text-align:center;width:25px;", @class = "irpneed", @value = "1", @id = "nl" + i.ToString() + "1" }))</td>
+                        <td>@(Html.Kendo().CheckBoxFor(m => m.IRP.IRPList[i].NeedLevel).Checked(Model.IRP.IRPList[i].NeedLevel == 2).HtmlAttributes(new { @style = "text-align:center;width:25px;", @class = "irpneed", @value = "2", @id = "nl" + i.ToString() + "2" }))</td>
+                        <td>@(Html.Kendo().CheckBoxFor(m => m.IRP.IRPList[i].NeedLevel).Checked(Model.IRP.IRPList[i].NeedLevel == 3).HtmlAttributes(new { @style = "text-align:center;width:25px;", @class = "irpneed", @value = "3", @id = "nl" + i.ToString() + "3" }))</td>
+                        <td style="line-height:12PX;">@Html.TextAreaFor(m => m.IRP.IRPList[i].STGoal, new { @spellcheck = "true", @class = "textareaforcasemanngement", @placeholder = "Short Term Goal ...", @maxLength = "100" })</td>
+                        <td style="line-height:12PX;">@Html.TextAreaFor(m => m.IRP.IRPList[i].PlanedSTIntervention, new { @spellcheck = "true", @class = "textareaforcasemanngement", @placeholder = "Planned ST Intervention ...", @maxLength = "100" })</td>
+                        <td style="line-height:12PX;width:110px;">
+                            @(Html.Kendo().DatePickerFor(m => m.IRP.IRPList[i].STGoalMetDate).Format("MM/dd/yyyy").Value(Model.IRP.IRPList[i].STGoalMetDate.HasValue ? Model.IRP.IRPList[i].STGoalMetDate.Value.ToString("MM/dd/yyyy") : null).HtmlAttributes(new
+                {
+                    @style = "width:110px",
+                    @id = "date-picker-irp-st-" + i.ToString(),
+                    @class = "input-group irpdp"
+                }))
+                        </td>
+                        <td style="border-right:none;width:25px;">
+                            @(Html.Kendo().CheckBoxFor(m => m.IRP.IRPList[i].ReadingForCharge).Checked(Model.IRP.IRPList[i].ReadingForCharge == 1).HtmlAttributes(new { @class = "RFC", id = "RFC1" + i.ToString(), value = "1" }).Label("PC"))<b />
+                            @(Html.Kendo().CheckBoxFor(m => m.IRP.IRPList[i].ReadingForCharge).Checked(Model.IRP.IRPList[i].ReadingForCharge == 2).HtmlAttributes(new { @class = "RFC", id = "RFC2" + i.ToString(), value = "2" }).Label("C"))
+                        </td>
+                        <td style="border-right:none;border-left:none;width:25px;">
+                            @(Html.Kendo().CheckBoxFor(m => m.IRP.IRPList[i].ReadingForCharge).Checked(Model.IRP.IRPList[i].ReadingForCharge == 3).HtmlAttributes(new { @class = "RFC", id = "RFC3" + i.ToString(), value = "3" }).Label("P" + " "))<b />
+                            @(Html.Kendo().CheckBoxFor(m => m.IRP.IRPList[i].ReadingForCharge).Checked(Model.IRP.IRPList[i].ReadingForCharge == 4).HtmlAttributes(new { @class = "RFC", id = "RFC4" + i.ToString(), value = "4" }).Label("A"))
+                        </td>
+                        <td style="border-left:none;width:25px;">
+                            @(Html.Kendo().CheckBoxFor(m => m.IRP.IRPList[i].ReadingForCharge).Checked(Model.IRP.IRPList[i].ReadingForCharge == 5).HtmlAttributes(new { @class = "RFC", id = "RFC5" + i.ToString(), value = "5" }).Label("M"))<b />
+                            @(Html.Kendo().CheckBoxFor(m => m.IRP.IRPList[i].ReadingForCharge).Checked(Model.IRP.IRPList[i].ReadingForCharge == 6).HtmlAttributes(new { @class = "RFC", id = "RFC6" + i.ToString(), value = "6" }).Label("R"))
+                        </td>
+                        <td style="line-height:14PX;">@Html.TextAreaFor(m => m.IRP.IRPList[i].LTGoal, new { @spellcheck = "true", @class = "textareaforcasemanngement", @placeholder = "Long Term Goal ...", @maxLength = "100" })</td>
+                        <td style="line-height:14PX;">@Html.TextAreaFor(m => m.IRP.IRPList[i].PlanedLTIntervention, new { @spellcheck = "true", @class = "textareaforcasemanngement", @placeholder = "Planned LT Intervention ...", @maxLength = "100" })</td>
+                        <td style="line-height:14PX;width:110px;">
+                            @(Html.Kendo().DatePickerFor(m => m.IRP.IRPList[i].LTGoalMetDate).Format("MM/dd/yyyy").Value(Model.IRP.IRPList[i].LTGoalMetDate.HasValue ? Model.IRP.IRPList[i].LTGoalMetDate.Value.ToString("MM/dd/yyyy") : null).HtmlAttributes(new
+    {
+        @style = "width:110px",
+        @id = "date-picker-irp-lt-" + i.ToString(),
+        @class = "input-group irpdp"
+    }))
+                        </td>
+                        <td style="line-height:12PX;">
+                            @(Html.Kendo().DropDownListFor(m => m.IRP.IRPList[i].IdentifiedBarriersToInterventionID)
+                .Name("IdentifiedBarriersToInterventionId")
+                .OptionLabel("Select Item ...")
+                .DataTextField("IBTIValue")
+                .DataValueField("IBTIID")
+                .HtmlAttributes(new { id = "IBTIID" + i.ToString(), style = "width:200px;text-align:left;font-size:12px;" })
+                .Filter(FilterType.Contains)
+                .Height(290)
+                .Events(e => e.Change("IBTIDateChanged"))
+                .BindTo(Model.IBTIList))
+                        </td>
+                        <td>
+                            @(Html.Kendo().DropDownListFor(m => m.IRP.IRPList[i].BarrierFrequencyID)
+                .Name("BarrierFrequency")
+                .OptionLabel("Select Item...")
+                .DataTextField("BarrFreqValue")
+                .DataValueField("BarrFreqID")
+                .HtmlAttributes(new { id = "BarrFreqID" + i.ToString(), style = "width:80px;text-align:left;font-size:12px;" })
+                .Filter(FilterType.Contains)
+                .Height(290)
+                .Events(e => e.Change("BFDateChanged"))
+                .BindTo(Model.BarrFreqList))
+                        </td>
+
+                    </tr>
+                }
+            </table>
+        </div>
+        <br />
+        <B>@Html.Label("ADDITIONAL REMARKS:")</B>
+    @(Html.TextAreaFor(m => m.IRP.AdditionalRemarks, new { @spellcheck = "true", @class = "textareaforcasemanngement", @placeholder = "Additional Remarks ...", @maxLength = "500", style = "height:100px;text-align:left;" })) <br />
+
+    <br />
+        <div class="padded aligncenter form-actions" id="caseBHRIRPButtonDiv"><center>
+        @(Html.Kendo().Button().Name("bhrirpSave").Content("Submit").HtmlAttributes(new { style = "height:22px;", type = "submit" }))
+        @*<button type="submit" class="btn btn-group-lg" id="bhrirpSave">Submit</button>*@
+    &nbsp;&nbsp;
+    @(Html.Kendo().Button().Name("bhrirpCancel").Content("Cancel").HtmlAttributes(new { style = "height:22px;", type = "button" }))
+    @(Html.Kendo().Button().Name("bhrirpReset").Content("Reset").HtmlAttributes(new { style = "height:22px;", type = "button" }))
+    @*<button type="button" class="btn btn-group-lg" id="bhrirpCancel">Cancel</button>
+        <button type="button" class="btn btn-group-lg" id="bhrirpReset">Reset</button>*@&nbsp;&nbsp;
+    @*@if ((Model.IRP.IRPList != null && Model.IRP.IRPList.Count() > 0 && Model.IRP.IRPId > 0))
+                {
+        <a href="javascript:printPATSPDF(@Model.IRP.EpisodeID, '@Model.IRP.IRPId', 'BHR INDIVIDUALIZED REINTEGRATION PLAN (IRP)','color-danger')">
+            <img style="width:22px; height:22px;" title="Print Case IRP" src='@Url.Content("~/Content/images/printer-icon.png")' />
+        </a>
+    }*@
+</center>
+
+        </div>
+            <br />
+            </div>
+}
+<script type="text/javascript">
+    function BHRIRPButtonEnable(enabled) {
+        $("#bhrirpform").find(".k-button").each(function (index) {
+            $(this).data("kendoButton").enable(enabled);
+        })
+    }
+    function CheckBoxEvent(e, classname, idname) {
+        if (e.target.checked) {
+            //var rownum = e.target.name.substring((e.target.name.indexOf('[') + 1), (e.target.name.indexOf(']')));
+            var selectName = e.target.name;
+            var value = e.target.value;
+            $("#" + idname).val(value);
+            $("." + classname).each(function () {
+                if (this.name == selectName && this.value != value) {
+                    $(this).prop('checked', false);
+                }
+            })
+        }
+    }
+    $(function () {
+       $('#bhrirpform').on('dblclick', '.textareaforcasemanngement', function (e) {
+            if ($('#IRPTextMsg').data('kendoWindow') !== undefined)
+                $('#IRPTextMsg').data('kendoWindow').close();
+            var edit = ($("#hdIsLastBIRPSet").val() == "True" && $("#hdIRPEditable").val() == "True");
+            onIrpdblclick(e, edit);
+       });
+       var initdata = $('#bhrirpform').serialize();     
+        $('#bhrirpform').submit(function (e) {
+            e.preventDefault();
+            var nowdata = $('#bhrirpform').serialize();
+            if (initdata === nowdata) {
+                NoticeNoChanges();
+                e.stopPropagation();
+                return false;
+            }
+            if (confirm("Are you sure you want to save this IRP?") == false) {
+                e.stopPropagation();
+                return false;
+            }
+            initdata = nowdata;
+            BHRIRPButtonEnable(false);
+            postFormAndReplaceDivHtml($('#bhrirpform'));
+            //var tabstrip = $("#swTabstrip").kendoTabStrip().data("kendoTabStrip");;
+            //var tab = tabstrip.select(1);
+            //tabstrip.reload(tab);
+            return true;
+        });
+        $("#bhrirpform").on("change", function (e) {
+            var nowdata = $('#bhrirpform').serialize();
+            if (initdata === nowdata) {
+                BHRIRPButtonEnable(false);
+            }
+            else {
+                BHRIRPButtonEnable(true);
+            }
+        })
+    });
+    $(".irpdp").kendoValidator({
+        rules: {
+            dateValidation: function (element) {
+                $(this).removeClass('field-validation-error');
+                $(this).parent().find('span[data-valmsg-for]').remove();
+                if (element.is("[data-val-date]") && element.val() != "") {
+                    var value = $(element).val();
+                    return is_valid_date(value);
+                }
+                return true;
+            }
+        },
+        messages: {
+            dateValidation: "must be a valid date",
+        }
+    });
+    $(".irpdp").kendoMaskedTextBox({
+        mask: "00/00/0000"
+    });
+    $(".irpdp").closest(".k-datepicker").add($(".irpdp")).removeClass("k-textbox")
+    $(".phaseStatus").click(function (e) {
+        CheckBoxEvent(e, "phaseStatus", "hdcurrstatus");
+    })
+    $(".RFC").click(function (e) {
+        var rownum = this.name.substring((this.name.indexOf('[') + 1), (this.name.indexOf(']')));
+        CheckBoxEvent(e, "RFC", "hdRFC" + rownum);
+    })
+    $(".irpneed").click(function (e) {
+        var rownum = this.name.substring((this.name.indexOf('[') + 1), (this.name.indexOf(']')));
+        CheckBoxEvent(e, "irpneed", "hdNL" + rownum);
+    })
+   
+    var editableIRP = EditableEpisode($("#hdIRPEditable").val()) && $("#hdIsLastBIRPSet").val() == "True";
+    DisableInputFields("#bhrirpform :input", editableIRP);
+    BHRIRPButtonEnable(false);
+    
+    $("#bhrirpReset").click(function () {
+        $("#bhrirpform :input").each(function () {
+            if (this.type == "checkbox" || this.type == "radio")
+                $(this).prop('checked', false);
+
+            if (this.type == "text" || this.type == "textarea") {
+                $(this).val('');
+            }
+
+        })
+    });
+    $("#bhrirpCancel").click(function () {
+        document.getElementById("bhrirpform").reset();
+        BHRIRPButtonEnable(false);
+    })
+</script> 

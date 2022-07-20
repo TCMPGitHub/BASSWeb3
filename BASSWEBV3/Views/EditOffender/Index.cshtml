@@ -164,6 +164,8 @@
         function onClick(e) {
             $.when(showLoadWindow("\r\nLoading page...", 0)).then(function () {
                 kendo.ui.progress($('#loadWindow'), true);
+                if($('#loadWindow').data('kendoWindow') !== undefined)                                                       
+                   $('#loadWindow').data('kendoWindow').close();
             });
             var actionText = UnsavedChanges();
             if (actionText.length > 0) {
@@ -331,12 +333,12 @@
 
     <div id="InmatePanel" style="height:calc(100vh - 125px);"></div>
 </div>
-<div id="divWindow">
+<div id="divWindow" style="overflow:hidden;">
     @(Html.Kendo().Window()
                 .Name("Assignmentwindow")
                 .Width(1060)
                 .Height(370)
-                .HtmlAttributes(new { @style = "background-color:cornflowerblue;padding:5px 10px 20px 10px;" })
+                .HtmlAttributes(new { @style = "background-color:cornflowerblue;padding:5px 10px 20px 10px;overflow:hidden!important;" })
                 .Title("My Assigned Cases")
                 .Actions(actions => actions.Custom("pdf").Custom("excel").Refresh().Minimize().Maximize().Close())
                 .LoadContentFrom("GetBWAssignment", "EditOffender", new { BenefitWorkerID = Model.LoginUser.IsBenefitWorker ? Model.LoginUser.UserID : (int?)null })

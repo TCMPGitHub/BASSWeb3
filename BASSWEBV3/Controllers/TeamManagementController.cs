@@ -33,7 +33,7 @@ namespace BASS.Controllers
         {
             var query = @"SELECT SupervisorID, (LastName + ', ' + FirstName + ' ' + ISNULl(MiddleName, ''))SupervisorName 
                             FROM dbo.[User] WHERE IsActive = 1 AND IsADUser = 1 AND UserID = SupervisorID";
-            var list = SqlHelper.ExecuteCommands<SupervisorList>(query);
+            var list = SqlHelper.ExecuteCommands<SupervisorList>(query, 1);
             return Json(list, JsonRequestBehavior.AllowGet);
         }
         public ActionResult UserList([DataSourceRequest]DataSourceRequest request, int SupervisorID)
@@ -41,7 +41,7 @@ namespace BASS.Controllers
             var query = string.Format(@"SELECT UserID, FirstName, LastName, UserName, 
                           (CASE WHEN UserID = SupervisorID THEN 'Supervisor' ELSE 'Benefit Worker' END)Title
                            FROM dbo.[User] WHERE IsActive = 1 AND SupervisorID={0}", SupervisorID);
-            var result = SqlHelper.ExecuteCommands<TeamManagement>(query);
+            var result = SqlHelper.ExecuteCommands<TeamManagement>(query, 1);
 
             return Json(result.ToDataSourceResult(request, ModelState), JsonRequestBehavior.AllowGet);
         }
@@ -53,7 +53,7 @@ namespace BASS.Controllers
                 var query = string.Format(@"SELECT UserID, FirstName, LastName, UserName, 'Unknown' AS Notes, 
                           (CASE WHEN UserID = SupervisorID THEN 'Supervisor' ELSE 'Benefit Worker' END)Title
                            FROM dbo.[User] WHERE IsActive = 1 AND SupervisorID={0}", SupervisorID);
-                var result = SqlHelper.ExecuteCommands<TeamManagement>(query);
+                var result = SqlHelper.ExecuteCommands<TeamManagement>(query, 1);
                 return Json(result, JsonRequestBehavior.AllowGet);
             }
             return Json(null, JsonRequestBehavior.AllowGet);

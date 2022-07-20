@@ -25,7 +25,6 @@ namespace BASSWEBV3
                       "~/Scripts/Telerik/2019.3.11/kendo.aspnetmvc.min.js",
                       "~/Scripts/Telerik/2019.3.11/jszip.min.js",
                       "~/Scripts/dist/clipboard.min.js"));
-
             bundles.Add(new ScriptBundle("~/bundles/bass").Include("~/Scripts/Bass/Bass.js"));
 
             bundles.Add(new StyleBundle("~/Content/css")

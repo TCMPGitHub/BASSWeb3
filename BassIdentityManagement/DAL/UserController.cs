@@ -51,13 +51,22 @@ namespace BassIdentityManagement.DAL
         }
         public static int UpdateLoginFailure(int UserID, int logins)
         {
-            return SqlHelper.ExecuteCommand(string.Format("Update dbo.[User] Set LoginFailures ={0} Where UserID ={1}", logins, UserID));
+            var query = string.Empty;
+            if (logins == 0)
+            {
+                query = string.Format("Update dbo.[User] Set LoginFailures ={0}, LastLoginDate = GetDate() Where UserID ={1}", logins, UserID);
+            }
+            else
+            {
+                query = string.Format("Update dbo.[User] Set LoginFailures ={0} Where UserID ={1}", logins, UserID);
+            }
+            return SqlHelper.ExecuteCommand(query, 1);
         }
 
         public static int RecordPageLoad(int UserID, string Controller, string Action, string Method, string strIp)
         {
             return SqlHelper.ExecuteCommand(
-              string.Format("INSERT INTO dbo.PageLoad(UserID,Controller,Action,Method,DateTimeOffset,IpAddress) VALUES({0},'{1}','{2}','{3}',GetDate(), {4})", UserID, Controller, Action, Method, strIp));
+              string.Format("INSERT INTO dbo.PageLoad(UserID,Controller,Action,Method,DateTimeOffset,IpAddress) VALUES({0},'{1}','{2}','{3}',GetDate(), {4})", UserID, Controller, Action, Method, strIp), 1);
         }
     }
 }

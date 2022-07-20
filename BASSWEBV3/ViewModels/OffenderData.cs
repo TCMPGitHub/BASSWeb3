@@ -1,5 +1,6 @@
 ﻿using BassIdentityManagement.Entities;
 using System.Collections.Generic;
+using static BassWebV3.DataAccess.BassConstants;
 
 namespace BassWebV3.ViewModels
 {
@@ -11,7 +12,7 @@ namespace BassWebV3.ViewModels
         public List<Episodes> AllEpisodes { get; set; }
         public List<County> AllCounties { get; set; }
         public List<Facility> AllFacilities { get; set; }
-        public List<string> SomsReleaseDates { get; set; }
+        public List<ReleaseDateChanged> SomsReleaseDates { get; set; }
         public List<Gender> AllGenders { get; set; }
         public List<EpisodeAcpDshType> AllAcpDshTypes { get; set; }
         public List<EpisodeMdoSvpType> AllMdoSvpTypes { get; set; }

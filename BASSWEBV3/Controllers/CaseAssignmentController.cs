@@ -31,7 +31,7 @@ namespace BassWebV3.Controllers
             ViewBag.CurrentUser = (ApplicationUser)Session["CurrentUser"];
             ViewBag.IsAppViewOnly = CurrentUser.ViewBenefitOnly;
             var query = @"SELECT FacilityID, (OrgCommonID + '-' + Name)NameWithCode, Abbr FROM dbo.Facility WHERE ISNULL(Disabled, 0) = 0";
-            var result = SqlHelper.ExecuteCommands<Facility>(query).ToList();
+            var result = SqlHelper.ExecuteCommands<Facility>(query, 1).ToList();
             var datePeriod = new List<ReleasePeriod>()
             {
                 new ReleasePeriod {  PeriodID =1 , Abbr= "0,30", Period="0-30 days" },
@@ -105,7 +105,7 @@ INSERT INTO dbo.CaseAssignment (BenefitWorkerID, EpisodeID,AssignedDateTime, Act
                     queryall = queryall + query;
                 }
 
-                var result = SqlHelper.ExecuteCommand(queryall);
+                var result = SqlHelper.ExecuteCommand(queryall, 1);
             }
             //Returns how many records was posted
             return Json(new { count = count });
@@ -119,7 +119,7 @@ INSERT INTO dbo.CaseAssignment (BenefitWorkerID, EpisodeID,AssignedDateTime, Act
             {
                 var query = string.Format(@"UPDATE dbo.CaseAssignment SET UnAssignedDateTime = GetDate() WHERE BenefitWorkerID ={0} AND EpisodeID in ({1})",
                     BenifitWorkerID, string.Join(",", ArrayOfEpisoddeID));
-                var result = SqlHelper.ExecuteCommand(query);
+                var result = SqlHelper.ExecuteCommand(query, 1);
             }
             //Returns how many records was posted
             return Json(new { count = count });
@@ -129,7 +129,7 @@ INSERT INTO dbo.CaseAssignment (BenefitWorkerID, EpisodeID,AssignedDateTime, Act
             var query = @"SELECT UserID, (LastName + ', ' + FirstName + ' ' + ISNULL(MiddleName, ''))BenefitWorkerName FROM dbo.[User]
                           WHERE IsBenefitWorker = 1 AND IsActive = 1
                            ORDER BY LastName DESC";
-            var result = SqlHelper.ExecuteCommands<AssignmentUserList>(query);                
+            var result = SqlHelper.ExecuteCommands<AssignmentUserList>(query, 1);                
             return Json(result, JsonRequestBehavior.AllowGet);
         }
         public JsonResult GetBWUsers(string text)
@@ -146,7 +146,7 @@ INSERT INTO dbo.CaseAssignment (BenefitWorkerID, EpisodeID,AssignedDateTime, Act
                           WHERE IsBenefitWorker = 1 AND IsActive = 1 AND (LastName + ', ' + FirstName + ' ' + ISNULL(MiddleName, '')) like {0}
                            ORDER BY LastName DESC", "'%" + text + "%'");
             }
-            var result = SqlHelper.ExecuteCommands<AssignmentUserList>(query);
+            var result = SqlHelper.ExecuteCommands<AssignmentUserList>(query, 1);
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 
@@ -157,7 +157,7 @@ INSERT INTO dbo.CaseAssignment (BenefitWorkerID, EpisodeID,AssignedDateTime, Act
             {
                 var query = string.Format(@"UPDATE dbo.CaseAssignment SET UnAssignedDateTime = GetDate() WHERE CaseAssignmentID ={0}",
                     assignment.CaseAssignmentID);
-                var result = SqlHelper.ExecuteCommand(query);
+                var result = SqlHelper.ExecuteCommand(query, 1);
             }
 
             return Json(new[] { assignment }.ToDataSourceResult(request, ModelState), JsonRequestBehavior.AllowGet);

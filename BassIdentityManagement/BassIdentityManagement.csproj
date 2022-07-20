@@ -68,6 +68,7 @@
     <Compile Include="DAL\UserRoleController.cs" />
     <Compile Include="Data\ParameterInfo.cs" />
     <Compile Include="Data\SqlHelper.cs" />
+    <Compile Include="Entities\EditOffender\BHRIRPData.cs" />
     <Compile Include="Entities\CaseAssignment\AssignmentData.cs" />
     <Compile Include="Entities\CaseAssignment\BenefitWorkerAssignedCases.cs" />
     <Compile Include="Entities\EditOffender\ApplicationData.cs" />

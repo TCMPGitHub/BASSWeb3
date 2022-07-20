@@ -9,6 +9,13 @@ namespace BassIdentityManagement.Utilities
 {
     public class Utils
     {
+        public string ConnectString = string.Empty;
+        public Utils(int ConnectDB){
+            if(ConnectDB == 1)
+                ConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["BassWeb"].ConnectionString;
+            else
+                ConnectString = System.Configuration.ConfigurationManager.ConnectionStrings["PATSWeb"].ConnectionString;
+        }
         public static String ConnectionString()
         {
             return System.Configuration.ConfigurationManager.ConnectionStrings["BassWeb"].ConnectionString;

@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Script.Serialization;
 using static BassWebV3.DataAccess.BassConstants;
 
 namespace BassWebV3.Controllers
@@ -48,7 +49,7 @@ namespace BassWebV3.Controllers
                 objlist.Add("Facilities");
                 objlist.Add("CaseNoteTypes");
                 objlist.Add("Episode");
-                var result = SqlHelper.GetMultiRecordsets<object>("spGetSearchingList", param, objlist).ToList();
+                var result = SqlHelper.GetMultiRecordsets<object>("spGetSearchingList", param, objlist, 1).ToList();
                 return View(new OffenderSearch
                 {
                     AllSearchUsers = ((List<ActiveUserList>)result[0]).ToList(),
@@ -96,7 +97,7 @@ namespace BassWebV3.Controllers
                 if (BenefitWorkerID != user.UserID)
                 {
                     var query = string.Format("SELECT * FROM dbo.[User] WHERE UserID ={0}", BenefitWorkerID);
-                    user = SqlHelper.ExecuteCommands<ApplicationUser>(query).FirstOrDefault();
+                    user = SqlHelper.ExecuteCommands<ApplicationUser>(query, 1).FirstOrDefault();
                 }
             }
 
@@ -145,28 +146,37 @@ namespace BassWebV3.Controllers
                 AllMdoSvpTypes = ((List<EpisodeMdoSvpType>)results[7]).ToList(),
                 AllMedReleaseTypes = ((List<EpisodeMedReleaseType>)results[8]).ToList(),
                 AllDestinationIDs = ((List<LookUpTable>)results[9]).ToList(),
-                SomsReleaseDates = ((List<string>)results[10]).ToList()
+                SomsReleaseDates = ((List<ReleaseDateChanged>)results[10]).ToList()
             };
 
             return PartialView("_OffenderData", offender);
         }
-        public ActionResult GetPATSIRP(string CDCRNum, int IRPID)
-        {
-            List<ParameterInfo> parms = new List<ParameterInfo> {
-                { new ParameterInfo {  ParameterName= "CDCRNum", ParameterValue = CDCRNum } },
-                { new ParameterInfo {  ParameterName= "IRPID", ParameterValue = IRPID }} };
-            var results = SqlHelper.GetMultiPATSSets<dynamic>("spGetPATSEpisodeIRPToBASS", parms, 2);
-            var userid = results[1][0].BassUserID;
-            var actuser = (userid == 0 ? results[1][0].PatsUserName : GetBassUserName(userid));
+        //public ActionResult GetPATSIRP(string CDCRNum, int IRPID)
+        //{
+        //    if (CDCRNum == "") return null;
+        //    var results = GetBHRIRPData(CDCRNum,0, IRPID);
+        //    //JavaScriptSerializer serializer = new JavaScriptSerializer();
+        //    ////==================================================================
+        //    //BHRIRPData irp = (BHRIRPData)results[0];
+        //    //irp.IRPList = serializer.Deserialize<List<BHRIRP>>(irp.BHRIRPJson);
 
-            return PartialView("_IRP", new IRP
-            {
-                PATSEpisodeID = (int)results[1][0].PATSEpisodeID,
-                IRPSetList = (List<IRPSet>)results[0],
-                ActionUserName = string.IsNullOrEmpty(actuser) ? CurrentUser.UserLFM() : actuser,
-                CanEdit = CurrentUser.IsBenefitWorker || CurrentUser.CanAccessReports
-            });
-        }
+        //    //var actuser = string.Empty;
+        //    //var objAdditionInfo = (BHRIRPAdditionInfo)results[3];
+        //    //if (objAdditionInfo.BASSUserID > 0)
+        //    //{
+        //    //    actuser = GetBassUserName(objAdditionInfo.BASSUserID);
+        //    //}
+        //    //else
+        //    //{
+        //    //    if (string.IsNullOrEmpty(objAdditionInfo.PATSUserName))
+        //    //    {
+        //    //        actuser = CurrentUser.UserLFI();
+        //    //    }
+        //    //    else
+        //    //        actuser = objAdditionInfo.PATSUserName;
+        //    //}
+        //    return PartialView("_BHRIRP", results);
+        //}
         public ActionResult OffenderBenefitRead([DataSourceRequest] DataSourceRequest request, int EpisodeID, int ApplicationTypeID, int CountyID)
         {
             List<ApplicationReadonly> benefitapp = GetLatestBenefitApp(EpisodeID, ApplicationTypeID, CountyID);
@@ -181,7 +191,7 @@ namespace BassWebV3.Controllers
                 [AppliedOrRefusedOnDate], ISNULL([ArchivedOnDate], '')ArchivedOnDate, ISNULL([PhoneInterviewDate], '')PhoneInterviewDate
            FROM [dbo].[Application] t1 LEFT OUTER JOIN[dbo].[ApplicationOutcome] t3 ON t1.ApplicationOutcomeID = t3.ApplicationOutcomeID
           WHERE EpisodeID = @EpisodeID = {0} AND ApplicationTypeID = {1}", EpisodeID, ApplicationTypeID);
-            var benefitList = SqlHelper.ExecuteCommands<ApplicationReadonly>(query);
+            var benefitList = SqlHelper.ExecuteCommands<ApplicationReadonly>(query, 1);
             return Json(benefitList.ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
         }
 
@@ -230,7 +240,7 @@ namespace BassWebV3.Controllers
         public JsonResult GetAllCounties()
         {
             var query = "Select CountyID, Name FROM County";
-            var result = SqlHelper.ExecuteCommands<County>(query).OrderBy(o => o.Name);
+            var result = SqlHelper.ExecuteCommands<County>(query, 1).OrderBy(o => o.Name);
             return Json(result, JsonRequestBehavior.AllowGet);
         }
         private List<SelectListItem> GetApplicationSearchResults(string SearchString, int EpisodeID)
@@ -252,63 +262,148 @@ namespace BassWebV3.Controllers
             };
             return SqlHelper.GetRecords<ApplicationReadonly>("sp_GetAllApplications", parms);
         }
-        
-        public ActionResult SaveIRP(IRP caseIRPs)
+        public ActionResult GetIRP(string CDCRNum, int EpisodeID, int IRPID)
         {
-            if (caseIRPs == null || caseIRPs.IRPSetList.Count() == 0)
-                return null;
+            if (CDCRNum == "" && EpisodeID == 0) return null;
+            var results = GetBHRIRPData(CDCRNum, EpisodeID, IRPID);
+            
+            return PartialView("_BHRIRP", results);
+        }
+        private BHRIRPViewModel GetBHRIRPData(string CDCRNum, int EpisodeID, int IRPID)
+        {
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
+            List<ParameterInfo> parms = new List<ParameterInfo> {
+                { new ParameterInfo {  ParameterName= "CDCRNum", ParameterValue = CDCRNum }},
+                { new ParameterInfo {  ParameterName= "EpisodeID", ParameterValue = EpisodeID }},
+                { new ParameterInfo {  ParameterName= "IRPID", ParameterValue = IRPID }},
+                { new ParameterInfo {  ParameterName= "CurrentUserID", ParameterValue = CurrentUser.UserID }} };
+            List<string> objlist = new List<string>();
+            objlist.Add("BHRIRP");
+            objlist.Add("IdentifiedBarriersToIntervention");
+            objlist.Add("BarrierFrequency");
+            objlist.Add("BHRIRPAdditionInfo");
+            var results = SqlHelper.GetMultiRecordsets<object>("spGetPATSEpisodeIRPToBASS", parms, objlist, 0);            
+            //==================================================================
+            BHRIRPData irp = (BHRIRPData)results[0];
+            irp.IRPList = serializer.Deserialize<List<BHRIRP>>(irp.BHRIRPJson);
+
+            var actuser = string.Empty;
+            var objAdditionInfo = (BHRIRPAdditionInfo)results[3];
+            if (objAdditionInfo.BASSUserID > 0)
+            {
+                actuser = GetBassUserName(objAdditionInfo.BASSUserID);
+            }
+            else
+            {
+                if (string.IsNullOrEmpty(objAdditionInfo.PATSUserName))
+                {
+                    actuser = CurrentUser.UserLFI();
+                }
+                else
+                    actuser = objAdditionInfo.PATSUserName;
+            }
+            return new BHRIRPViewModel {
+                ActionUserName = actuser,
+                BarrFreqList = (List<BarrierFrequency>)results[2],
+                IBTIList = (List<IdentifiedBarriersToIntervention>)results[1],
+                IRP = irp,
+                CanEdit = CurrentUser.CanAccessReports || CurrentUser.IsBenefitWorker
+            };
+        }
+        public JsonResult GetBHRIRPDateList(int EpisodeID)
+        {
+            var query = string.Format("DECLARE @EpisodeID int = {0} " +
+                "DECLARE @ID int = (SELECT ISNULl(BHRIRPID, 0) FROM EpisodeTrace WHERE EpisodeID = @EpisodeID) " +
+                "IF @ID = 0 " +
+                "SELECT 0 AS IRPID, (CONVERT(NVARCHAR(15), GetDate(), 110) + '*') AS IRPDate " +
+                "ELSE " +
+                  " SELECT IRPID, (CONVERT(NVARCHAR(15), DateAction, 110) + " +
+                  " (CASE WHEN IRPID = @ID THEN '*' ELSE '' END)) as IRPDate " +
+                  " From dbo.CaseBHRIRP Where EpisodeID = @EpisodeID AND ActionStatus <> 10 ORDER BY DateAction DESC", EpisodeID);
+            var dates = SqlHelper.ExecuteCommands<BHRIRPDates>(query, 0);
+            return Json(dates, JsonRequestBehavior.AllowGet);
+        }
+        public ActionResult SaveBHRIRP(BHRIRPViewModel casrIrp)
+        {
+            if (ModelState.IsValid)
+            {
+                var newid = SaveBIRP(casrIrp.IRP, casrIrp.IRP.EpisodeID);
+                var result = GetBHRIRPData("", casrIrp.IRP.EpisodeID, newid);
+                return PartialView("_BHRIRP", result);
+            }
+            return null; // ErrorsJson(ModelStateErrors());
+        }
+        private int SaveBIRP(BHRIRPData IRPs, int EpisodeID)
+        {
+            if (IRPs == null || IRPs.IRPList.Count() == 0)
+                return 0;
 
             //var currentDateTime = DateTime.Now;
-            var query = string.Format(@"DECLARE @EpisodeID int = {0} DECLARE @IsNew int = 0 DECLARE @IRpDate DateTime = GetDate() " +
-                "DECLARE @ID int = (SELECT ISNULl(IRPID,0) FROM dbo.EpisodeTrace WHERE EpisodeID = @EpisodeID) IF @ID = 0  SET @IsNew = 1 ELSE SET @IsNew = 2", caseIRPs.PATSEpisodeID);
-            foreach (var item in caseIRPs.IRPSetList)
-            {
-                var NeedStatus = (int?)null;
-                if (item.NeedStatus1.HasValue && item.NeedStatus1.Value == true)
-                    NeedStatus = 1;
-                else if (item.NeedStatus2.HasValue && item.NeedStatus2.Value == true)
-                    NeedStatus = 2;
-                else if (item.NeedStatus3.HasValue && item.NeedStatus3.Value == true)
-                    NeedStatus = 3;
-                else if (item.NeedStatus4.HasValue && item.NeedStatus4.Value == true)
-                    NeedStatus = 4;
-
-                var LongTermStatus = (int?)null;
-                if (item.LongTermStatusMet.HasValue && item.LongTermStatusMet.Value == true)
-                    LongTermStatus = 1;
-                else if (item.LongTermStatusNoMet.HasValue && item.LongTermStatusNoMet.Value == true)
-                    LongTermStatus = 0;
-                //1379 pats user id
-                var queryIRP = string.Format(@" INSERT INTO [dbo].[CaseIRP]([EpisodeID],[NeedId],[NeedStatus],[DescriptionCurrentNeed],
-                    [Note],[ShortTermGoal],[LongTermGoal],[LongTermStatus],[LongTermStatusDate],[PlanedIntervention],
-                    [ActionStatus],[ActionBy],[DateAction],[BassUserID]) VALUES (@EpisodeID,{0},(CASE WHEN {1} = 0 
-                     THEN null ELSE {1} END),{2},{3},{4},{5},(CASE WHEN {6} = -1 THEN null ELSE {6} END),{7},{8},@IsNew,1379,@IRpDate, {9}) ", 
-                     item.NeedID, (NeedStatus == (int?)null ? 0 : NeedStatus),
-                  (string.IsNullOrEmpty(item.DescriptionCurrentNeed) ? "null" : "'" + RemoveUnprintableChars(item.DescriptionCurrentNeed) + "'"),
-                  (string.IsNullOrEmpty(item.Note) ? "null" : "'" + RemoveUnprintableChars(item.Note) + "'"),
-                  (string.IsNullOrEmpty(item.ShortTermGoal) ? "null" : "'" + RemoveUnprintableChars(item.ShortTermGoal) + "'"),
-                  (string.IsNullOrEmpty(item.LongTermGoal) ? "null" : "'" + RemoveUnprintableChars(item.LongTermGoal) + "'"), (LongTermStatus == (int?)null ? -1 : LongTermStatus),
-                  (item.LongTermStatusDate != (DateTime?)null ? "'" + item.LongTermStatusDate + "'" : "null"), 
-                  (string.IsNullOrEmpty(item.PlanedIntervention) ? "null" : "'" + RemoveUnprintableChars(item.PlanedIntervention) + "'"), CurrentUser.UserID);
-                if (item.NeedID == 1)
-                {
-                    queryIRP = queryIRP + " SET @ID=@@IDENTITY ";
-                }
-                query = query + queryIRP;
-
-            }
-            query = query + " UPDATE dbo.EpisodeTrace SET IRPID=@ID WHERE EpisodeID=@EpisodeID SELECT @ID ";
-            var results = SqlHelper.ExecutePATSCommand(query);
-            return null;
-            //return PartialView("_IRP", new IRP
-            //{
-            //    PATSEpisodeID = (int)(results[1]),
-            //    IRPSetList = (List<IRPSet>)results[0],
-            //    ActionUserName = CurrentUser.UserLFI(),
-            //    CanEdit = true
-            //});
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
+            var irp = serializer.Serialize(IRPs.IRPList);
+            var isnew = IRPs.IRPId == 0 ? 1 : 2;
+            var query = string.Format(@"DECLARE @ID int = 0 INSERT INTO [dbo].[CaseBHRIRP]([EpisodeID],[CurrentPhaseStatus],[BHRIRPJson],[AdditionalRemarks]
+           ,[ActionStatus],[ActionBy],[DateAction],[BassUserID]) VALUES({0},{1},{2},{3},{4},1379,GetDate(),{5}) SET @ID=@@IDENTITY
+           UPDATE dbo.EpisodeTrace SET BHRIRPID=@ID WHERE EpisodeID={0} SELECT @ID",
+           IRPs.EpisodeID, IRPs.CurrentPhaseStatus.HasValue ? IRPs.CurrentPhaseStatus.ToString() : "null", "'" + RemoveUnprintableChars(irp) + "'",
+           string.IsNullOrEmpty(IRPs.AdditionalRemarks) ? "null" : "'" + RemoveUnprintableChars(IRPs.AdditionalRemarks) + "'", isnew, CurrentUser.UserID);
+            return SqlHelper.ExecuteQueryWithReturnValue(query, 0);
         }
-        
+        //public ActionResult SaveIRP(IRP caseIRPs)
+        //{
+        //    if (caseIRPs == null || caseIRPs.IRPSetList.Count() == 0)
+        //        return null;
+
+        //    //var currentDateTime = DateTime.Now;
+        //    var query = string.Format(@"DECLARE @EpisodeID int = {0} DECLARE @IsNew int = 0 DECLARE @IRpDate DateTime = GetDate() " +
+        //        "DECLARE @ID int = (SELECT ISNULl(IRPID,0) FROM dbo.EpisodeTrace WHERE EpisodeID = @EpisodeID) IF @ID = 0  SET @IsNew = 1 ELSE SET @IsNew = 2", caseIRPs.PATSEpisodeID);
+        //    foreach (var item in caseIRPs.IRPSetList)
+        //    {
+        //        var NeedStatus = (int?)null;
+        //        if (item.NeedStatus1.HasValue && item.NeedStatus1.Value == true)
+        //            NeedStatus = 1;
+        //        else if (item.NeedStatus2.HasValue && item.NeedStatus2.Value == true)
+        //            NeedStatus = 2;
+        //        else if (item.NeedStatus3.HasValue && item.NeedStatus3.Value == true)
+        //            NeedStatus = 3;
+        //        else if (item.NeedStatus4.HasValue && item.NeedStatus4.Value == true)
+        //            NeedStatus = 4;
+
+        //        var LongTermStatus = (int?)null;
+        //        if (item.LongTermStatusMet.HasValue && item.LongTermStatusMet.Value == true)
+        //            LongTermStatus = 1;
+        //        else if (item.LongTermStatusNoMet.HasValue && item.LongTermStatusNoMet.Value == true)
+        //            LongTermStatus = 0;
+        //        //1379 pats user id
+        //        var queryIRP = string.Format(@" INSERT INTO [dbo].[CaseIRP]([EpisodeID],[NeedId],[NeedStatus],[DescriptionCurrentNeed],
+        //            [Note],[ShortTermGoal],[LongTermGoal],[LongTermStatus],[LongTermStatusDate],[PlanedIntervention],
+        //            [ActionStatus],[ActionBy],[DateAction],[BassUserID]) VALUES (@EpisodeID,{0},(CASE WHEN {1} = 0 
+        //             THEN null ELSE {1} END),{2},{3},{4},{5},(CASE WHEN {6} = -1 THEN null ELSE {6} END),{7},{8},@IsNew,1379,@IRpDate, {9}) ", 
+        //             item.NeedID, (NeedStatus == (int?)null ? 0 : NeedStatus),
+        //          (string.IsNullOrEmpty(item.DescriptionCurrentNeed) ? "null" : "'" + RemoveUnprintableChars(item.DescriptionCurrentNeed) + "'"),
+        //          (string.IsNullOrEmpty(item.Note) ? "null" : "'" + RemoveUnprintableChars(item.Note) + "'"),
+        //          (string.IsNullOrEmpty(item.ShortTermGoal) ? "null" : "'" + RemoveUnprintableChars(item.ShortTermGoal) + "'"),
+        //          (string.IsNullOrEmpty(item.LongTermGoal) ? "null" : "'" + RemoveUnprintableChars(item.LongTermGoal) + "'"), (LongTermStatus == (int?)null ? -1 : LongTermStatus),
+        //          (item.LongTermStatusDate != (DateTime?)null ? "'" + item.LongTermStatusDate + "'" : "null"), 
+        //          (string.IsNullOrEmpty(item.PlanedIntervention) ? "null" : "'" + RemoveUnprintableChars(item.PlanedIntervention) + "'"), CurrentUser.UserID);
+        //        if (item.NeedID == 1)
+        //        {
+        //            queryIRP = queryIRP + " SET @ID=@@IDENTITY ";
+        //        }
+        //        query = query + queryIRP;
+
+        //    }
+        //    query = query + " UPDATE dbo.EpisodeTrace SET IRPID=@ID WHERE EpisodeID=@EpisodeID SELECT @ID ";
+        //    var results = SqlHelper.ExecutePATSCommand(query);
+        //    return null;
+        //    //return PartialView("_IRP", new IRP
+        //    //{
+        //    //    PATSEpisodeID = (int)(results[1]),
+        //    //    IRPSetList = (List<IRPSet>)results[0],
+        //    //    ActionUserName = CurrentUser.UserLFI(),
+        //    //    CanEdit = true
+        //    //});
+        //}    
         public PartialViewResult SaveApplication(ApplicationEditor AppData)
         {
             if (ModelState.IsValid)
@@ -505,7 +600,7 @@ namespace BassWebV3.Controllers
             objlist.Add("EpisodeMdoSvpTypes");
             objlist.Add("EpisodeMedReleaseTypes");
             objlist.Add("Destinations");
-            objlist.Add("SomsReleaseDates");
+            //objlist.Add("SomsReleaseDates");
             objlist.Add("ApplicationFlags");           
             var results = SqlHelper.GetInmateDetails<object>("spGetInmateProfile", parameters, objlist);
             var episodes = ((List<Episodes>)results[2]).ToList();
@@ -524,15 +619,15 @@ namespace BassWebV3.Controllers
                 AllAcpDshTypes = ((List<EpisodeAcpDshType>)results[6]).ToList(),
                 AllMdoSvpTypes = ((List<EpisodeMdoSvpType>)results[7]).ToList(),
                 AllMedReleaseTypes = ((List<EpisodeMedReleaseType>)results[8]).ToList(),
-                AllDestinationIDs = ((List<LookUpTable>)results[9]).ToList(),                   
-                SomsReleaseDates = ((List<string>)results[10]).ToList()
+                AllDestinationIDs = ((List<LookUpTable>)results[9]).ToList()                  
+                //SomsReleaseDates = ((List<ReleaseDateChanged>)results[10]).ToList()
             };
 
             Applications apps = new Applications
             {
                  //AllOutcomes = ((List<OutcomeType>)results[10]).ToList(),
                  //AppData = ((List<ApplicationData>)results[12]).ToList(),
-                 AppFlags = (ApplicationFlags)results[11],
+                 AppFlags = (ApplicationFlags)results[10],
                  CanEditApplication = Editingable,
                  //AllFacilities = allf,
                  User = CurrentUser
@@ -555,13 +650,12 @@ namespace BassWebV3.Controllers
                 EpisodeID = EpisodeID
             });
         }
-        public ActionResult GetReleaseDateChangs([DataSourceRequest] DataSourceRequest request, string CDCNo)
+        public ActionResult GetReleaseDateChangs([DataSourceRequest] DataSourceRequest request, int EpisodeID)
         {
-            var query = string.Format(@"select distinct MIN(FileDate)FileDate, ScheduledReleaseDate from SomsRecord where CDCNumber = '{0}'
-Group BY ScheduledReleaseDate", CDCNo);
+            var query = string.Format(@"SELECT FileDate, ScheduledReleaseDate FROM  [dbo].[fnGetReleaseHistory]({0})", EpisodeID);
             //'BE3758'
             //List<ReleaseDateChanges> rdChanges = new List<ReleaseDateChanges>();
-            var rdChanges = SqlHelper.ExecuteCommands<ReleaseDateChanges>(query).ToList();
+            var rdChanges = SqlHelper.ExecuteCommands<ReleaseDateChanged>(query, 1).ToList();
             //rdChanges = db.SomsRecords.Where(x => x.CDCNumber == CDCNo).GroupBy(g => g.ScheduledReleaseDate)
             //                  .Select(g => g.OrderBy(x => x.FileDate).FirstOrDefault())
             //                  .Select(s => new ReleaseDateChanges { FileDate = s.FileDate, ScheduledReleaseDate = s.ScheduledReleaseDate.HasValue ? s.ScheduledReleaseDate.Value : (DateTime?)null })
@@ -726,7 +820,7 @@ Group BY ScheduledReleaseDate", CDCNo);
             var query = string.Format(@"UPDATE dbo.[Application] SET  ArchivedOnDate = null WHERE ApplicationID = {0}
            UPDATE dbo.[Episode] SET {1} = 1 WHERE EpisodeID = {2}", ApplicationId, colName, EpisodeID);
 
-            var result = SqlHelper.ExecuteCommand(query);
+            var result = SqlHelper.ExecuteCommand(query, 1);
             return true;
         }
         public ActionResult GetApplicationReadonly(int ApplicationID)
@@ -738,7 +832,7 @@ Group BY ScheduledReleaseDate", CDCNo);
                  LEFT OUTER JOIN dbo.[Facility] t3 ON t1.CustodyFacilityID = t3.FacilityID
                  LEFT OUTER JOIN dbo.[ApplicationOutcome] t4 ON t1.ApplicationOutcomeID = t4.ApplicationOutcomeID
                WHERE ApplicationID  = {0}", ApplicationID);
-            var result = SqlHelper.ExecuteCommands<ArchiveApplicationReadData>(query).FirstOrDefault();
+            var result = SqlHelper.ExecuteCommands<ArchiveApplicationReadData>(query, 1).FirstOrDefault();
             
             return PartialView("_ApplicationReadonly", result);
         }
@@ -793,7 +887,7 @@ Group BY ScheduledReleaseDate", CDCNo);
         private int DeleteCaseNote(int CasenoteTraceID)
         {
             var query = string.Format(@"UPDATE dbo.[CaseNote] SET ActionStatus = 10 Where CaseNoteTraceID = {0}", CasenoteTraceID);
-            return SqlHelper.ExecuteCommand(query);
+            return SqlHelper.ExecuteCommand(query, 1);
         }
         private List<CaseNoteData> SaveCaseNote(CaseNoteData CaseNote, int EpisodeID)
         {
@@ -808,7 +902,7 @@ Group BY ScheduledReleaseDate", CDCNo);
                       CaseNote.EventDate.HasValue ? "'" + CaseNote.EventDate + "'" : "null", CaseNote.CaseNoteTypeID,
                       CaseNote.CaseNoteTypeReasonID.HasValue ? "'" + CaseNote.CaseNoteTypeReasonID.ToString() + "'" : "null", 
                       "'" + RemoveUnprintableChars(CaseNote.Text) + "'", CurrentUser.UserID);
-                return SqlHelper.ExecuteCommands<CaseNoteData>(query);
+                return SqlHelper.ExecuteCommands<CaseNoteData>(query, 1);
             }
             return null;
         }
@@ -826,7 +920,7 @@ Group BY ScheduledReleaseDate", CDCNo);
             if (file != null)
             {
                 var query = string.Format(@"UPDATE [dbo].[DocUpload] SET ActionStatus = 10 WHERE ID = {0}", file.ID);
-                var result = SqlHelper.ExecuteCommand(query);
+                var result = SqlHelper.ExecuteCommand(query, 1);
             }
 
             return Json(new[] { file }.ToDataSourceResult(request, ModelState));
@@ -848,7 +942,7 @@ Group BY ScheduledReleaseDate", CDCNo);
                         var query = string.Format(@"INSERT INTO [dbo].[DocUpload]([EpisodeId],[FileTypeId],[FileName]
            ,[FileSize],[ActionStatus],[ActionBy],[DateAction]) VALUES ({0},1,{1},{2}, 1, {3}, GetDate())",
            EpisodeId, "'" + fileName + "'", System.IO.File.ReadAllBytes(physicalPath).Length, CurrentUser.UserID );
-                        var result = SqlHelper.ExecuteCommand(query); 
+                        var result = SqlHelper.ExecuteCommand(query, 1); 
                     }
                 }
             }
@@ -867,7 +961,7 @@ Group BY ScheduledReleaseDate", CDCNo);
         public ActionResult Download(int id)
         {
             var query = string.Format(@"SELECT ID, EpisodeId, FileName, FileData, ActionStatus FROM [dbo].[DocUpload] WHERE ID={0}", id);
-            var result = SqlHelper.ExecuteCommands<UploadedFiles>(query).FirstOrDefault();
+            var result = SqlHelper.ExecuteCommands<UploadedFiles>(query, 1).FirstOrDefault();
             string fileName = string.Empty;
             if (result != null && !string.IsNullOrEmpty(result.FileName))
                fileName = Path.GetFileName(result.FileName);
@@ -960,7 +1054,7 @@ Group BY ScheduledReleaseDate", CDCNo);
             var query = string.Format(@"DECLARE @IsHIVPos bit =
   (SELECT HIVPos FROM Episode e INNER JOIN Offender o On e.offenderID  = o.OffenderID WHERE EpisodeID = {0})
   SELECT CaseNoteTypeID, Name FROM dbo.CaseNoteType WHERE (@IsHIVPos = 0 AND 1=1) OR (@IsHIVPos = 1 AND Name NOT like 'CID SP%' AND Name Not Like 'CID Un%')", EpisodeID);
-            var result = SqlHelper.ExecuteCommands<CaseNoteTypeList>(query);          
+            var result = SqlHelper.ExecuteCommands<CaseNoteTypeList>(query, 1);          
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 
@@ -974,7 +1068,7 @@ Group BY ScheduledReleaseDate", CDCNo);
                             ((@CaseNoteTypeID <> 6 AND CaseNoteTypeID = @CaseNoteTypeID) OR (
                             (@CaseNoteTypeID = 6 AND (@Report = 1 AND CaseNoteTypeID = @CaseNoteTypeID) OR (@Report = 0 AND CaseNoteTypeID = @CaseNoteTypeID AND CaseNoteTypeReasonID NOT IN (47, 52)))))
                       Order BY Position", CaseNoteTypeID.HasValue ? CaseNoteTypeID : 0, CurrentUser.UserID);
-            var result = SqlHelper.ExecuteCommands<CaseNoteTypeReasonList>(query);
+            var result = SqlHelper.ExecuteCommands<CaseNoteTypeReasonList>(query, 1);
             return Json(result, JsonRequestBehavior.AllowGet);
         }
         //[HttpPost]

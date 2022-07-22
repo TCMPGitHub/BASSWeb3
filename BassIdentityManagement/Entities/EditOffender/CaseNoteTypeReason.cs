@@ -74,7 +74,16 @@ namespace BassIdentityManagement.Entities.EditOffender
         //Case Management
         AttendedPRVCMeeting,
         AttendedISUDTMeeting,
-        AllNotes
+        AllNotes,
+        UnavailableHousedAtCountyJail,
+        CIDUnavailableInaccessible,
+        CIDSPCreated,
+        CIDSPDelivered,
+        CIDSPNOTDelivered,
+        CIDNOTDisclosed,
+        Submission,
+        Refused,
+        Update
     }
     public class CaseNoteTypeReason
     {

@@ -26,7 +26,8 @@ namespace BassIdentityManagement.Entities
         OutcomeLetter,
         ScanUploadDocs = 18,
         StatusUpdate,
-        CIDServices = 23
+        CIDServices = 23,
+        IRP
     //CentralFileReview = 0,
     //CaseManagement = 1,
     //ExitInterview,

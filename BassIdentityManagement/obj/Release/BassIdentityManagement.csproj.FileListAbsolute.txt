@@ -10,3 +10,15 @@ C:\TCMPProject\BASSWEBV3\BassIdentityManagement\bin\Release\Microsoft.AspNet.Ide
 C:\TCMPProject\BASSWEBV3\BassIdentityManagement\obj\Release\BassIdentityManagement.dll
 C:\TCMPProject\BASSWEBV3\BassIdentityManagement\obj\Release\BassIdentityManagement.pdb
 C:\TCMPProject\BASSWEBV3\BassIdentityManagement\obj\Release\BassIdentityManagement.csprojResolveAssemblyReference.cache
+C:\TCMPGitHub\BASSWeb3\BassIdentityManagement\bin\Release\BassIdentityManagement.dll
+C:\TCMPGitHub\BASSWeb3\BassIdentityManagement\bin\Release\BassIdentityManagement.pdb
+C:\TCMPGitHub\BASSWeb3\BassIdentityManagement\bin\Release\Antlr3.Runtime.dll
+C:\TCMPGitHub\BASSWeb3\BassIdentityManagement\bin\Release\Dapper.dll
+C:\TCMPGitHub\BASSWeb3\BassIdentityManagement\bin\Release\Microsoft.AspNet.Identity.Core.dll
+C:\TCMPGitHub\BASSWeb3\BassIdentityManagement\bin\Release\System.Security.Claims.dll
+C:\TCMPGitHub\BASSWeb3\BassIdentityManagement\bin\Release\Antlr3.Runtime.xml
+C:\TCMPGitHub\BASSWeb3\BassIdentityManagement\bin\Release\Dapper.xml
+C:\TCMPGitHub\BASSWeb3\BassIdentityManagement\bin\Release\Microsoft.AspNet.Identity.Core.xml
+C:\TCMPGitHub\BASSWeb3\BassIdentityManagement\obj\Release\BassIdentityManagement.csprojResolveAssemblyReference.cache
+C:\TCMPGitHub\BASSWeb3\BassIdentityManagement\obj\Release\BassIdentityManagement.dll
+C:\TCMPGitHub\BASSWeb3\BassIdentityManagement\obj\Release\BassIdentityManagement.pdb

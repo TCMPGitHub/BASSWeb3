@@ -27,7 +27,8 @@ namespace BassIdentityManagement.Entities
         ScanUploadDocs = 18,
         StatusUpdate,
         CIDServices = 23,
-        IRP
+        IRP,
+        CRS
     //CentralFileReview = 0,
     //CaseManagement = 1,
     //ExitInterview,

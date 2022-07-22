@@ -80,6 +80,7 @@ namespace BassIdentityManagement.Entities.EditOffender
         CIDSPCreated,
         CIDSPDelivered,
         CIDSPNOTDelivered,
+        CIDNOTDisclosed,
         Submission,
         Refused,
         Update

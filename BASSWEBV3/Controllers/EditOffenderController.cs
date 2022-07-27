@@ -1053,7 +1053,8 @@ namespace BassWebV3.Controllers
         {
             var query = string.Format(@"DECLARE @IsHIVPos bit =
   (SELECT HIVPos FROM Episode e INNER JOIN Offender o On e.offenderID  = o.OffenderID WHERE EpisodeID = {0})
-  SELECT CaseNoteTypeID, Name FROM dbo.CaseNoteType WHERE (@IsHIVPos = 0 AND 1=1) OR (@IsHIVPos = 1 AND Name NOT like 'CID SP%' AND Name Not Like 'CID Un%')", EpisodeID);
+  SELECT CaseNoteTypeID, Name FROM dbo.CaseNoteType WHERE Disabled = 0 AND ((@IsHIVPos = 0 AND Name NOT like 'CID S%') OR 
+  (@IsHIVPos = 1 AND 1=1 )) ORDER BY DisplayOrder", EpisodeID);
             var result = SqlHelper.ExecuteCommands<CaseNoteTypeList>(query, 1);          
             return Json(result, JsonRequestBehavior.AllowGet);
         }

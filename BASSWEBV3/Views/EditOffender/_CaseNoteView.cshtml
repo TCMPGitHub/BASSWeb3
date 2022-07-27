@@ -274,7 +274,7 @@
         .Events(e => { e.DataBound("gridDataBound"); e.Change("onRowSelected"); e.Edit("insertPopupCaption"); e.Save("CheckPopupData"); e.BeforeEdit("StopProcess"); })
         .ToolBar(toolbar => { toolbar.Create().Text("Add New Note").HtmlAttributes( new { style="display:" + @canedit }); })
         //.ToolBar(toolbar => toolbar.Excel().Text("Export To Excel")).Excel(exl => exl.FileName("CaseNote.xlsx").Filterable(true).AllPages(true))
-        .Editable(editable => editable.Mode(GridEditMode.PopUp).TemplateName("_NewNote").Window(w => w.Title("Edit Case Note").Width(700).Height(230)))
+        .Editable(editable => editable.Mode(GridEditMode.PopUp).TemplateName("_NewNote").Window(w => w.Title("Edit Case Note").Width(750).Height(230)))
         .Sortable(sortable => sortable.AllowUnsort(true))
         .Filterable(filterable => filterable
         .Extra(false)

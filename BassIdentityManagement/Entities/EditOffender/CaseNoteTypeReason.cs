@@ -83,7 +83,21 @@ namespace BassIdentityManagement.Entities.EditOffender
         CIDNOTDisclosed,
         Submission,
         Refused,
-        Update
+        Update,
+        ScreeningOrPhoneConsultation,
+        MCAppSubmissionPostRelease,
+        MCReinstatementPostRelease,
+        MCIntercountryTransferPostRelease,
+        MCRefusedMCPostRelease,
+        AgentOfRecord,
+        TCMPBWCommunication,
+        BehavioralHealthReintegration,
+        ResourceGuideOrInformation,
+        IneligiblePRCSProbation,
+        Ineligible61PlusPostRelease,
+        StatusCheckOrUpdatePostRelease,
+        ReferralToCIDBWCoordinator,
+        CaseManagementOrOther
     }
     public class CaseNoteTypeReason
     {

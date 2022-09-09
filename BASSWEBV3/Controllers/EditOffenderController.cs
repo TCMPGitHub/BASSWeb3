@@ -427,10 +427,10 @@ namespace BassWebV3.Controllers
                 END
                ELSE
                BEGIN
-              INSERT INTO [dbo].[ApplicationTrace]([ApplicationID],[ApplicationTypeID],[EpisodeID]
+              INSERT INTO [dbo].[Application]([ApplicationTypeID],[EpisodeID]
                     ,[ApplicationOutcomeID],[AgreesToApply],[AppliedOrRefusedOnDate],[PhoneInterviewDate]
                     ,[OutcomeDate],[BICNum],[IssuedOnDate],[ArchivedOnDate],[CreatedByUserID],[CustodyFacilityId]
-                    ,[DateAction]) VALUES(@ApplicationID,{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11}, GetDate())
+                    ,[DateAction]) VALUES({0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11}, GetDate())
               END
               EXEC dbo.[spGetApplicationByType] {1},{10},{0}",
            AppData.App.ApplicationTypeID, AppData.App.EpisodeID,

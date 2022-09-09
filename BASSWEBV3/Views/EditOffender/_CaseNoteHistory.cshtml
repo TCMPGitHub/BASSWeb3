@@ -124,7 +124,7 @@
             columns.Bound(f => f.EventDate).Title("Date").Format("{0:MM/dd/yyyy}").Width(60);
             columns.Bound(f => f.CaseNoteType).Title("Type").Width(90).Filterable(fs => fs.UI("typeFilter"));
             columns.Bound(f => f.CaseNoteTypeReason).Title("Reason").Width(100).Filterable(fs => fs.UI("reasonFilter"));
-            columns.Bound(f => f.Text).Width(200).ClientTemplate("<textarea class='textareaforcasemanngement'  readonly='readonly' style='width:100%'>#= Text#</textarea>").Title("Note"); ;
+            columns.Bound(f => f.Text).Width(200).ClientTemplate("<textarea class='textareaforcasemanngement'  readonly='readonly' style='width:99%'>#= Text#</textarea>").Title("Note"); ;
             columns.Bound(f => f.CreatedBy).Title("Creator").Width(100);
             columns.Bound(f => f.CreateDate).Title("Creat Date").Format("{0:MM/dd/yyyy hh:mm tt}").Width(100);
             columns.Command(command => { command.Edit().Text(" ").Visible("NoteCanEdit"); command.Destroy().Text(" ").Visible("NoteCanEdit"); }).Width(45);
@@ -157,7 +157,7 @@
                 columns.Bound(o => o.EventDate).Format("{0:MM/dd/yyyy}").Title("Entered Date").Width(80);
                 columns.Bound(o => o.CaseNoteType).Width(100);
                 columns.Bound(o => o.CaseNoteTypeReason).Width(160);
-                columns.Bound(o => o.Text).ClientTemplate("<textarea class='textareaforcasemanngement'  readonly='readonly' style='width:100%'>\\#= Text \\#</textarea>").Title("Note");
+                columns.Bound(o => o.Text).ClientTemplate("<textarea class='textareaforcasemanngement'  readonly='readonly' style='width:99%'>\\#= Text \\#</textarea>").Title("Note");
                 columns.Bound(o => o.CreatedBy).Width(140).Title("Entered By");
             })
             .DataSource(dataSource => dataSource

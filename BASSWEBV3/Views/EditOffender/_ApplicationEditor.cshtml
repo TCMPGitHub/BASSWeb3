@@ -57,10 +57,12 @@
         }
         @Html.HiddenFor(m => m.App.ApplicationID, new { id = "hdApplicationID" + Model.ApplicationTypeName })
         @Html.HiddenFor(m => m.App.ApplicationTypeID)
+        @Html.HiddenFor(m => m.App.AppliedOrRefusedOnDate, new { id = "hdAppliedOrRefusedOnDate" }) 
         @Html.HiddenFor(m => m.App.EpisodeID)
         @Html.HiddenFor(m => m.App.DHCSDate)
         @Html.HiddenFor(m => m.App.CustodyFacilityId, new { id = "hdCustodyFacilityId" })
         @Html.HiddenFor(m => m.App.ApplicationOutcomeID, new { id = "hdApplicationOutcomeID" })
+        @Html.HiddenFor(m => m.App.PhoneInterviewDate, new { id = "hdPhoneInterviewDate" })
         @Html.HiddenFor(m => m.App.OutcomeDate, new { id = "hdOutcomeDate" })
         @Html.HiddenFor(m => m.App.IssuedOnDate, new { id = "hdIssuedOnDate" })
         @Html.HiddenFor(m => m.App.IsEditable, new { id = "hdIsEditable" })
@@ -125,29 +127,35 @@
                     <div class="divOffenderPart2tbs" style="width:50%;">
                         <scan style="width: 100%; text-align: right; margin-right: 5px;">@labelval</scan>
                     </div>
-                    <script>
-                        function ChangeAppliedOrRefusedOnDate(e) {
+               @*<script>
+                   function ChangeAppliedOrRefusedOnDate(e) {
                             e.sender.element[0].form['App.AppliedOrRefusedOnDate'].value = kendo.toString(new Date(this.value()), "d");
-                       }
-                    </script>
+                        }
+               </script>*@
                     <div class="divOffenderPart2tbs" style="width:50%;">
-                        @Html.HiddenFor(m => m.App.AppliedOrRefusedOnDate, new { id= "hdAppliedOrRefusedOnDate" })
                         @(Html.Kendo().DatePickerFor(m => m.App.AppliedOrRefusedOnDate).Format("MM/dd/yyyy").DateInput().HtmlAttributes(new { @style = "width:120px!important;height:22px!important;" })
                             .Value(Model.App.AppliedOrRefusedOnDate).Name("App.AppliedOrRefusedOnDate" + Model.ApplicationTypeName)
-                            .Events(e => e.Change("ChangeAppliedOrRefusedOnDate")).Enable(false))
+                            /*.Events(e => e.Change("ChangeAppliedOrRefusedOnDate"))*/.Enable(false))
                     </div>
                 </div>
            <div id=@devname style="display:@apptDetails">
                 @if (Model.NeedPI)
                 {
                     <div class="divOffenderPart1tr">
-                        <div class="divOffenderPart2tbs" style="width:50%;">
+                        <div class="divOffenderPart2tbs" style="width:50%;float:right">
                             <scan style="width: 100%; text-align: right; margin-right: 5px;">Phone Interview</scan>
                         </div>
-                        <div class="divOffenderPart2tbs" style="width:50%;">
+                        <script>
+                        function SetApplicationPIDate(e) {
+                            e.sender.element[0].form['App.PhoneInterviewDate'].value = kendo.toString(new Date(this.value()), "d");
+                        }
+                         </script>
+                        <div class="divOffenderPart2tbs" style="width:50%;float:left;">
                             @(Html.Kendo().DatePickerFor(m => m.App.PhoneInterviewDate).Format("MM/dd/yyyy").DateInput()
-                        .Value(Model.App.PhoneInterviewDate).Name("App.PhoneInterviewDate").HtmlAttributes(new { @style = "width:120px!important;height:22px!important;" })
-                        /*.Enable(false)*/)
+                        .Value(Model.App.PhoneInterviewDate).Name("App.PhoneInterviewDate" + Model.ApplicationTypeName)
+                        .HtmlAttributes(new { @style = "width:120px!important;height:22px!important;" })
+                        .Enable(Model.App.IsEditable)
+                        .Events(e => e.Change("SetApplicationPIDate")))
                         </div>
                     </div>
                 }
@@ -216,13 +224,16 @@
             </div>
         </div>
         <script type="text/javascript">
-            $(function () {
+            $(function (e) {
                 var appname = @Html.Raw(Json.Encode(Model.ApplicationTypeName));
+                //var id =  e.target['App.ApplicationID' + appname].value;
                 var appID = @Html.Raw(Json.Encode(Model.App.ApplicationID));
+                    //$("#hdApplicationID" + appname).val();
+
                 var tempDLF = $("#App_CustodyFacilityId" + appname).data("kendoDropDownList");
                 var tempDLO = $("#App_ApplicationOutcomeID" + appname).data("kendoDropDownList");
                 var tempDPR = $("#App_AppliedOrRefusedOnDate" + appname).data("kendoDatePicker");
-                var tempDPI = $("#App_PhoneInterviewDate").data("kendoDatePicker");
+                var tempDPI = $("#App_PhoneInterviewDate" + appname).data("kendoDatePicker");
                 var tempDPO = $("#App_OutcomeDate" + appname).data("kendoDatePicker");
                 var tempDPS = $("#App_IssuedOnDate" + appname).data("kendoDatePicker");
                 if ($("#hdCanEditApp").val() == "False") {
@@ -243,8 +254,15 @@
                         if(!confirm("WARNING: You have unsaved changes in " + actionText + " that will be lost if you save " + appname + " changes.\n\nIf you'd like to discard your changes and continue, click \"OK\"; otherwise, click \"Cancel\".")){
                             e.stopPropagation();
                             return false;
-                        }                      
+                        }
                     }
+                    $("#hdApplicationID" + appname).val(@Html.Raw(Json.Encode(Model.App.ApplicationID)));
+                    if(appname === "MediCal")
+                        $("#hdIssuedOnDate").val(e.target['App.IssuedOnDate' + appname].value);
+                    $("#hdOutcomeDate").val(e.target['App.OutcomeDate' + appname].value);
+                    if(appname === "SSI")
+                        $("#hdPhoneInterviewDate").val(e.target['App.PhoneInterviewDate' + appname].value);
+                    $("#hdAppliedOrRefusedOnDate").val(e.target['App.AppliedOrRefusedOnDate' + appname].value);
                     var apply =($(".agree_1_" + appname).prop('checked') == true ? "'Applied On'" : "'Refused On'");
                     if (tempDPR == undefined || tempDPR.element[0].value == "" || tempDPR.element[0].value == "__/__/____" )
                     {
@@ -272,6 +290,7 @@
                     }
 
                     postFormAndReplaceDivHtml($("#" + appname + "App"), function(e){
+                        appID = $('#appForm' + appname)[0]['App.ApplicationTypeID'].value;
                         RefreshApplicationPanel($('#appForm' + appname), appname, appID);
                         EnableButtons(false, appname, appID);
                     });
@@ -309,6 +328,7 @@
                     if (tempDPO != undefined) tempDPO.enable(true);
                     if (tempDPS != undefined) tempDPS.enable(true);
                     EnableButtons(true, appname, appID);
+                    return true;
                 });
 
                 $('#link' + appname).click(function (e) {
@@ -322,7 +342,7 @@
                     }
                 })
             });
-           
+
             function EnableButtons(obj, fname, appID){
                 var screendate = $("#Inmate_ScreeningDate").val();
                 var buttonR = $("#r" + fname).data("kendoButton");
@@ -348,7 +368,7 @@
                 var tempDLF = $("#App_CustodyFacilityId" + appname).data("kendoDropDownList");
                 var tempDLO = $("#App_ApplicationOutcomeID" + appname).data("kendoDropDownList");
                 var tempDPR = $("#App_AppliedOrRefusedOnDate" + appname).data("kendoDatePicker");
-                var tempDPI = $("#App_PhoneInterviewDate").data("kendoDatePicker");
+                var tempDPI = $("#App_PhoneInterviewDate" + appname).data("kendoDatePicker");
                 var tempDPO = $("#App_OutcomeDate" + appname).data("kendoDatePicker");
                 var tempDPS = $("#App_IssuedOnDate" + appname).data("kendoDatePicker");
                 var chform = form[0];
@@ -359,7 +379,7 @@
                 $(".agree_2_" + appname).attr("disabled", false);
                 SetDatePickerPlaceHolder($("#App_AppliedOrRefusedOnDate" + appname));
                 SetDatePickerPlaceHolder($("#App_OutcomeDate" + appname));
-                if (appname == "SSI") SetDatePickerPlaceHolder($("#App_PhoneInterviewDate"));
+                if (appname == "SSI") SetDatePickerPlaceHolder($("#App_PhoneInterviewDate" + appname));
                 if (appname == "MediCal"){
                     SetDatePickerPlaceHolder($("#App_IssuedOnDate" + appname));
                     $("#App_BICNum")[0].disabled = true;
@@ -370,7 +390,6 @@
                 if (tempDPI != undefined) tempDPI.enable(false); //SetDatePickerPlaceHolder($("#App_PhoneInterviewDate"));};
                 if (tempDPO != undefined) tempDPO.enable(false); //SetDatePickerPlaceHolder($("#App_OutcomeDate"  + appname));};
                 if (tempDPS != undefined) tempDPS.enable(false); //SetDatePickerPlaceHolder($("#App_IssuedOnDate" + appname));};
-
                 if (editable == "False") {
                     $(chform).find("input, select, textarea, button").attr("disabled", true);
                 }
@@ -388,15 +407,15 @@
                     else if (chinput !== undefined && chinput !== "" && appID > 0 && AllowPartialEditAppt){
                         if(chinput == "False"){
                             $(".agree_1_" + appname).attr("disabled", true);
-                            $(".agree_2_" + appname).attr("disabled", true); 
+                            $(".agree_2_" + appname).attr("disabled", true);
                             if (tempDLF != undefined) tempDLF.enable(true);
                             if (tempDPR != undefined) tempDPR.enable(true);
                         }
                     }
                 }
-                else if (!AllowPartialEditAppt) {    
+                else if (!AllowPartialEditAppt) {
                      $(".agree_1_" + appname).attr("disabled", true);
-                     $(".agree_2_" + appname).attr("disabled", true);    
+                     $(".agree_2_" + appname).attr("disabled", true);
                 }
             }
         </script>

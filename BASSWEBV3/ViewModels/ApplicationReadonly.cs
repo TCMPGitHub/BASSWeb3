@@ -12,7 +12,7 @@ namespace BassWebV3.ViewModels
         public string ReleaseCountyName { get; set; }
         public bool? AgreesToApply { get; set; }
         public DateTime AppliedOrRefusedOnDate { get; set; }
-        public string PhoneInterviewDate { get; set; }
+        public DateTime? PhoneInterviewDate { get; set; }
         public string OutcomeDate { get; set; }
         public string OutCome { get; set; }
         public string ApplicationTypeName { get; set; }

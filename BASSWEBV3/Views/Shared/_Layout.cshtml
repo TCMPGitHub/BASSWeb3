@@ -105,6 +105,10 @@
                         }
                         </div>
                         <div class="editHeaderItem2">
+                            @if(BassConstants.Environment == "Development")
+                            {
+                                <span class ="redtext"><strong>[Development]</strong>&nbsp;&nbsp;</span>
+                            }
                             <span id="loading" class="hidden waitingtext"><strong>[Loading]</strong>&nbsp;&nbsp;</span><span style="color:greenyellow">Logged in as </span><span style="color:green;"><strong>@ViewBag.CurrentUser.UserName</strong></span>&nbsp;&nbsp;
                             @(Html.Kendo().Button().Name("logoutButton").Content("Logout")@*.Icon("logout")*@.Events(e => e.Click("Logout"))
                                   .HtmlAttributes(new { style = "width:60px;height:22px;background-color:darkblue;color:white;" }))

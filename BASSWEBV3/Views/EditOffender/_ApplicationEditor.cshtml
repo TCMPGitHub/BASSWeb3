@@ -291,8 +291,8 @@
                     debugger
                     postFormAndReplaceDivHtml($("#" + appname + "App"), function(e){
                         debugger
-                        var appID = $('#appForm' + appname)[0]['App.ApplicationTypeID'].value;
-                        if(appID === '0') appID = $("#hdApplicationID" + appname).val();
+                        var appID = $('#appForm' + appname)[0]['App.ApplicationID'].value;
+                        //if(appID === '0') appID = $("#hdApplicationID" + appname).val();
                         RefreshApplicationPanel($('#appForm' + appname), appname, appID);
                         EnableButtons(false, appname, appID);
                     });

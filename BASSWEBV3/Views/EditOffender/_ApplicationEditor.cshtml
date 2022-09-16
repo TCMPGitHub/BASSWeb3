@@ -55,7 +55,7 @@
         {
             <scan style="color:red">@Html.DisplayFor(m => m.ErrorMessage)</scan>
         }
-        @Html.HiddenFor(m => m.App.ApplicationID, new { id = "hdApplicationID" + Model.ApplicationTypeName })
+        @Html.HiddenFor(m => m.App.ApplicationID, new { id = ("App.ApplicationID" + Model.ApplicationTypeName) })
         @Html.HiddenFor(m => m.App.ApplicationTypeID)
         @Html.HiddenFor(m => m.App.AppliedOrRefusedOnDate, new { id = "hdAppliedOrRefusedOnDate" }) 
         @Html.HiddenFor(m => m.App.EpisodeID)
@@ -226,10 +226,8 @@
         <script type="text/javascript">
             $(function (e) {
                 var appname = @Html.Raw(Json.Encode(Model.ApplicationTypeName));
-                //var id =  e.target['App.ApplicationID' + appname].value;
                 var appID = @Html.Raw(Json.Encode(Model.App.ApplicationID));
-                    //$("#hdApplicationID" + appname).val();
-
+                 
                 var tempDLF = $("#App_CustodyFacilityId" + appname).data("kendoDropDownList");
                 var tempDLO = $("#App_ApplicationOutcomeID" + appname).data("kendoDropDownList");
                 var tempDPR = $("#App_AppliedOrRefusedOnDate" + appname).data("kendoDatePicker");
@@ -256,8 +254,10 @@
                             return false;
                         }
                     }
-                    $("#hdApplicationID" + appname).val(@Html.Raw(Json.Encode(Model.App.ApplicationID)));
-                    if(appname === "MediCal")
+                    if(appID > 0 && e.target['App.ApplicationID' + appname].value == 0) {
+                        e.target['App.ApplicationID' + appname].value = appID;
+                    }
+                  if(appname === "MediCal")
                         $("#hdIssuedOnDate").val(e.target['App.IssuedOnDate' + appname].value);
                     $("#hdOutcomeDate").val(e.target['App.OutcomeDate' + appname].value);
                     if(appname === "SSI")
@@ -288,14 +288,7 @@
                         alert( "Outcomes other than \"Applied\" require an Outcome Date.");
                         return false;
                     }
-                    debugger
-                    postFormAndReplaceDivHtml($("#" + appname + "App"), function(e){
-                        debugger
-                        var appID = $('#appForm' + appname)[0]['App.ApplicationID'].value;
-                        //if(appID === '0') appID = $("#hdApplicationID" + appname).val();
-                        RefreshApplicationPanel($('#appForm' + appname), appname, appID);
-                        EnableButtons(false, appname, appID);
-                    });
+                    postFormAndReplaceDivHtml($("#" + appname + "App"), function(e){});
                     return true;
                 });
                 $('#appForm' + appname).on("change","input", function (e) {

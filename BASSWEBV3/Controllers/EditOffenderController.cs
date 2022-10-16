@@ -934,7 +934,7 @@ namespace BassWebV3.Controllers
                     //copy file to server
                     if (files != null)
                     {
-                        var fileName = Path.GetFileNameWithoutExtension(file.FileName) + DateTime.Now.ToString("MMddyyyyhhmm") + ".pdf";
+                        var fileName = Path.GetFileNameWithoutExtension(file.FileName)  + ".pdf";   //+ DateTime.Now.ToString("MMddyyyyhhmm")
                         var physicalPath = Path.Combine(Server.MapPath("~/BASSDoc"), fileName);
                         // The files are not actually saved in disk
                         file.SaveAs(physicalPath);

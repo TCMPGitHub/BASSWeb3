@@ -472,49 +472,63 @@
             </div>
             <line style="height:2px!important;width:100%;border-bottom: 1px solid lightgray;"></line>
             <div class="divOffenderPart1tr"><strong><scan style="color:saddlebrown"> MISCELLANEOUS&nbsp;QUESTIONS</scan></strong></div>
-            <div class="divOffenderPart1tr">
-                <div class="divOffenderPart1tb" style="width:185px;"><span style="width:20px;"></span><b>CID&nbsp;Services&nbsp;Refusal&nbsp;Date&nbsp;</b></div>
-                <div class="divOffenderPart1tb" style="height:22px!important;">
-                    @(Html.Kendo().DatePickerFor(m => m.Inmate.CIDServiceRefusalDate).Format("MM/dd/yyyy").DateInput()
+        <div class="divOffenderPart1tr">
+            <div class="divOffenderPart1tbh">
+                <RELAESE class="divOffenderPart1tbs">
+                    <div style="width:190px;height:22px!important;"><b>&nbsp;&nbsp;&nbsp;&nbsp;CID&nbsp;Services&nbsp;Refusal&nbsp;Date&nbsp;</b></div>
+                    @*<div class="divOffenderPart1tb" style="width:100%;"><span style="width:20px;"></span><b>CID&nbsp;Services&nbsp;Refusal&nbsp;Date&nbsp;</b></div>*@
+                    <div class="divOffenderPart1tb" style="height:22px!important;">
+                        @(Html.Kendo().DatePickerFor(m => m.Inmate.CIDServiceRefusalDate).Format("MM/dd/yyyy").DateInput()
                             .Value(Model.Inmate.CIDServiceRefusalDate).Name("Inmate.CIDServiceRefusalDate")
                             .HtmlAttributes(new { style = "height:22px!important;width:115px!important;" }))
-                </div>
-                <div class="divOffenderPart1tr">
-                    <div class="divOffenderPart1tb" style="width:300px;"><span style="width:220px;"></span><b>Released&nbsp;To&nbsp;</b></div>
+                    </div>
+                </RELAESE>
+                    @*<div class="divOffenderPart1tr">*@
+                <CTRL class="divOffenderPart1tbs">
+                    <div class="divOffenderPart1tb"><b>&nbsp;&nbsp;&nbsp;&nbsp;Released&nbsp;To&nbsp;</b></div>
                     <div class="divOffenderPart1tb">
                         @(Html.Kendo().DropDownListFor(m => m.Inmate.DestinationID).DataValueField("lkValue").DataTextField("lkdescr_short")
-                                  .Name("Inmate.DestinationID").BindTo(Model.AllDestinationIDs).OptionLabel("(Select a Destination)")
+                                  .Name("Inmate.DestinationID").BindTo(Model.AllDestinationIDs).OptionLabel("Select a Destination")
                                   .Enable(Model.EditingEnabled)
                                   .HtmlAttributes(new { @style = "width:180px;", @data_orig = Model.Inmate.DestinationID }))
-                </div>
-            </div>
+                    </div>
+                </CTRL>
+             </div>
             </div>
             <div class="divOffenderPart1tr">
-            <div class="divOffenderPart1tb" style="width:185px;"><span style="width:150px;"></span><b>Import&nbsp;Date&nbsp;</b></div>
-            <div class="divOffenderPart1tb" style="height:22px!important;">
-                @(Html.Kendo().DatePicker().Format("MM/dd/yyyy").DateInput().Enable(false)
+                <RELAESE class="divOffenderPart1tbs">
+                    <div class="divOffenderPart1tb" style="width:185px;"><span style="width:100px;"></span><b>Import&nbsp;Date&nbsp;</b></div>
+                    <div class="divOffenderPart1tb" style="height:22px!important;">
+                        @(Html.Kendo().DatePicker().Format("MM/dd/yyyy").DateInput().Enable(false)
                             .Value(Model.Inmate.ReferralDate).Name("ReferralDate")
                             .HtmlAttributes(new { style = "height:22px!important;width:115px!important;" }))
-            </div>
-                <div class="divOffenderPart1tb" style="width:300px;"><span style="width:150px;"></span><b>Release&nbsp;Date&nbsp;Changes</b></div>
-                <div class="divOffenderPart1tb" style="height:22px!important;background-color:white;">
-    @(Html.Kendo().Grid(Model.SomsReleaseDates)
-                          .Name("SomsReleaseDates")
-                          .HtmlAttributes(new { style = "max-height:150px;disabled:true;border: 1px solid #e7e7e7;background-color:white;" })
+                    </div>
+                </RELAESE>
+                <CTRL class="divOffenderPart1tbs" style="width:100%;">
+                    @*<div class="divOffenderPart1tr" style="width:100%;">
+                        <div class="divOffenderPart1tb" style="width:100%;"><span style="width:20px;"></span><b>Release&nbsp;Date&nbsp;Changes</b></div>
+                     </div>*@   
+                    <span style="width:15px;"></span>
+                    <div class="divOffenderPart1tr" style="width:100%;">
+                        <div class="divOffenderPart1tb" style="height:22px!important;width:100%;">                          
+                            @(Html.Kendo().Grid(Model.SomsReleaseDates)
+                          .Name("SomsReleaseDates").ToolBar(t=>t.Template(@<text><span style="font-size:16px; font-weight:bold;width:100%;">Release Date Changes</span></text>))
+                          .HtmlAttributes(new { style = "max-height:150px;width:100 %;" })
                           .Selectable(s => s.Enabled(true))
                           .Columns(columns =>
                           {
-                              columns.Bound(o => o.FileDate).Title("Date Changed").Format("{0:MM/dd/yyyy}").Width(90);
-                              columns.Bound(o => o.ScheduledReleaseDate).Title("Release Date").Format("{0:MM/dd/yyyy}").Width(90);
+                              columns.Bound(o => o.FileDate).Title("Date Changed").Format("{0:MM/dd/yyyy}").Width(90)
+                                     .HeaderHtmlAttributes( new { Style = "border-left:1px solid lightgrey;" })
+                                     .HtmlAttributes(new { Style = "border-left:1px solid lightgrey;" });
+                              columns.Bound(o => o.ScheduledReleaseDate).Title("Release Date").Format("{0:MM/dd/yyyy}").Width(90)
+                                     .HeaderHtmlAttributes(new { Style = "border-right:1px solid lightgrey;" })
+                                     .HtmlAttributes(new { Style = "border-right:1px solid lightgrey;" });
                           }).DataSource(dataSource => dataSource.Ajax().Read(r => r.Action("GetReleaseDateChangs", "EditOffender", new { EpisodeID = Model.Inmate.EpisodeID }))
                                                    ))
-    @*@(Html.Kendo().ListBox()
-        .Name("optional").HtmlAttributes(new { style = "max-height:80px;disabled:true;line-height:18px;width:180px;" })
-        .Selectable(ListBoxSelectable.Single)
-        .BindTo(Model.SomsReleaseDates)
-                )*@
-</div>
-           </div>
+                        </div>
+                        </div>
+              </CTRL>
+            </div>
             <line style="height:5px!important;width:100%;"></line>
             <div class="divOffenderPart1tr">
                 <div class="divOffenderPart1tb" style="width:185px;"><span style="width:150px;"></span><b>CalFresh&nbsp;Referral&nbsp;</b></div>
@@ -542,7 +556,7 @@
                           .Enable(Model.EditingEnabled).Checked(Model.Inmate.CalWorksRef.HasValue && Model.Inmate.CalWorksRef.Value == false))
                 </div>
             </div>
-        <line style="height:20px!important;width:100%;"></line>
+            <line style="height:20px!important;width:100%;"></line>
             <div class="divOffenderPart1tr">
                 <div class="divOffenderPart1tb" style="width:185px;"><span style="width:150px;"></span><b>DHCS&nbsp;Eligibility&nbsp;</b></div>
                 <div class="divOffenderPart1tb" style="margin-top:5px;">
@@ -558,9 +572,9 @@
 .HtmlAttributes(new { @style = "width:100px!important;height:22px!important;", @MaxLength = "10" }))
                 </div>
             </div>
-       
 
-    </div>
+
+        </div>
         <script type="text/javascript">
             function OFFENDERButtonDisable(disabled) {
                 var buttonR = $("#revertEpisodeButton").data("kendoButton");

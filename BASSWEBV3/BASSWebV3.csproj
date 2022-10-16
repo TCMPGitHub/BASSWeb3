@@ -674,6 +674,7 @@
     <Content Include="Content\Telerik\2019.3.11\kendo.uniform.mobile.min.css.map" />
     <Content Include="Scripts\dist\clipboard.js" />
     <Content Include="Scripts\dist\clipboard.min.js" />
+    <None Include="Properties\PublishProfiles\BASSWEBV3.pubxml" />
     <None Include="Properties\PublishProfiles\BASSWEBV3DEV.pubxml" />
     <None Include="Scripts\jquery-3.3.1-vsdoc.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />

@@ -974,19 +974,18 @@ namespace BassWebV3.Controllers
                 // System.IO.File.Delete(physicalPath);
                 data = System.IO.File.ReadAllBytes(physicalPath);
             }
-            else
-            {
-                if (result.FileData != null)
-                {
-                    System.IO.File.WriteAllBytes(physicalPath, result.FileData);
-                    return File(data.ToArray(), "application/octet-stream", result.FileName);
-                }
-                else
-                    //throw new HttpResponseException(HttpStatusCode.InternalServerError);
-                   throw new HttpException(fileName + " File is not found.");
-            }
-            return Content("");
-            //RedirectToAction("GetInmateData", new { EpisodeID = result.EpisodeId });
+            //else
+            //{
+            //    if (result.FileData != null)
+            //    {
+            //        System.IO.File.WriteAllBytes(physicalPath, result.FileData);
+            //        return File(data.ToArray(), "application/octet-stream", result.FileName);
+            //    }
+            //    else
+            //        //throw new HttpResponseException(HttpStatusCode.InternalServerError);
+            //       throw new HttpException(fileName + " File is not found.");
+            //}
+            return File(data.ToArray(), "application/octet-stream", result.FileName);
         }
 
         public static byte[] GetFilesBytes(HttpPostedFileBase file, ref int Len)

@@ -54,10 +54,13 @@
         /*.k-widget .k-upload .k-header .k-upload-empty{
             width:95%;
         }*/
-        .k-grid-content .k-button.k-grid-delete {
-            background: url('../../Content/themes/base/images/trash.ico') no-repeat;
-        }
 
+        /*.k-grid-content .k-button.k-grid-delete {
+            background: url('../../Content/themes/base/images/trash.ico') no-repeat;
+        }*/
+        .k-grid-delete {
+        background-image: url('../../Content/themes/base/images/trash.ico');
+    }
         /*.k-grid-content .k-button.k-grid-delete::before {
             content: "\f1f8";
             background-image: url('../../Content/themes/base/images/trash.ico');
@@ -119,7 +122,7 @@
 <div class="divOffenderPart1tr">
     @if (!Model.ViewOnly)
     {
-        <div class="divOffenderPart1tb" style="width:95%">
+        <div class="divOffenderPart1tb" style="width:93%">
 
             @(Html.Kendo().Upload()
                       .Name("files")
@@ -146,9 +149,9 @@
           columns.Bound(f => f.ID).Hidden();
           columns.Bound(f => f.UploadDate).Format("{0:MM/dd/yyyy}").Title("Upload Date").Width(90);
           columns.Bound(f => f.FileName).ClientTemplate("<a href='" + Url.Action("Download", "EditOffender") + "/#= ID#'>#= FileName #</a>")
-                      .Title("File Name").Width(140).HtmlAttributes(new { style = "white-space: normal;font-size:12px;line-height:12px!important;" });
+                      .Title("File Name").Width(200).HtmlAttributes(new { style = "white-space: normal;font-size:12px;line-height:12px!important;" });
           columns.Bound(f => f.UploadBy).Title("Upload By").Width(100);
-          columns.Command(command => command.Destroy()).Width(30).Visible(!Model.ViewOnly);
+          columns.Command(command => command.Destroy().Text(" ")).Visible(!Model.ViewOnly);
       })
        .Sortable(sortable => sortable.AllowUnsort(true))
         //.Scrollable(a => a.Height(160))

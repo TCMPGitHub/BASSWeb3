@@ -413,7 +413,7 @@
                         <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.ChronicIllness).Name("Inmate.ChronicIllness").Enable(Model.EditingEnabled).Label("Chronic Illness")</div>
                         <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.EOP).Name("Inmate.EOP").Enable(Model.EditingEnabled)<scan class="@eopDiff" title="@eopTitle">EOP (Severely Mentally Ill)</scan></div>
                         <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.PhysDisabled).Name("Inmate.PhysDisabled").Enable(Model.EditingEnabled)<scan class=@physDiff title="@physTitle">Physical Disabled</scan></div>
-                        <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.DevDisabled).Name("Inmate.DevDisabled").Enable(Model.EditingEnabled)<scan class=@devDiff title="@devTitle">Developmentally Disabled</scan></div>
+                        <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.DevDisabled).Name("Inmate.DevDisabled").Enable(Model.EditingEnabled)<scan class=@devDiff title="@devTitle">Developmentally&nbsp;Disabled</scan></div>
                         <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.USVet).Name("Inmate.USVet").Enable(Model.EditingEnabled).Label("US Veteran")</div>
                     </div>
                     <div class="divOffenderPart1tbv">
@@ -513,7 +513,7 @@
                         <div class="divOffenderPart1tb" style="height:22px!important;width:100%;">                          
                             @(Html.Kendo().Grid(Model.SomsReleaseDates)
                           .Name("SomsReleaseDates").ToolBar(t=>t.Template(@<text><span style="font-size:16px; font-weight:bold;width:100%;">Release Date Changes</span></text>))
-                          .HtmlAttributes(new { style = "max-height:150px;width:100 %;" })
+                          .HtmlAttributes(new { style = "max-height:100px;width:100 %;" })
                           .Selectable(s => s.Enabled(true))
                           .Columns(columns =>
                           {
@@ -556,7 +556,7 @@
                           .Enable(Model.EditingEnabled).Checked(Model.Inmate.CalWorksRef.HasValue && Model.Inmate.CalWorksRef.Value == false))
                 </div>
             </div>
-            <line style="height:20px!important;width:100%;"></line>
+            <line style="height:80px!important;width:100%;"></line>
             <div class="divOffenderPart1tr">
                 <div class="divOffenderPart1tb" style="width:185px;"><span style="width:150px;"></span><b>DHCS&nbsp;Eligibility&nbsp;</b></div>
                 <div class="divOffenderPart1tb" style="margin-top:5px;">
@@ -572,7 +572,7 @@
 .HtmlAttributes(new { @style = "width:100px!important;height:22px!important;", @MaxLength = "10" }))
                 </div>
             </div>
-
+           <line style="height:20px!important;width:100%;"></line>
 
         </div>
         <script type="text/javascript">

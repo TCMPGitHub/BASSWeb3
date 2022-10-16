@@ -122,7 +122,7 @@
 <div class="divOffenderPart1tr">
     @if (!Model.ViewOnly)
     {
-        <div class="divOffenderPart1tb" style="width:93%">
+        <div class="divOffenderPart1tb" style="width:90%">
 
             @(Html.Kendo().Upload()
                       .Name("files")
@@ -137,7 +137,7 @@
 
         </div>
         <div class="divOffenderPart1tb">
-            <button id="clearAll" class="k-button" style="height:22px;">Clear</button>
+            <button id="clearAll" class="k-button" style="height:22px;margin-left:-20px;">Clear</button>
         </div>
     }
 </div>
@@ -156,7 +156,7 @@
        .Sortable(sortable => sortable.AllowUnsort(true))
         //.Scrollable(a => a.Height(160))
         .Navigatable()
-        .HtmlAttributes(new { style = "height:180px;" })
+        .HtmlAttributes(new { style = "height:180px;width:95%" })
         .DataSource(dataSource => dataSource
           .Ajax()
           .Model(m => m.Id(f => f.ID))

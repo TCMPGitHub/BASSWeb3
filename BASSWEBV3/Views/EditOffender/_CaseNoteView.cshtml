@@ -267,8 +267,8 @@
 <div class="divOffenderPart1tr">
     @(Html.Kendo().Grid<BassIdentityManagement.Entities.CaseNoteData>()
     .Name("gridCaseNote")
-    .HtmlAttributes(new { style = "width:100%;font-size:12px;line-height:12px!important;" })
-    .Scrollable(s => s.Height(120))
+    .HtmlAttributes(new { style = "width:100%;font-size:12px;line-height:12px!important;padding:0" })
+    .Scrollable(s => s.Height(100))
     .Selectable(s=>s.Mode(GridSelectionMode.Single))
     .PersistSelection(true)
         .Events(e => { e.DataBound("gridDataBound"); e.Change("onRowSelected"); e.Edit("insertPopupCaption"); e.Save("CheckPopupData"); e.BeforeEdit("StopProcess"); })
@@ -322,6 +322,7 @@
     <div class="divOffenderPart1tr" id="divCasenoteReason">
         @Html.TextBox("message", "", new { @id = "displayReason", @readonly = "readonly", style = "width:100%;color:#ff9900;background-color:white;font-weight: bold;" })
     </div>
+   <div style="height:20px;"></div>
     <div class="divOffenderPart1tr" id="divCasenoteText" style="height:100px!important;">
         @Html.TextArea("textarea", "", new { @id = "txtComment", @class = "textareaforcasemanngement", placeholder = "Note ...", spellcheck = "true", style = "width:100%;max-height:100px!important;background-color:white;", @rows = "6", @readonly = "readonly" })
     </div>

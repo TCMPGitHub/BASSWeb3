@@ -243,26 +243,71 @@ namespace BassWebV3.Controllers
             objlist.Add("EpisodeMdoSvpTypes");
             objlist.Add("EpisodeMedReleaseTypes");
             objlist.Add("Destinations");
+            objlist.Add("ApplicationFlags");
             var results = SqlHelper.GetInmateDetails<object>("spSaveAssignment", parameters, objlist);
             DerivedSomsData SomsData = (DerivedSomsData)results[0];
             InmateProfileData profile = (InmateProfileData)results[1];
             var episodes = ((List<Episodes>)results[2]).ToList();
+            var allf = ((List<Facility>)results[4]).ToList();
             var isLatest = (episodes.Where(w => w.EpisodeID == EpisodeID).FirstOrDefault().ReferralDate).IndexOf('*') > 0 ? true : false;
-
-            return PartialView("_OffenderData", new OffenderData
+            var Editingable = isLatest && HasEditPermission(CurrentUser, profile.BenefitWorkerID);
+            OffenderData offender = new OffenderData
             {
-                EditingEnabled = isLatest && HasEditPermission(CurrentUser, profile.BenefitWorkerID),
-                DerivedSomsData = SomsData,
+                EditingEnabled = Editingable,
+                IsUnassignedCase = string.IsNullOrEmpty(profile.BenefitWorkerName) && isLatest && CurrentUser.IsBenefitWorker,
+                DerivedSomsData = (DerivedSomsData)results[0],
                 Inmate = profile,
                 AllEpisodes = episodes,
                 AllCounties = ((List<County>)results[3]).ToList(),
-                AllFacilities = ((List<Facility>)results[4]).ToList(),
+                AllFacilities = allf,
                 AllGenders = ((List<Gender>)results[5]).ToList(),
                 AllAcpDshTypes = ((List<EpisodeAcpDshType>)results[6]).ToList(),
                 AllMdoSvpTypes = ((List<EpisodeMdoSvpType>)results[7]).ToList(),
                 AllMedReleaseTypes = ((List<EpisodeMedReleaseType>)results[8]).ToList(),
                 AllDestinationIDs = ((List<LookUpTable>)results[9]).ToList()
+                //SomsReleaseDates = ((List<ReleaseDateChanged>)results[10]).ToList()
+            };
+            Applications apps = new Applications
+            {
+                //AllOutcomes = ((List<OutcomeType>)results[10]).ToList(),
+                //AppData = ((List<ApplicationData>)results[12]).ToList(),
+                AppFlags = (ApplicationFlags)results[10],
+                CanEditApplication = Editingable,
+                //AllFacilities = allf,
+                User = CurrentUser
+            };
+
+            CaseNoteFiles casenf = new CaseNoteFiles
+            {
+                CanEditNote = Editingable || CurrentUser.CanEditAllNotes,
+                EpisodeID = EpisodeID,
+                HideCaseNote = CurrentUser.CaseNoteHidden,
+                HideDocument = CurrentUser.DocumentHidden,
+                CanUploadFile = Editingable || CurrentUser.CanEditAllCases
+            };
+
+            return PartialView("_InmatePanel", new InmateData
+            {
+                ShowCaseNoteList = CurrentUser.CanAccessReports,
+                Offender = offender,
+                Appliations = apps,
+                CaseNF = casenf,
+                EpisodeID = EpisodeID
             });
+            //return PartialView("_OffenderData", new OffenderData
+            //{
+            //    EditingEnabled = isLatest && HasEditPermission(CurrentUser, profile.BenefitWorkerID),
+            //    DerivedSomsData = SomsData,
+            //    Inmate = profile,
+            //    AllEpisodes = episodes,
+            //    AllCounties = ((List<County>)results[3]).ToList(),
+            //    AllFacilities = ((List<Facility>)results[4]).ToList(),
+            //    AllGenders = ((List<Gender>)results[5]).ToList(),
+            //    AllAcpDshTypes = ((List<EpisodeAcpDshType>)results[6]).ToList(),
+            //    AllMdoSvpTypes = ((List<EpisodeMdoSvpType>)results[7]).ToList(),
+            //    AllMedReleaseTypes = ((List<EpisodeMedReleaseType>)results[8]).ToList(),
+            //    AllDestinationIDs = ((List<LookUpTable>)results[9]).ToList()
+            //});
         }
         public JsonResult GetAllCounties()
         {
@@ -636,7 +681,8 @@ namespace BassWebV3.Controllers
             var isLatest = (episodes.Where(w => w.EpisodeID == EpisodeID).FirstOrDefault().ReferralDate).IndexOf('*') > 0 ? true : false;
             var Editingable = isLatest && HasEditPermission(CurrentUser, profile.BenefitWorkerID);
             OffenderData offender = new OffenderData {
-                EditingEnabled = Editingable,
+                EditingEnabled = Editingable,  
+                IsUnassignedCase = string.IsNullOrEmpty(profile.BenefitWorkerName) && isLatest && CurrentUser.IsBenefitWorker,
                 DerivedSomsData = (DerivedSomsData)results[0],
                 Inmate = profile,
                 AllEpisodes = episodes,
@@ -662,10 +708,11 @@ namespace BassWebV3.Controllers
 
             CaseNoteFiles casenf = new CaseNoteFiles
             {
-                CanEditNote = Editingable,
+                CanEditNote = Editingable || CurrentUser.CanEditAllNotes,
                 EpisodeID = EpisodeID,
                 HideCaseNote = CurrentUser.CaseNoteHidden,
-                HideDocument = CurrentUser.DocumentHidden
+                HideDocument = CurrentUser.DocumentHidden,
+                CanUploadFile = Editingable || CurrentUser.CanEditAllCases
             };
             
             return PartialView("_InmatePanel", new InmateData
@@ -1193,12 +1240,12 @@ namespace BassWebV3.Controllers
             return result.OrderByDescending(o => o.EventDate).ThenByDescending(t => t.CaseNoteID).ToList();
         }
         [HttpPost]
-        public ActionResult GetCaseNoteView(int EpisodeId)
+        public ActionResult GetCaseNoteView(int EpisodeId, bool Editable)
         {
             return PartialView("_CaseNoteView", new CaseNoteFiles
             {
                 EpisodeID = EpisodeId,
-                CanEditNote= (CurrentUser.IsBenefitWorker || CurrentUser.CanAccessReports)
+                CanEditNote= Editable  //(CurrentUser.IsBenefitWorker || CurrentUser.CanAccessReports)
             });
         }
         

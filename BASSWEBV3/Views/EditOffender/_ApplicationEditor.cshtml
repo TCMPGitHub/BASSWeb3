@@ -225,6 +225,7 @@
         </div>
         <script type="text/javascript">
             $(function (e) {
+                debugger
                 var appname = @Html.Raw(Json.Encode(Model.ApplicationTypeName));
                 var appID = @Html.Raw(Json.Encode(Model.App.ApplicationID));
                  
@@ -234,14 +235,14 @@
                 var tempDPI = $("#App_PhoneInterviewDate" + appname).data("kendoDatePicker");
                 var tempDPO = $("#App_OutcomeDate" + appname).data("kendoDatePicker");
                 var tempDPS = $("#App_IssuedOnDate" + appname).data("kendoDatePicker");
-                if ($("#hdCanEditApp").val() == "False") {
-                    $("#appForm" + appname + ":input").prop('disabled', true);
-                    $("#appForm" + appname + ":button").prop('disabled', true);
-                }
-                else{
+                //if ($("#hdIsEditable").val() == "False") {
+                //    $("#appForm" + appname + ":input").prop('disabled', true);
+                //    $("#appForm" + appname + ":button").prop('disabled', true);
+                //}
+                //else{
                     RefreshApplicationPanel($("#appForm" + appname), appname, appID);
                     EnableButtons(false, appname, appID);
-                }
+                //}
 
                 $('#appForm' + appname).submit(function (e) {
                     e.preventDefault();
@@ -354,6 +355,7 @@
                 }
             }
             function RefreshApplicationPanel(form, appname, appID) {
+                debugger
                 var editable = $("#hdIsEditable").val();
                 var screendate = $("#Inmate_ScreeningDate").val();
                 var InfoSigned = $('#Inmate_ReleaseOfInfoSigned').prop('checked');

@@ -47,7 +47,8 @@
             type: "POST",
         dataType: "html",
         success: function (data, textStatus, XMLHttpRequest) {
-            $(".flex-item-b").html(data);
+            //$(".flex-item-b").html(data);
+            $("#InmatePanel").html(data);
         }
     });
     }
@@ -143,7 +144,7 @@
                 <div class="divOffenderPart1tb" style="width:30%;">
                     <div class="divOffenderPart1tb" style="width:60px;height:22px;">
                         @(Html.Kendo().Button().Name("addCaseButton").Content("Assign")
-.Enable(string.IsNullOrEmpty(Model.Inmate.BenefitWorkerName) && Model.EditingEnabled).Events(e => e.Click("AssignCase"))
+.Enable(Model.IsUnassignedCase).Events(e => e.Click("AssignCase"))
 .HtmlAttributes(new { type="button", @class = "buttonWidth" }))
                     </div>
                     <div class="divOffenderPart1tb" style="width:60px;height:22px;">

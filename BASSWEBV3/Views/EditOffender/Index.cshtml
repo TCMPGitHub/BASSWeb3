@@ -425,7 +425,7 @@
     }
     $(function () {
        $("#Assignmentwindow").keydown(function (e) { if (e.keyCode == 8) e.preventDefault(); });
-        if ($("#hdCanAccessReports").val() == "True" && $("#hdIsLoginUserBFW").val() == "True") {
+        if ($("#hdCanAccessReports").val() == "False" && $("#hdIsLoginUserBFW").val() == "True") {
             $("#divImg").show();
             if ($("#hdEpisodeID").val() != "0") {
                 $("#divWindow").show();

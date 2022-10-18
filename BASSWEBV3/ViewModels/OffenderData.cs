@@ -7,6 +7,7 @@ namespace BassWebV3.ViewModels
     public class OffenderData
     {
         public bool EditingEnabled { get; set; }
+        public bool IsUnassignedCase { get; set; }
         public DerivedSomsData DerivedSomsData { get; set; }
         public InmateProfileData Inmate { get; set; }
         public List<Episodes> AllEpisodes { get; set; }
@@ -29,5 +30,6 @@ namespace BassWebV3.ViewModels
         public bool CanEditNote { get; set; }
         public bool HideCaseNote { get; set; }
         public bool HideDocument { get; set; }
+        public bool CanUploadFile { get; set; }
     }
 }

@@ -134,7 +134,7 @@
            {
                validation.MaxFileSize(20000000);
                validation.AllowedExtensions(new string[] { ".pdf" });
-           }).ShowFileList(false)
+           }).ShowFileList(false).Enable(!Model.ViewOnly)
            )
         </div>
 </div>

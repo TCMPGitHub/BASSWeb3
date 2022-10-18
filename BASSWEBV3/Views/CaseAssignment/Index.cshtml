@@ -78,12 +78,16 @@
 }
 <div id="editContentCA">
     <script>
+        function addDays(date, days) {
+            var result = new Date(date);
+            result.setDate(result.getDate() + days);
+            return result;
+        }
         function DatePeriodChanged(e) {
-            if (this.select() > 0) {
-                var data = this.dataItem(this.select()).Value.split(',')
-                var fromDate = kendo.toString(kendo.parseDate(addDays(new Date(), data[0])), 'MM/dd/yyyy');
-
-                var toDate = kendo.toString(kendo.parseDate(addDays(new Date(), data[1])), 'MM/dd/yyyy');
+           if (this.selectedIndex > 0) {
+                var data = this.dataItem().Abbr.split(',');              
+                var fromDate = kendo.toString(kendo.parseDate(addDays(new Date(), parseInt(data[0]))), 'MM/dd/yyyy');
+                var toDate = kendo.toString(kendo.parseDate(addDays(new Date(), parseInt(data[1]))), 'MM/dd/yyyy');
 
                 var datePickerFrom = $("#FromDate").data("kendoDatePicker");
                 datePickerFrom.value(fromDate);
@@ -94,11 +98,9 @@
             }
             else {
                 //default to today to 180 days
-                var data = this.dataItem(this.select()).Value.split(',')
-                var fromDate = kendo.toString(kendo.parseDate(addDays(new Date(), "0")), 'MM/dd/yyyy');
-
-                var toDate = kendo.toString(kendo.parseDate(addDays(new Date(), "180")), 'MM/dd/yyyy');
-
+               var fromDate = kendo.toString(kendo.parseDate(addDays(new Date(), 0)), 'MM/dd/yyyy');
+               var toDate = kendo.toString(kendo.parseDate(addDays(new Date(), 180)), 'MM/dd/yyyy');
+               
                 var datePickerFrom = $("#FromDate").data("kendoDatePicker");
                 datePickerFrom.value(fromDate);
                 datePickerFrom.trigger("change");

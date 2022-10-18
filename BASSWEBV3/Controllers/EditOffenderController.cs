@@ -1162,7 +1162,7 @@ namespace BassWebV3.Controllers
             {
                 // The files are not actually removed in this demo
                 System.IO.File.Delete(physicalPath);
-                var query = string.Format(@"DECLARE @ID INT =(SELECT ID FROM [dbo].[DocUpload] WHERE FileName = '{0}')
+                var query = string.Format(@"DECLARE @ID INT =(SELECT ID FROM [dbo].[DocUpload] WHERE FileName = '{0} AND ActionStatus <> 10')
                     BEGIN
                      IF @ID > 0
                           UPDATE [dbo].[DocUpload] SET ActionStatus = 10 Where ID = @ID

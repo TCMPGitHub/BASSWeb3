@@ -95,16 +95,24 @@
            }
            function CloseFileList(e){
                e.preventDefault();
-
                var upload = $("#files").data("kendoUpload");
                upload.removeAllFiles();
            }
 </script>
 <script type="text/javascript">
-          function onUploadSuccess() {
-                    // Force the rebinding of the Grid on successful upload
-                $("#gridFileUpload").data("kendoGrid").dataSource.read();
-          }
+    function checkFileExist(url) {
+            http.open('HEAD', url, false);
+            http.send();
+            if (http.status === 200) {
+                output.innerHTML = "File exists";
+            } else {
+                output.innerHTML = "File doesn't exists";
+            }
+    }   
+    function onUploadSuccess() {
+        // Force the rebinding of the Grid on successful upload
+        $("#gridFileUpload").data("kendoGrid").dataSource.read();
+    }
           $("#clearAll").on('click', function (e) {
               e.preventDefault();
 
@@ -120,26 +128,24 @@
 )
 
 <div class="divOffenderPart1tr">
-    @if (!Model.ViewOnly)
-    {
-        <div class="divOffenderPart1tb" style="width:90%">
-
+   <div class="divOffenderPart1tb" style="width:90%">
             @(Html.Kendo().Upload()
-                      .Name("files")
-                      .Async(a => a.Save("SaveUploadFile", "EditOffender", new { EpisodeId = Model.EpisodeId }).AutoUpload(true))
-                      .HtmlAttributes(new { style = "height:20px; float:left" })
-                      .Events(e => { e.Success("onUploadSuccess"); })
-                      .Validation(validation => { validation.MaxFileSize(1048576000); validation.AllowedExtensions(new string[] { ".pdf" }); })
-                      .Messages(m => m.Select("Select File..."))
-                      .Multiple(false)
-                      .ShowFileList(true)  // Hide the file list as we're displaying uploaded files in the Grid
-            )
-
+            .Name("files")
+            .Async(a => a
+                .Save("Chunk_Upload_Save", "EditOffender", new { EpisodeId = Model.EpisodeId })
+                .AutoUpload(true)
+                .ChunkSize(1048576)
+            ).HtmlAttributes(new { style = "height:20px; float:left" })
+           .Events(e => { e.Success("onUploadSuccess"); })
+           .Messages(m => m.Select("Select File..."))
+           .Multiple(false)
+           .Validation(validation =>
+           {
+               validation.MaxFileSize(20000000);
+               validation.AllowedExtensions(new string[] { ".pdf" });
+           }).ShowFileList(false)
+           )
         </div>
-        <div class="divOffenderPart1tb">
-            <button id="clearAll" class="k-button" style="height:22px;margin-left:-20px;">Clear</button>
-        </div>
-    }
 </div>
 @(Html.Kendo().Grid<BassIdentityManagement.Entities.UploadedFiles>()
       .Name("gridFileUpload")
@@ -149,14 +155,14 @@
           columns.Bound(f => f.ID).Hidden();
           columns.Bound(f => f.UploadDate).Format("{0:MM/dd/yyyy}").Title("Upload Date").Width(90);
           columns.Bound(f => f.FileName).ClientTemplate("<a href='" + Url.Action("Download", "EditOffender") + "/#= ID#'>#= FileName #</a>")
-                      .Title("File Name").Width(200).HtmlAttributes(new { style = "white-space: normal;font-size:12px;line-height:12px!important;" });
-          columns.Bound(f => f.UploadBy).Title("Upload By").Width(100);
+                      .Title("File Name").HtmlAttributes(new { style = "white-space: normal;font-size:12px;line-height:12px!important;" });
+          columns.Bound(f => f.UploadBy).Title("Upload By").Width(80);
           columns.Command(command => command.Destroy().Text(" ")).Visible(!Model.ViewOnly);
       })
        .Sortable(sortable => sortable.AllowUnsort(true))
         //.Scrollable(a => a.Height(160))
         .Navigatable()
-        .HtmlAttributes(new { style = "height:180px;width:95%" })
+        .HtmlAttributes(new { style = "height:180px;width:auto" })
         .DataSource(dataSource => dataSource
           .Ajax()
           .Model(m => m.Id(f => f.ID))

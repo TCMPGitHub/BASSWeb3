@@ -1,7 +1,7 @@
 ﻿@using Kendo.Mvc.UI
 @model BassWebV3.ViewModels.CaseNoteFiles
     @{ 
-        var canedit = Model.CanEditNote;
+        var canedit = @ViewBag.CurrentUser.IsBenefitWorker || @ViewBag.CurrentUser.CanAccessReports;
     }
 <div class="divCaseNoteFileMain" style="border: 1px lightblue solid;">
     <div class="divOffenderPart1tab">

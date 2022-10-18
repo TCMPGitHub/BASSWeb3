@@ -8,6 +8,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Json;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
@@ -19,6 +22,29 @@ namespace BassWebV3.Controllers
     [RoutePrefix("EditOffender")]
     public class EditOffenderController : AbstractBassController
     {
+        [DataContract]
+        public class ChunkMetaData
+        {
+            [DataMember(Name = "uploadUid")]
+            public string UploadUid { get; set; }
+            [DataMember(Name = "fileName")]
+            public string FileName { get; set; }
+            [DataMember(Name = "relativePath")]
+            public string RelativePath { get; set; }
+            [DataMember(Name = "contentType")]
+            public string ContentType { get; set; }
+            [DataMember(Name = "chunkIndex")]
+            public long ChunkIndex { get; set; }
+            [DataMember(Name = "totalChunks")]
+            public long TotalChunks { get; set; }
+            [DataMember(Name = "totalFileSize")]
+            public long TotalFileSize { get; set; }
+        }
+        public class FileResult
+        {
+            public bool uploaded { get; set; }
+            public string fileUid { get; set; }
+        }
         [Route]
         [HttpGet]
         // GET: EditOffender
@@ -26,6 +52,7 @@ namespace BassWebV3.Controllers
         {
             ViewBag.ControllerID = ControllerID.EditOffender;
             ViewBag.IsAppViewOnly = CurrentUser.ViewBenefitOnly;
+            ViewBag.CurrentUser = (ApplicationUser)Session["CurrentUser"];
             try
             {
                 UserController.RecordPageLoad(CurrentUser.UserID, RouteData.Values["Controller"].ToString(), RouteData.Values["action"].ToString(),
@@ -1020,6 +1047,141 @@ namespace BassWebV3.Controllers
             // Return an empty string to signify success
             return Content("");
         }
+        //==================================================                
+        public void AppendToFile(string fullPath, Stream content)
+        {
+            try
+            {
+                using (FileStream stream = new FileStream(fullPath, FileMode.Append, FileAccess.Write, FileShare.ReadWrite))
+                {
+                    using (content)
+                    {
+                        content.CopyTo(stream);
+                    }
+                }
+            }
+            catch (IOException ex)
+            {
+                throw ex;
+            }
+        }
+
+        public ActionResult Chunk_Upload_Save(IEnumerable<HttpPostedFileBase> files, string metaData, int EpisodeID)
+        {
+            if (metaData == null)
+            {
+                return Chunk_Upload_Async_Save(files, EpisodeID);
+            }
+            // var fileName = Path.GetFileNameWithoutExtension(file.FileName) + ".pdf";
+            MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(metaData));
+            var serializer = new DataContractJsonSerializer(typeof(ChunkMetaData));
+            ChunkMetaData chunkData = serializer.ReadObject(ms) as ChunkMetaData;
+            if (chunkData.ChunkIndex == 0)
+            {
+                ChunkFileRemove(chunkData.FileName);
+            }
+            string path = String.Empty;
+            // The Name of the Upload component is "files"
+            if (files != null)
+            {
+                foreach (var file in files)
+                {
+                    path = Path.Combine(Server.MapPath("~/BASSDoc"), chunkData.FileName);
+                    AppendToFile(path, file.InputStream);
+                }
+            }
+
+            FileResult fileBlob = new FileResult();
+            fileBlob.uploaded = chunkData.TotalChunks - 1 <= chunkData.ChunkIndex;
+            if (fileBlob.uploaded)
+            {
+                //var fileName = Path.GetFileNameWithoutExtension(file.FileName) + ".pdf";   //+ DateTime.Now.ToString("MMddyyyyhhmm")
+                var physicalPath = Path.Combine(Server.MapPath("~/BASSDoc"), chunkData.FileName);
+                var query = string.Format(@"INSERT INTO [dbo].[DocUpload]([EpisodeId],[FileTypeId],[FileName]
+           ,[FileSize],[ActionStatus],[ActionBy],[DateAction]) VALUES ({0},1,{1},{2}, 1, {3}, GetDate())",
+                       EpisodeID, "'" + chunkData.FileName + "'", System.IO.File.ReadAllBytes(physicalPath).Length, CurrentUser.UserID);
+                var result = SqlHelper.ExecuteCommand(query, 1);
+            }
+
+            fileBlob.fileUid = chunkData.UploadUid;
+
+            return Json(fileBlob);
+        }
+
+        private void ChunkFileRemove(string file)
+        {
+            var physicalPath = Path.Combine(Server.MapPath("~/BASSDoc"), file);
+            if (System.IO.File.Exists(physicalPath))
+            {
+                // The files are not actually removed in this demo
+                System.IO.File.Delete(physicalPath);
+                var query = string.Format(@"DECLARE @ID INT =(SELECT ID FROM [dbo].[DocUpload] WHERE FileName = '{0}')
+                    BEGIN
+                     IF @ID > 0
+                          UPDATE [dbo].[DocUpload] SET ActionStatus = 10 Where ID = @ID
+                     END", file);
+                var result = SqlHelper.ExecuteCommand(query, 1);
+            }
+        }
+        public ActionResult Chunk_Upload_Remove(string[] fileNames)
+        {
+            // The parameter of the Remove action must be called "fileNames"
+
+            if (fileNames != null)
+            {
+                foreach (var fullName in fileNames)
+                {
+                    var fileName = Path.GetFileName(fullName);
+                    var physicalPath = Path.Combine(Server.MapPath("~/BASSDoc"), fileName);
+
+                    // TODO: Verify user permissions
+
+                    if (System.IO.File.Exists(physicalPath))
+                    {
+                        // The files are not actually removed in this demo
+                        System.IO.File.Delete(physicalPath);
+                    }
+                }
+            }
+
+            // Return an empty string to signify success
+            return Content("");
+        }
+
+            public ActionResult Chunk_Upload_Async_Save(IEnumerable<HttpPostedFileBase> files, int EpisodeID)
+            {
+                // The Name of the Upload component is "files"
+                if (files != null)
+                {
+                    foreach (var file in files)
+                    {
+                    //=============================================================
+                        // Some browsers send file names with full path.
+                        // We are only interested in the file name.
+                        //var fileName = Path.GetFileName(file.FileName);
+                        //var physicalPath = Path.Combine(Server.MapPath("~/App_Data"), fileName);
+
+                    // The files are not actually saved in this demo
+                    // file.SaveAs(physicalPath);
+                    //====================================================
+                    var fileName = Path.GetFileNameWithoutExtension(file.FileName) + ".pdf";   //+ DateTime.Now.ToString("MMddyyyyhhmm")
+                    var physicalPath = Path.Combine(Server.MapPath("~/BASSDoc"), fileName);
+                    // The files are not actually saved in disk
+                    file.SaveAs(physicalPath);
+
+                    var query = string.Format(@"INSERT INTO [dbo].[DocUpload]([EpisodeId],[FileTypeId],[FileName]
+           ,[FileSize],[ActionStatus],[ActionBy],[DateAction]) VALUES ({0},1,{1},{2}, 1, {3}, GetDate())",
+       EpisodeID, "'" + fileName + "'", System.IO.File.ReadAllBytes(physicalPath).Length, CurrentUser.UserID);
+                    var result = SqlHelper.ExecuteCommand(query, 1);
+                    
+                }
+                }
+
+                // Return an empty string to signify success
+                return Content("");
+            }
+  
+        //==================================================
         private List<CaseNoteData> GetCaseNotes(int EpisodeID, string searchString, int TraceID)
         {
             List<ParameterInfo> parameters = new List<ParameterInfo>();

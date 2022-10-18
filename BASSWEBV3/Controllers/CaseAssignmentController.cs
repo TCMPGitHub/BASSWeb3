@@ -78,6 +78,7 @@ namespace BassWebV3.Controllers
             parameters.Add(new BassIdentityManagement.Data.ParameterInfo() { ParameterName = "Facility", ParameterValue = Facility });
             parameters.Add(new BassIdentityManagement.Data.ParameterInfo() { ParameterName = "MaybeCDCR", ParameterValue = MayBeCDCR });
             parameters.Add(new BassIdentityManagement.Data.ParameterInfo() { ParameterName = "Lifer", ParameterValue = Lifer });
+            parameters.Add(new BassIdentityManagement.Data.ParameterInfo() { ParameterName = "CurrentUserID", ParameterValue = CurrentUser.UserID });
             var results = SqlHelper.GetRecords<CaseAssignmentData>("spCaseAssignmentsv3", parameters).ToList();
             if (!string.IsNullOrEmpty(Qualifier))
             {

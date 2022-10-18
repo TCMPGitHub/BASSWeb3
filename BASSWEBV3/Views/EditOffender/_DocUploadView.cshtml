@@ -100,15 +100,6 @@
            }
 </script>
 <script type="text/javascript">
-    function checkFileExist(url) {
-            http.open('HEAD', url, false);
-            http.send();
-            if (http.status === 200) {
-                output.innerHTML = "File exists";
-            } else {
-                output.innerHTML = "File doesn't exists";
-            }
-    }   
     function onUploadSuccess() {
         // Force the rebinding of the Grid on successful upload
         $("#gridFileUpload").data("kendoGrid").dataSource.read();

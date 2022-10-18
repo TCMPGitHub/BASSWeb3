@@ -83,7 +83,7 @@
 
                     <div style="display:@closebnt">@(Html.Kendo().Button().Name("c" + Model.ApplicationTypeName).Content("Cancel").HtmlAttributes(new { type = "button", style = "height:20px;padding:1px;width:60px;" }).Enable(@enableClose).Events(e => e.Click("CloseApplication")))</div>
                     <div style="display:@archivebnt">
-                        @(Html.Kendo().Button().Name("a" + Model.ApplicationTypeName).Content("Archive").HtmlAttributes(new { type = "button", style = "height:20px;padding:1px;width:65px;" }).Enable(true).Events(e => e.Click("ArchiveApplication")))
+                        @(Html.Kendo().Button().Name("a" + Model.ApplicationTypeName).Content("Archive").HtmlAttributes(new { type = "button", style = "height:20px;padding:1px;width:65px;" }).Enable(Model.App.IsEditable).Events(e => e.Click("ArchiveApplication")))
                     </div>
                 </div></div>
             <div class="divOffenderPart1tr">
@@ -225,7 +225,6 @@
         </div>
         <script type="text/javascript">
             $(function (e) {
-                debugger
                 var appname = @Html.Raw(Json.Encode(Model.ApplicationTypeName));
                 var appID = @Html.Raw(Json.Encode(Model.App.ApplicationID));
                  
@@ -349,13 +348,12 @@
                 if(buttonC !== undefined)  buttonC.enable(obj);
                 var buttonA = $("#a" + fname).data("kendoButton");
                 if(buttonA !== undefined)  buttonA.enable(obj);
-                if(appID > 0 )
+                if(appID > 0 && $("#hdIsEditable").val() == "True")
                 {
                     if(buttonA !== undefined)  buttonA.enable(true);
                 }
             }
             function RefreshApplicationPanel(form, appname, appID) {
-                debugger
                 var editable = $("#hdIsEditable").val();
                 var screendate = $("#Inmate_ScreeningDate").val();
                 var InfoSigned = $('#Inmate_ReleaseOfInfoSigned').prop('checked');

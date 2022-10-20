@@ -402,7 +402,7 @@
         </div>
             <line style="height:2px!important;width:100%;"></line>
             <div class="divOffenderPart1tr">
-                <div class="divOffenderPart1tb" style="border: 0.5px silver solid!important;border-radius:4px;">
+                <div class="divOffenderPart1tb" style="border: none;border-radius:4px;">
                     <div class="divOffenderPart1tbv">
                         <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.LongTermMedCare).Name("Inmate.LongTermMedCare").Enable(Model.EditingEnabled).Label("Long-Term Medical Care")</div>
                         <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.Hospice).Name("Inmate.Hospice").Enable(Model.EditingEnabled).Label("Hospice")</div>
@@ -414,7 +414,7 @@
                         <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.ChronicIllness).Name("Inmate.ChronicIllness").Enable(Model.EditingEnabled).Label("Chronic Illness")</div>
                         <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.EOP).Name("Inmate.EOP").Enable(Model.EditingEnabled)<scan class="@eopDiff" title="@eopTitle">EOP (Severely Mentally Ill)</scan></div>
                         <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.PhysDisabled).Name("Inmate.PhysDisabled").Enable(Model.EditingEnabled)<scan class=@physDiff title="@physTitle">Physical Disabled</scan></div>
-                        <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.DevDisabled).Name("Inmate.DevDisabled").Enable(Model.EditingEnabled)<scan class=@devDiff title="@devTitle">Developmentally&nbsp;Disabled</scan></div>
+                        <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.DevDisabled).Name("Inmate.DevDisabled").Enable(Model.EditingEnabled)<scan class=@devDiff title="@devTitle">Develop.&nbsp;Disabled</scan></div>
                         <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.USVet).Name("Inmate.USVet").Enable(Model.EditingEnabled).Label("US Veteran")</div>
                     </div>
                     <div class="divOffenderPart1tbv">

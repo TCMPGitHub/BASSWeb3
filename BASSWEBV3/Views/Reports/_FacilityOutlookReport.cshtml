@@ -153,7 +153,7 @@
 @(Html.Kendo().Grid<BassIdentityManagement.Entities.FacilityOutlookReportData>()
         .Name("gridFAOutLook")
         .NoRecords("No Data Found.")
-        .Selectable(s => s.Enabled(true)).HtmlAttributes(new { @style = "height:87vh" })
+        .Selectable(s => s.Enabled(true)).HtmlAttributes(new { @style = "height:calc(100vh - 110px);" })
         .Events(e => e.DataBound("GridFADataBound"))
         .ToolBar(toolbar =>
         {

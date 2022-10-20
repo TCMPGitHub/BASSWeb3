@@ -1,10 +1,13 @@
 ﻿@using Kendo.Mvc.UI
 @using Kendo.Mvc.Extensions
-<style>
+@*<style>
     #gridBWProductivity>.k-grid-norecords{
-            height:73.3vh!important;
+            height:calc(100vh - 220px)!important;
         }
-</style>
+    #gridBWProductivity>.k-grid-content-expander{
+        width:calc(100vh - 120px)!important;
+    }
+</style>*@
 <script>
     function BWGridDataBound(e) {
         var ctrl= $("#FromToDate").data("kendoDateRangePicker");
@@ -207,8 +210,9 @@
 @(Html.Kendo().Grid<BassIdentityManagement.Entities.BWProductivityReportData>()
                .Name("gridBWProductivity")
                .NoRecords("No Data Found.")
-               .Sortable(s => s.AllowUnsort(false)).HtmlAttributes(new { @style = "height:calc(90vh - 30px)!important;" })
+               .Sortable(s => s.AllowUnsort(false))/*.HtmlAttributes(new { @style = "height:calc(100vh - 110px);" })*/
                .Selectable(s => s.Enabled(true))
+               .Scrollable(sb=>sb.Enabled(true).Height("55vh"))
                .Events(e => { e.DataBound("BWGridDataBound"); e.ColumnMenuInit("columnMenuInit"); })
                .ColumnMenu(c => c.Sortable(false).Columns(true))
                .Reorderable(reorderable => reorderable.Columns(true))
@@ -216,7 +220,7 @@
                .Excel(e => e.FileName("BenefitworkerProductivityRpt.xlsx").AllPages(true).Filterable(true))
                .ToolBar(toolbar =>
                {
-                   toolbar.Template(@<text>
+               toolbar.Template(@<text>
         <div class="row">
             <div class="col" style="float:left"><a style="height:25px;" class="k-button export" href='@Url.Action("ExportExcel", "Reports", new { page = 1, pageSize = "~", filter = "~", sort = "~", data = "~" })'><span class="k-icon k-i-excel"></span>Export To Excel</a></div>
             <div class="col" style="float:left;margin-top:5px;margin-left:10px;"><label class="category-label" for="AllRptBfUsers" style="font-weight:bold;color:darkblue;">Benefit Worker:</label></div>

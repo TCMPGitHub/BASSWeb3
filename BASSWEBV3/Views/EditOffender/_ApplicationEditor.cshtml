@@ -234,15 +234,9 @@
                 var tempDPI = $("#App_PhoneInterviewDate" + appname).data("kendoDatePicker");
                 var tempDPO = $("#App_OutcomeDate" + appname).data("kendoDatePicker");
                 var tempDPS = $("#App_IssuedOnDate" + appname).data("kendoDatePicker");
-                //if ($("#hdIsEditable").val() == "False") {
-                //    $("#appForm" + appname + ":input").prop('disabled', true);
-                //    $("#appForm" + appname + ":button").prop('disabled', true);
-                //}
-                //else{
-                    RefreshApplicationPanel($("#appForm" + appname), appname, appID);
-                    EnableButtons(false, appname, appID);
-                //}
-
+                RefreshApplicationPanel($("#appForm" + appname), appname, appID);
+                EnableButtons(false, appname, appID);
+ 
                 $('#appForm' + appname).submit(function (e) {
                     e.preventDefault();
                     e.stopImmediatePropagation();
@@ -254,7 +248,7 @@
                             return false;
                         }
                     }
-                    if(appID > 0 && e.target['App.ApplicationID' + appname].value == 0) {
+                  if(appID > 0 && e.target['App.ApplicationID' + appname].value == 0) {
                         e.target['App.ApplicationID' + appname].value = appID;
                     }
                   if(appname === "MediCal")
@@ -325,7 +319,6 @@
                     EnableButtons(true, appname, appID);
                     return true;
                 });
-
                 $('#link' + appname).click(function (e) {
                     var content = this.nextElementSibling;
                     if (content.style.display === "") {
@@ -381,10 +374,10 @@
                 }
                 if (tempDLF != undefined) tempDLF.enable(false);
                 if (tempDLO != undefined) tempDLO.enable(false);
-                if (tempDPR != undefined) tempDPR.enable(false); //SetDatePickerPlaceHolder($("#App_AppliedOrRefusedOnDate"  + appname));};
-                if (tempDPI != undefined) tempDPI.enable(false); //SetDatePickerPlaceHolder($("#App_PhoneInterviewDate"));};
-                if (tempDPO != undefined) tempDPO.enable(false); //SetDatePickerPlaceHolder($("#App_OutcomeDate"  + appname));};
-                if (tempDPS != undefined) tempDPS.enable(false); //SetDatePickerPlaceHolder($("#App_IssuedOnDate" + appname));};
+                if (tempDPR != undefined) tempDPR.enable(false); 
+                if (tempDPI != undefined) tempDPI.enable(false); 
+                if (tempDPO != undefined) tempDPO.enable(false); 
+                if (tempDPS != undefined) tempDPS.enable(false); 
                 if (editable == "False") {
                     $(chform).find("input, select, textarea, button").attr("disabled", true);
                 }

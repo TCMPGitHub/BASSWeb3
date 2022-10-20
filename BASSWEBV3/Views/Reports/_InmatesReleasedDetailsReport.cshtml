@@ -8,6 +8,9 @@
         text-align: center;
         vertical-align: middle;
     }
+    #gridInmatesDetails>div.k-header.k-grid-toolbar.k-grid-top{
+        width:109vw!important;
+    }
 </style>
 <script>
 
@@ -100,7 +103,7 @@
 
 @(Html.Kendo().Grid<BassIdentityManagement.Entities.InmatesReleaseDetailsReportData>()
                .Name("gridInmatesDetails")
-               .Selectable(s => s.Enabled(true)).HtmlAttributes(new { @style = "height:85vh;width:98vw;" })
+               .Selectable(s => s.Enabled(true)).HtmlAttributes(new { @style = "height:calc(100vh - 110px);width:1vw;" })
                 .Filterable(filterable => filterable
                  .Extra(false)
                  .Operators(operators => operators
@@ -112,13 +115,14 @@
                  )
                .NoRecords("No Data Found.")
                .Sortable(sortable => sortable.AllowUnsort(false))
-               .ToolBar(toolbar => { toolbar.Excel().Text("Export to Excel").HtmlAttributes( new { style="height: 25px;" }); }).Excel(e => e.FileName("InmatesReleaseDetailsRpt.xlsx").Filterable(true).AllPages(true))
+               .ToolBar(toolbar => { toolbar.Excel().Text("Export to Excel").HtmlAttributes(new { style = "height: 25px;width:150px;" }); }).Excel(e => e.FileName("InmatesReleaseDetailsRpt.xlsx").Filterable(true).AllPages(true))
                .Columns(column =>
                {
                    column.Bound(m => m.CDCRNum).Width(60).Title("CDCR#").ClientFooterTemplate("Total: ").Filterable(false);
                    column.Bound(m => m.LastName).Width(60).Title("Last Name").ClientFooterTemplate("#=count#").Filterable(false);
                    column.Bound(m => m.FirstName).Width(60).Title("First Name").Filterable(false);
-                   column.Bound(x => x.FacilityName).Width(50).Title("Facility").Filterable(f => f.Multi(true).DataSource(ds => ds.Read(r => r.Action("FilterInmatesDetailsFa_read", "Reports"))));
+                   column.Bound(m => m.FacilityName).HeaderTemplate(@<text><span class="greentext">Facility</span></text>).ClientFooterTemplate("Total : ").Filterable(fs => fs.Multi(true));
+                   //column.Bound(x => x.FacilityName).Width(50).Title("Facility").Filterable(f => f.Multi(true).DataSource(ds => ds.Read(r => r.Action("FilterInmatesDetailsFa_read", "Reports"))));
                    column.Bound(m => m.EPRD).Width(80).Title("EPRD").Format("{0:MM/dd/yyyy}").Filterable(false);
                    column.Bound(m => m.Housing).Width(130).Title("Housing").Filterable(false);
                    column.Bound(m => m.BenefitWorkerName).Width(150).Title("Benefit Worker").Filterable(false);

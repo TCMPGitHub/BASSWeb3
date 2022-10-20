@@ -8,6 +8,9 @@
     .k-grid-footer td {
         background-color: lightblue;
     }
+    #gridInmates>div.k-header.k-grid-toolbar.k-grid-top{
+        width:200vw!important;
+    }
 </style>
 
 <script type="text/javascript">
@@ -260,7 +263,7 @@
 @(Html.Kendo().Grid<BassIdentityManagement.Entities.InmatesReleaseReportData>()
     .Name("gridInmates")
     .NoRecords("No Data Found.")
-    .Selectable(s => s.Enabled(true)).HtmlAttributes(new { @style = "height:85vh;width:100vw!important;" })
+    .Selectable(s => s.Enabled(true)).HtmlAttributes(new { @style = "height:calc(100vh - 110px);width:200vw!important;" })
     //.Scrollable(sc=>sc.Height("auto"))
     .Filterable()
     .Events(e => { e.DataBound("Grid1DataBound"); })

@@ -909,7 +909,7 @@ namespace BassWebV3.Controllers
         public JsonResult GetAllUsers()
         {
             string query = @"SELECT UserID, (LastName + ', ' + FirstName + ' ' + ISNULL(MiddleName, ''))BenefitWorkerName FROM dbo.[User]
-                          WHERE IsBenefitWorker = 1 AND IsActive = 1";
+                          WHERE IsBenefitWorker = 1 AND IsActive = 1 ORDER BY LastName";
             var result = SqlHelper.ExecuteCommands<AssignmentUserList>(query, 1);
             return Json(result, JsonRequestBehavior.AllowGet);
         }

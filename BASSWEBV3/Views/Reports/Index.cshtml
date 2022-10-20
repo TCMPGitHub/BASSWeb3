@@ -31,13 +31,14 @@
          font-weight:bold;
          height:20px!important;
      }
-  
-     /*.k-tabstrip > .k-tabstrip-items .k-state-active.k-item .k-link{
-         background-color:#526a7f;
-         padding:2px;
-         color:white;
-         font-weight:bold;
-     }*/
+     .k-widget k-grid k-display-block{
+         /*height: calc(100vh - 150px);*/
+         font-size:14px!important;
+        
+     }
+     span.k-icon.k-i-calendar{
+         margin-top:-15px!important;
+     }
     .k-tabstrip-wrapper{
         padding:1px;
     }
@@ -50,7 +51,7 @@
     .k-grid tr td {
         border-bottom: 0.1px solid lightgray;
         white-space: normal;
-        font-size: 12px;
+        font-size: 14px;
         line-height: 12px !important;
     }
     .k-grid .k-state-selected {
@@ -74,50 +75,37 @@
 </style>
 <script>
     function getdates() {
-        var ctrl = $("#FromToDate").data("kendoDateRangePicker");
-        return { FromDate: kendo.toString(ctrl.options.range.start, "MM/dd/yyyy"), ToDate: kendo.toString(ctrl.options.range.end, "MM/dd/yyyy") }
-        //return { FromDate: $("#FromDate").val(), ToDate: $("#ToDate").val() }
+        return { FromDate: $("#FromDate").val(), ToDate: $("#ToDate").val() }
     }
-
-        function getRptdate() {
-            var ctrl = $("#FromToDate").data("kendoDateRangePicker");
-            return { FromDate: kendo.toString(ctrl.options.range.start, "MM/dd/yyyy") }
-        //return { FromDate: $("#FromDate").val() }
+    function getRptdate() {
+        return { FromDate: $("#FromDate").val() }
     }
-        function getprams() {
-            var ctrl = $("#FromToDate").data("kendoDateRangePicker");
-            return {
-                FromDate: kendo.toString(ctrl.options.range.start, "MM/dd/yyyy"),
-                  ToDate: kendo.toString(ctrl.options.range.end, "MM/dd/yyyy"), BfWorkerIDs: $("#AllRptBfUsers").data("kendoMultiSelect").value().join(',')
-            }
-        //return { FromDate: $("#FromDate").val(), ToDate: $("#ToDate").val(), BfWorkerIDs: $("#AllRptBfUsers").data("kendoMultiSelect").value().join(',') }
+    function getprams() {
+        return { FromDate: $("#FromDate").val(), ToDate: $("#ToDate").val(), BfWorkerIDs: $("#AllRptBfUsers").data("kendoMultiSelect").value().join(',') }
     }
-        function getbwprams() {
-            var ctrl = $("#FromToDate").data("kendoDateRangePicker");
-            return { FromDate: kendo.toString(ctrl.options.range.start, "MM/dd/yyyy"), ToDate: $("#ToDate").val(), BfWorkerIDs: $("#RptBfUsers").data("kendoMultiSelect").value().join(',') }
+    function getbwprams() {
+        return { FromDate: $("#FromDate").val(), ToDate: $("#ToDate").val(), BfWorkerIDs: $("#RptBfUsers").data("kendoMultiSelect").value().join(',') }
     }
-    //function getbwdprams() {
-    //    return { FromDate: $("#FromDate").val(), ToDate: $("#ToDate").val(), BfWorkerID: 0 }
-    //}
-        //function DateChanged(e) {
-        //    var ctrl = $("#FromToDate").data("kendoDateRangePicker");
-        //    var start = kendo.toString(ctrl.options.range.start, "MM/dd/yyyy");
-        //    var date = new Date(start);
-        //    var d = (new Date(1900 + date.getFullYear(), date.getMonth() + 1, 0)).getDate();
-        //    var m = date.getMonth();
-        //    var y = date.getFullYear();
-        //    var edate = new Date(y, m, d);
-        //    var test = $.datepicker.formatDate('mm/dd/yy', edate);
-        //    ctrl.options.range.end = test;
-        //}
+    function getbwdprams() {
+        return { FromDate: $("#FromDate").val(), ToDate: $("#ToDate").val(), BfWorkerID: 0 }
+    }
+    function DateChanged(e) {
+        var start = $('#FromDate').val();
+        var date = new Date(start);
+        var d = (new Date(1900 + date.getFullYear(), date.getMonth() + 1, 0)).getDate();
+        var m = date.getMonth();
+        var y = date.getFullYear();
+        var edate = new Date(y, m, d);
+        var test = $.datepicker.formatDate('mm/dd/yy', edate);
+        $('#ToDate').val(test);
+    }
     function GetReports() {
-        var ctrl = $("#FromToDate").data("kendoDateRangePicker");
         $("#gridFAOutLook").data("kendoGrid").dataSource.read();
         $('#gridFAOutLook').data('kendoGrid').refresh();
 
         $("#gridInmates").data("kendoGrid").dataSource.read();
         $('#gridInmates').data('kendoGrid').refresh();
-        $("#reportspan").html(kendo.toString(ctrl.options.range.start, "MM/dd/yyyy") + " - " + kendo.toString(ctrl.options.range.end, "MM/dd/yyyy"));
+        $("#reportspan").html($("#FromDate").val() + " - " + $("#ToDate").val());
 
         $("#gridInmatesDetails").data("kendoGrid").dataSource.read();
         $('#gridInmatesDetails').data('kendoGrid').refresh();
@@ -127,8 +115,7 @@
         GetBWProductivityReport($("#gridBWProductivity").data("kendoGrid"));
     }
     function GetDispayClientNames(obj) {
-        var ctrl = $("#FromToDate").data("kendoDateRangePicker");
-        var datestring = kendo.toString(ctrl.options.range.start, "MM/dd/yyyy") + " - " + kendo.toString(ctrl.options.range.end, "MM/dd/yyyy");
+        var datestring = kendo.toString($("#FromDate").val() + " - " + $("#ToDate").val());
         if (obj.length > 0) {
             var users = ""
             for (var i = 0; i < obj.length; i++) {
@@ -142,11 +129,10 @@
         return datestring;
     }
     function GetProductivityReport(e) {
-        var ctrl = $("#FromToDate").data("kendoDateRangePicker");
         var grid = $("#gridInmatesProductivity").data("kendoGrid");
         grid.dataSource.read();
         grid.refresh();
-        var datestring = kendo.toString(ctrl.options.range.start, "MM/dd/yyyy") + " - " + kendo.toString(ctrl.options.range.end, "MM/dd/yyyy");
+        var datestring = kendo.toString($("#FromDate").val() + " - " + $("#ToDate").val());
         var items = $("#AllRptBfUsers").data("kendoMultiSelect").dataItems();
         if (items.length > 0) {
             datestring = GetDispayClientNames(items);
@@ -154,68 +140,38 @@
         $("#rptprodspan").html(datestring);
     }
     function GetBWProductivityReport() {
-        var ctrl = $("#FromToDate").data("kendoDateRangePicker");
         var grid = $("#gridBWProductivity").data("kendoGrid");
         grid.dataSource.read();
         grid.refresh();
-        var datestring = kendo.toString(ctrl.options.range.start, "MM/dd/yyyy") + " - " + kendo.toString(ctrl.options.range.end, "MM/dd/yyyy");
+        var datestring = kendo.toString($("#FromDate").val() + " - " + $("#ToDate").val());
         var items = $("#RptBfUsers").data("kendoMultiSelect").dataItems();
         if (items.length > 0) {
             datestring = GetDispayClientNames(items);
         }
         $("#rptprodspan").html(datestring);
     }
-    function DateRangeChanged(e) {
-        if(new Date(e.sender._inputs[0].value) > new Date(e.sender._inputs[1].value)){
-            var todate = new Date(e.sender._inputs[0].value);
-            e.sender._inputs[1].value = todate.setDate(todate.getDate() + 30);
-        }
-        e.sender.options.range.start = e.sender._inputs[0].value;
-        e.sender.options.range.end = e.sender._inputs[1].value;
-        //$("#FromDate").val(e.sender.options.range.start);
-        //$("#ToDate").val(e.sender.options.range.end);
+   function GetNewDate(obj) {
+        return new Date(obj.getFullYear(), obj.getMonth(), 1)
     }
-    //function GetNewDate(obj) {
-    //    return new Date(obj.getFullYear(), obj.getMonth(), 1)
-    //}
-    function OpenReportDateRange(e) {
-        $("#FromToDate").data("kendoDateRangePicker").open();
-    }
-    $(".k-textbox").click(function (e) {
+     $(".k-textbox").click(function (e) {
         e.preventDefault();
     })   
 </script>
 
 <div class="editContent" style="border-top: thin solid; padding-top:1px;height:28px;">
    <div style="float:left;">&nbsp;&nbsp;<b>Select Report Date Ranges</b>&nbsp;&nbsp;</div>&nbsp;&nbsp;
-    <div style="float:left;">
-        @(Html.Kendo().DateRangePicker()
-          .Name("FromToDate").Format("{0:MM/dd/yyyy}").Depth("year")
-          .HtmlAttributes(new { style = "width: 100%;height:20px!important;float:left;" })
-          .Range(r => r.Start(Model.FromDate.HasValue ? Model.FromDate.Value : Convert.ToDateTime(DateTime.Now.Month + "/1/" + DateTime.Now.Year))
-          .End(Model.ToDate.HasValue ? Model.ToDate.Value : Convert.ToDateTime(DateTime.Now.Month + "/" + DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month) + "/" + DateTime.Now.Year)))
-          .Labels(false).Events(e => { e.Change("DateRangeChanged"); e.Close("DateRangeChanged"); /*e.Open("OpenReportDateRange");*/ })
-    )
-</div>&nbsp;&nbsp;
-    <div style="float:left;">
-    @(Html.Kendo().Button().Name("bntOpenDateRange").Events(e => e.Click("OpenReportDateRange"))
-          .HtmlAttributes(new { style = "height:22px;width:25px;Margin-top:2px;" }))
+   &nbsp;&nbsp;@Html.Label("From ")&nbsp;&nbsp;
+        @(Html.Kendo().DatePicker()
+.Name("FromDate").Format("MM/dd/yyyy").Value(Model.FromDate).Events(e => e.Change("DateChanged"))
+.HtmlAttributes(new { @style = "width:120px;height:22px;"}))
+        &nbsp;&nbsp;@Html.Label("To ")&nbsp;&nbsp;
+        @(Html.Kendo().DatePicker()
+.Name("ToDate").Format("MM/dd/yyyy").Value(Model.ToDate)
+.HtmlAttributes(new { @style = "width:120px;height:22px;"}))
+        @(Html.Kendo().Button().Name("GetReport").Events(e => e.Click("GetReports")).Content("Get Report")
+           .HtmlAttributes(new { @style = "height:22px;" }))
     </div>
-    <div style="float:left;">&nbsp;&nbsp;&nbsp;&nbsp;</div>
-    @*@(Html.Kendo().DatePickerFor(m => m.FromDate).Format("MM/dd/yyyy")
-          .Value(Model.FromDate.Value.ToString()).Name("FromDate").DateInput()
-          .HtmlAttributes(new { @style = "height:1.2em;" }))
-    &nbsp;&nbsp;@Html.Label("To ")&nbsp;&nbsp;
-    @(Html.Kendo().DatePickerFor(m => m.ToDate).Format("MM/dd/yyyy")
-          .Value(Model.ToDate.Value.ToString()).Name("ToDate").DateInput()
-          .HtmlAttributes(new { @style = "height:1.2em;" }))*@
-    <div style="float:left;">
-        @(Html.Kendo().Button().Name("GetReport").Events(e => e.Click("GetReports")).Content("Get Report").HtmlAttributes(new { style = "height:22px;" }))
-   </div>
-    </div>
-
 <div style="height:91vh;width:inherit;">
-
     @(Html.Kendo().TabStrip()
          .Name("rpttabstrip")
          .HtmlAttributes(new { style = "min-height:50vh; padding: 0; height:inherit!important;width:100vw!important;" })
@@ -239,8 +195,6 @@
 </div>
 
 <script type="text/javascript">
-    //SetDatePickerPlaceHolder($("#FromDate"));
-    //SetDatePickerPlaceHolder($("#ToDate"));
     $("#bntOpenDateRange").kendoButton({
         icon: "calendar"
     });

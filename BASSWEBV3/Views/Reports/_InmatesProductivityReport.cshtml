@@ -388,7 +388,7 @@
 .Name("gridInmatesProductivity")
 .NoRecords("No Data Found.")
 .Scrollable(sc => sc.Height("auto"))
-.Sortable(s => s.AllowUnsort(false)).HtmlAttributes(new { @style = "height:85.4vh;" })
+.Sortable(s => s.AllowUnsort(false)).HtmlAttributes(new { @style = "height:calc(100vh - 110px);" })
 .Selectable(s => s.Enabled(true))
 .Events(e => { e.DataBound("GridDataBound"); e.ColumnMenuInit("columnMenuInit"); })
 .Groupable()

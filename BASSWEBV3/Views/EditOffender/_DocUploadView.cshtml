@@ -153,7 +153,7 @@
        .Sortable(sortable => sortable.AllowUnsort(true))
         .Scrollable(a => a.Enabled(true))
         .Navigatable()
-        .HtmlAttributes(new { style = "height:180px;width:auto" })
+        .HtmlAttributes(new { style = "height:180px;width:90%" })
         .DataSource(dataSource => dataSource
           .Ajax()
           .Model(m => m.Id(f => f.ID))

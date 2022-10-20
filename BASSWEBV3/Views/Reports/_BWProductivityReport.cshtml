@@ -35,7 +35,7 @@
         cells.css("color", "#fff");
 
         if ($("#rptprodspan").html() == "")
-            $("#rptprodspan").html(kendo.toString(ctrl.options.range.start, "MM/dd/yyyy") + "-" + kendo.toString(ctrl.options.range.end, "MM/dd/yyyy"));
+            $("#rptprodspan").html($("#FromDate").val() + " - " + $("#ToDate").val());
 
         //==================================
         // Get the export link as jQuery object  page: grid.dataSource.page(),

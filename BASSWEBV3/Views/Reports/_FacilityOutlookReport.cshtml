@@ -13,8 +13,7 @@
 
 <script type="text/javascript">
     $(function () {
-                var ctrl = $("#FromToDate").data("kendoDateRangePicker");
-                var datestring = "60-Day Facility Outlook Report " + kendo.toString(ctrl.options.range.start, "MM/dd/yyyy") + "-" + kendo.toString(DateAdds(60), 'MM/dd/yyyy');
+                var datestring = "60-Day Facility Outlook Report " + $("#FromDate").val() + " - " + $("#ToDate").val();
                  $("#reportfospan").html(datestring);
                 });
                 function GridFADataBound() {
@@ -43,17 +42,9 @@
 </script>
 
 <script>
-    function DateAdds(days) {
-        var ctrl = $("#FromToDate").data("kendoDateRangePicker");
-        var todate = new Date(ctrl.options.range.start);
-        todate.setDate(todate.getDate() + 60);
-        return todate;
-    }
     function exportFOToExcel() {
         //header 1
-        var ctrl = $("#FromToDate").data("kendoDateRangePicker");
-        //var todate = new Date(ctrl.options.range.start);
-        var datestring = "60-Day Facility Outlook Report " + kendo.toString(ctrl.options.range.start, "MM/dd/yyyy") + " - " + kendo.toString(DateAdds(60), 'MM/dd/yyyy');
+        var datestring = "60-Day Facility Outlook Report " + $("#FromDate").val() + " - " + $("#ToDate").val();
         var rows = [{
             cells: [{ value: datestring, textAlign: "center", vAlign: "center", hAlign: "center", color: "#4e9a06", background: "#dcdcdc", colSpan: 10 }]
         }];

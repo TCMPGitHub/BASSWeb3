@@ -15,8 +15,7 @@
 
 <script type="text/javascript">
     $(function () {
-        var ctrl = $("#FromToDate").data("kendoDateRangePicker");
-        var datestring = kendo.toString(ctrl.options.range.start, "MM/dd/yyyy") + "-" + kendo.toString(DateAdds(60), 'MM/dd/yyyy')
+        var datestring = $("#FromDate").val() + " - " + $("#ToDate").val();
             //$("#FromDate").val() + "-" + $("#ToDate").val();
         $("#reportspan").html(datestring);
     });
@@ -31,11 +30,11 @@
 <script>
     function exportToExcel() {
         //header 1
-        var ctrl = $("#FromToDate").data("kendoDateRangePicker");
+        //var ctrl = $("#FromToDate").data("kendoDateRangePicker");
         var rows = [{
             cells: [
                {
-                   value: kendo.toString(ctrl.options.range.start, "MM/dd/yyyy") + "-" + kendo.toString(ctrl.options.range.end, "MM/dd/yyyy"), bold: true, color: "#4e9a06", background: "#dcdcdc",
+                   value: $("#FromDate").val() + " - " + $("#ToDate").val(), bold: true, color: "#4e9a06", background: "#dcdcdc",
                    colSpan: 4, vAlign: "center", hAlign: "center" },
                { value: "Global Services Not Provided", bold: true, color: "#cc0000", background: "#dcdcdc", colSpan: 10, vAlign: "center", hAlign: "center" },
                { value: "Potential TCMP Paticipants", bold: true, color: "#3465A4", background: "#dcdcdc", colSpan: 3, vAlign: "center", hAlign: "center" },

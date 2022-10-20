@@ -90,14 +90,12 @@
         return { FromDate: $("#FromDate").val(), ToDate: $("#ToDate").val(), BfWorkerID: 0 }
     }
     function DateChanged(e) {
-        var start = $('#FromDate').val();
+       var start = $('#FromDate').val();
         var date = new Date(start);
         var d = (new Date(1900 + date.getFullYear(), date.getMonth() + 1, 0)).getDate();
-        var m = date.getMonth();
-        var y = date.getFullYear();
-        var edate = new Date(y, m, d);
-        var test = $.datepicker.formatDate('mm/dd/yy', edate);
-        $('#ToDate').val(test);
+        date.setDate(date.getDate() + d);
+        var datePickerTo = $("#ToDate").data("kendoDatePicker");
+        datePickerTo.value(date);
     }
     function GetReports() {
         $("#gridFAOutLook").data("kendoGrid").dataSource.read();

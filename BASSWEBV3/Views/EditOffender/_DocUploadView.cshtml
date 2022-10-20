@@ -126,7 +126,7 @@
                 .Save("Chunk_Upload_Save", "EditOffender", new { EpisodeId = Model.EpisodeId })
                 .AutoUpload(true)
                 .ChunkSize(1048576)
-            ).HtmlAttributes(new { style = "height:20px; float:left" })
+            ).HtmlAttributes(new { style = "height:20px; float:left;width:90%;" })
            .Events(e => { e.Success("onUploadSuccess"); })
            .Messages(m => m.Select("Select File..."))
            .Multiple(false)
@@ -151,7 +151,7 @@
           columns.Command(command => command.Destroy().Text(" ")).Visible(!Model.ViewOnly);
       })
        .Sortable(sortable => sortable.AllowUnsort(true))
-        //.Scrollable(a => a.Height(160))
+        .Scrollable(a => a.Enabled(true))
         .Navigatable()
         .HtmlAttributes(new { style = "height:180px;width:auto" })
         .DataSource(dataSource => dataSource

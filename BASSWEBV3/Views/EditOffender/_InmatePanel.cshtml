@@ -1,8 +1,6 @@
 ﻿@using Kendo.Mvc.UI
 @model BassWebV3.ViewModels.InmateData
 
-@Html.HiddenFor(m=>m.EpisodeID, new { id= "hdCaseNHEpisodeID" } )
-@Html.HiddenFor(m => m.Offender.Inmate.CDCRNum, new { id = "hdCDCRNum" })
 <script>
     function LoadSelectedTab(url, fndata, target) {
         $.ajax({
@@ -40,6 +38,8 @@
     }
 </script>
 <div id="divTabs">
+    @Html.HiddenFor(m => m.EpisodeID, new { id = "hdCaseNHEpisodeID" })
+    @Html.HiddenFor(m => m.Offender.Inmate.CDCRNum, new { id = "hdCDCRNum" })
     @(Html.Kendo().TabStrip()
               .Name("offendertabstrip").HtmlAttributes(new { style = "padding:0px!important;border:0.5 lightgray solid;" })
               .Events(e => { e.Select("ReloadTab"); })
@@ -51,7 +51,7 @@
             tabstrip.Add().Text(" OFFENDER DATA ").Selected(true).HtmlAttributes(new { style = "height:18px!important;" }).Content(@<text>
         <div class="parent-flex">
             <div class="flex-item-b" style="overflow:hidden!important;">@Html.Partial("_OffenderData", Model.Offender)</div>
-            <div class="flex-item-a">@Html.Partial("_Applications", Model.Appliations)</div>
+            <div class="flex-item-a" >@Html.Partial("_Applications", Model.Appliations)</div>
             <div class="flex-item-s">@Html.Partial("_CaseNoteFile", Model.CaseNF)</div>
         </div>
                 </text>);

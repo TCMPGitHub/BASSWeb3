@@ -119,14 +119,14 @@
 )
 
 <div class="divOffenderPart1tr">
-   <div class="divOffenderPart1tb" style="width:90%">
+   <div class="divOffenderPart1tb" style="width:95%">
             @(Html.Kendo().Upload()
             .Name("files")
             .Async(a => a
                 .Save("Chunk_Upload_Save", "EditOffender", new { EpisodeId = Model.EpisodeId })
                 .AutoUpload(true)
                 .ChunkSize(1048576)
-            ).HtmlAttributes(new { style = "height:20px; float:left;width:90%;" })
+            ).HtmlAttributes(new { style = "height:20px; float:left;width:100%;font-size:15px;" })
            .Events(e => { e.Success("onUploadSuccess"); })
            .Messages(m => m.Select("Select File..."))
            .Multiple(false)

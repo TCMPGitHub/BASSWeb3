@@ -264,11 +264,11 @@
     var canedit = Model.CanEditNote ? "" : "none";
 }
 
-<div class="divOffenderPart1tr">
+<div class="divOffenderPart1tr" style="height: 100%!important;width:calc(100vw - 20px);overflow:no-display;">
     @(Html.Kendo().Grid<BassIdentityManagement.Entities.CaseNoteData>()
     .Name("gridCaseNote")
-    .HtmlAttributes(new { style = "width:90%;font-size:12px;line-height:12px!important;padding:0;" })
-    .Scrollable(s => s.Height(80).Enabled(true))
+    .HtmlAttributes(new { style = "width:auto;font-size:15px;line-height:12px!important;padding:0;overflow-y:scroll;" })
+    .Scrollable(s => s.Enabled(true))
     .Selectable(s=>s.Mode(GridSelectionMode.Single))
     .PersistSelection(true)
         .Events(e => { e.DataBound("gridDataBound"); e.Change("onRowSelected"); e.Edit("insertPopupCaption"); e.Save("CheckPopupData"); e.BeforeEdit("StopProcess"); })
@@ -297,7 +297,7 @@
             columns.Bound(o => o.CaseNoteTypeReasonID).Hidden();
             columns.Bound(f => f.EventDate).Title("Date").Format("{0:MM/dd/yyyy}").Width(60);
             columns.Bound(f => f.CaseNoteType).Title("Type").Width(90).Filterable(fs => fs.UI("typeFilter"))
-                                              .HtmlAttributes(new { style = "white-space: normal;font-size:12px;line-height:12px!important;" });
+                                              .HtmlAttributes(new { style = "white-space: normal;font-size:15px;line-height:12px!important;" });
             columns.Bound(f => f.CreatedBy).Title("Creator").Width(70).HtmlAttributes(new { style = "white-space: normal;font-size:12px;line-height:12px!important;" }); ;
             columns.Command(command => { command.Edit().Text(" ").Visible("NoteCanEdit"); command.Destroy().Text(" ").Visible("NoteCanEdit"); }).Width(50);
         })
@@ -319,12 +319,12 @@
     .Destroy(d => d.Action("CaseNoteDelete", "EditOffender", new { EpisodeID = Model.EpisodeID }))
     .Update(u => u.Action("CaseNoteUpdate", "EditOffender", new { EpisodeID = Model.EpisodeID }))))
     </div>
-<br/><br /><br />
+<span style="width:100%;height:5px;"></span>
     <div class="divOffenderPart1tr" id="divCasenoteReason">
-        @Html.TextBox("message", "", new { @id = "displayReason", @readonly = "readonly", style = "width:90%;color:#ff9900;background-color:white;font-weight: bold;" })
+        @Html.TextBox("message", "", new { @id = "displayReason", @readonly = "readonly", style = "width:100%;color:#ff9900;background-color:white;font-weight: bold;" })
     </div>
    @*<div style="height:20px;"></div>*@
     <div class="divOffenderPart1tr" id="divCasenoteText" style="height:100px!important;">
-        @Html.TextArea("textarea", "", new { @id = "txtComment", @class = "textareaforcasemanngement", placeholder = "Note ...", spellcheck = "true", style = "width:90%;max-height:100px!important;background-color:white;", @rows = "6", @readonly = "readonly" })
+        @Html.TextArea("textarea", "", new { @id = "txtComment", @class = "textareaforcasemanngement", placeholder = "Note ...", spellcheck = "true", style = "width:95%;max-height:120px!important;background-color:white;font-size:15px", @rows = "6", @readonly = "readonly" })
     </div>
 

@@ -126,7 +126,7 @@
             }
            <div class="divOffenderPart1tr">
                     <div class="divOffenderPart2tbs" style="width:50%;">
-                        <scan id=@agreelv style="width: 100%; text-align: right; margin-right: 5px;">.@labelval</scan>
+                        <scan id=@agreelv style="width: 100%; text-align: right; margin-right: 5px;">@labelval</scan>
                     </div>
                <script>
                    function ChangeAppliedOrRefusedOnDate(e) {
@@ -266,8 +266,8 @@
                     }
                     if (tempDPO !== undefined && tempDPO.element[0].value !== "" && tempDPO.element[0].value !== "__/__/____" ){
                         var diff = DateDiff(new Date(tempDPO.element[0].value), new Date(tempDPR.element[0].value));
-                        if(diff <= 0) {
-                            alert( "'Outcome Date' cannot early than " + apply + " date.");
+                        if(diff < 0) {
+                            alert( "'Outcome Date' cannot be early than " + apply + " date.");
                             return false;
                         }
 

@@ -146,14 +146,14 @@
           columns.Bound(f => f.ID).Hidden();
           columns.Bound(f => f.UploadDate).Format("{0:MM/dd/yyyy}").Title("Upload Date").Width(90);
           columns.Bound(f => f.FileName).ClientTemplate("<a href='" + Url.Action("Download", "EditOffender") + "/#= ID#'>#= FileName #</a>")
-                      .Title("File Name").HtmlAttributes(new { style = "white-space: normal;font-size:12px;line-height:12px!important;" });
+                      .Title("File Name").HtmlAttributes(new { style = "white-space: normal;font-size:15px;line-height:12px!important;" });
           columns.Bound(f => f.UploadBy).Title("Upload By").Width(80);
           columns.Command(command => command.Destroy().Text(" ")).Visible(!Model.ViewOnly);
       })
        .Sortable(sortable => sortable.AllowUnsort(true))
         .Scrollable(a => a.Enabled(true))
         .Navigatable()
-        .HtmlAttributes(new { style = "height:180px;width:90%" })
+        .HtmlAttributes(new { style = "height:180px;font-size:14px;padding:5px;" })
         .DataSource(dataSource => dataSource
           .Ajax()
           .Model(m => m.Id(f => f.ID))

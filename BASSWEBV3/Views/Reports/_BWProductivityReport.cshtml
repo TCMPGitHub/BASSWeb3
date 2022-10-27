@@ -10,8 +10,7 @@
 </style>*@
 <script>
     function BWGridDataBound(e) {
-        var ctrl= $("#FromToDate").data("kendoDateRangePicker");
-        var grid = $("#gridBWProductivity").data("kendoGrid");
+       var grid = $("#gridBWProductivity").data("kendoGrid");
         var dataSource = grid.dataSource
         grid.thead.find('th').each(function () {
             $(this).prop('title', $(this).data('title'));
@@ -48,7 +47,7 @@
         var dataFiletr = [];
         if (grid.dataSource.filter() !== undefined &&
             grid.dataSource.filter().filters.length > 0) {
-            var selectItems = $("#AllRptBfUsers").data("kendoMultiSelect").dataItems();
+            var selectItems = $("#RptBfUsers").data("kendoMultiSelect").dataItems();
             for (var i = 0; i < grid.dataSource.filter().filters.length; i++) {
                 var val = grid.dataSource.filter().filters[i].value;
                 for (var j = 0; j < selectItems.length; j++) {
@@ -59,9 +58,9 @@
         }
         var val1;
         if (dataFiletr.length > 0)
-            val1 = { FromDate: kendo.toString(ctrl.options.range.start, "MM/dd/yyyy"), ToDate: kendo.toString(ctrl.options.range.end, "MM/dd/yyyy"), BfWorkerIDs: dataFiletr.join(',') };
+            val1 = { FromDate: $("#FromDate").val(), ToDate: $("#ToDate").val(), BfWorkerIDs: dataFiletr.join(',') };
         else
-            val1 = getprams();
+            val1 = getbwprams();
         var thedata = encodeURIComponent(JSON.stringify(val1));
         // Get the export link as jQuery object
         var $exportLink = grid.element.find('.export');

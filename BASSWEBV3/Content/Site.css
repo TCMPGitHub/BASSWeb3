@@ -331,7 +331,7 @@ select {
     background-color:rgb(245, 245, 245);
  }
  textarea {
-    max-height:60px;
+    min-height:60px;
     text-indent: 0.15em!important;
 }:disabled{
     background-color:rgb(245, 245, 245);

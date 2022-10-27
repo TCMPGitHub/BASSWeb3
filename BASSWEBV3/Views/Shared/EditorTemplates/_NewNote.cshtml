@@ -26,8 +26,8 @@
 
 
     </script>
-    <table style="height:162px;">
-        <tr>
+    <table style="height:300px;">
+        <tr style="height:25px!important;">
             <td>
                 @Html.Label("Event Date:", new { @style = "margin-top:5px;width:80px;float:left;margin-left:20px;" })
             </td>
@@ -38,7 +38,7 @@
             @*@(Html.Kendo().DatePickerFor(m => m.EventDate).HtmlAttributes(new { onkeydown = "javascript:return disableInput(event)" }))*@
             </td>
         </tr>
-        <tr>
+        <tr style="height:25px!important;">
             <td>
                 <scan style="color:red;margin-left:10px;margin-top:5px; float:left;">*</scan>
                 @Html.Label("Note Type:", new { @style = "margin-top:5px;width:80px;float:left;" })
@@ -98,12 +98,12 @@
 
             </td>
         </tr>
-        <tr>
+        <tr style="height:220px!important;">
             <td>
                 @Html.Label("Note:", new { @style = "margin-left:20px;margin-top:30px;width:80px;" })
             </td>
             <td colspan="5">
-                &nbsp;&nbsp;@Html.TextAreaFor(m => m.Text, new { @id = "txtComment", @class = "textareaforcasemanngement", placeholder = "Note ...", spellcheck = "true", style = "width:100%;margin-left:-10px;height:100px;font-size:15px;" })
+                &nbsp;&nbsp;@Html.TextAreaFor(m => m.Text, new { @id = "txtComment", @class = "textareaforcasemanngement", placeholder = "Note ...", spellcheck = "true", style = "width:100%;margin-left:-10px;height:200px!important;font-size:14px;", @rows="8"})
             </td>
         </tr>
     </table>

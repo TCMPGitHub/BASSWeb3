@@ -3,14 +3,8 @@
 @Html.HiddenFor(m => m.EpisodeID, new { @id = "hdCFEpisodeID" })
 @Html.HiddenFor(m => m.CanEditNote, new { @id = "hdCanEditNote" })
 <style>
-    .k-grid-header th.k-header > .k-link {
-        min-height: 10px;
-    }
     .k-grid .k-state-selected { background: lightgray; }
-    #gridCaseNote > .k-grid-content {
-        height: 100% !important;
-    }
-
+    
     .k-grid tbody .k-button {
         min-width: 0px;
         width: 16px;
@@ -18,25 +12,11 @@
         height: 13px;
     }
     .k-grid td {
-        line-height: 1em !important;
+        line-height: 1em!important ;
+        font-size:14px!important;
     }
 
-    .k-grid .k-grid-toolbar .k-grid-add,
-    .k-grid tbody .k-grid-edit,
-    .k-grid tbody .k-grid-update,
-    .k-grid tbody .k-grid-cancel,
-    .k-grid tbody .k-grid-delete {
-        min-width: 0;
-    }
-
-        .k-grid .k-grid-toolbar .k-grid-add .k-icon,
-        .k-grid tbody .k-grid-edit .k-icon,
-        .k-grid tbody .k-grid-update .k-icon,
-        .k-grid tbody .k-grid-cancel .k-icon,
-        .k-grid tbody .k-grid-delete .k-icon {
-            margin: 0;
-        }
-    
+   
     .k-grid-content .k-button::before {
         text-indent: 0;
         position: absolute;
@@ -46,13 +26,6 @@
         background-color: transparent;
     }
 
-    .k-grid-content .k-button.k-grid-edit {
-        background: url('../../Content/themes/base/images/edit1.ico') no-repeat;
-    }
-
-    .k-grid-content .k-button.k-grid-delete {
-        background: url('../../Content/themes/base/images/trash.ico') no-repeat;
-    }
     .k-edit-form-container{
         width:100%!important;
     }
@@ -76,6 +49,7 @@
         }
     .k-edit-form-container {
         width: 680px;
+        height: 300px;
         padding: 0px;
     }
 
@@ -262,18 +236,19 @@
     var canedit = Model.CanEditNote ? "" : "none";
 }
 
-    <div class="divOffenderPart1tr" style="height: 120%!important;">
-        @(Html.Kendo().Grid<BassIdentityManagement.Entities.CaseNoteData>()
+    <div class="divOffenderPart1tr" style="height:150%;">
+    @(Html.Kendo().Grid<BassIdentityManagement.Entities.CaseNoteData>()
     .Name("gridCaseNote")
-    .HtmlAttributes(new { style = "width:auto;font-size:14px;line-height:10px!important;padding:0px;" })
+    .HtmlAttributes(new { style = "width:98%!important;font-size:14px;padding:0px;" })
     .Scrollable(s => s.Enabled(true))
-    .Selectable(s=>s.Mode(GridSelectionMode.Single))
+    .Selectable(s => s.Mode(GridSelectionMode.Single))
     .PersistSelection(true)
         .Events(e => { e.DataBound("gridDataBound"); e.Change("onRowSelected"); e.Edit("insertPopupCaption"); e.Save("CheckPopupData"); e.BeforeEdit("StopProcess"); })
-        .ToolBar(toolbar => { toolbar.Create().Text("Add New Note").HtmlAttributes( new { style="display:" + @canedit }); })
+        .ToolBar(toolbar => { toolbar.Create().Text("Add New Note").HtmlAttributes(new { style = "display:" + @canedit }); })
         //.ToolBar(toolbar => toolbar.Excel().Text("Export To Excel")).Excel(exl => exl.FileName("CaseNote.xlsx").Filterable(true).AllPages(true))
-        .Editable(editable => editable.Mode(GridEditMode.PopUp).TemplateName("_NewNote").Window(w => w.Title("Edit Case Note").Width(750).Height(230)))
+        .Editable(editable => editable.Mode(GridEditMode.PopUp).TemplateName("_NewNote").Window(w => w.Title("Edit Case Note").Width(750).Height(370)))
         .Sortable(sortable => sortable.AllowUnsort(true))
+        .Scrollable(sc => sc.Enabled(true).Height("13vh"))
         .Filterable(filterable => filterable
         .Extra(false)
         .Operators(operators =>
@@ -316,11 +291,12 @@
     .Create(c => c.Action("CaseNoteCreate", "EditOffender", new { EpisodeID = Model.EpisodeID }))
     .Destroy(d => d.Action("CaseNoteDelete", "EditOffender", new { EpisodeID = Model.EpisodeID }))
     .Update(u => u.Action("CaseNoteUpdate", "EditOffender", new { EpisodeID = Model.EpisodeID }))))
-    </div>
-    <div class="divOffenderPart1tr"><span style="width:100%;height:5px;"></span></div>
+</div>
+    <span style="width:100%;height:5px;"></span>
     <div class="divOffenderPart1tr" id="divCasenoteReason" style="justify-content:flex-start;">
-        @Html.TextBox("message", "", new { @id = "displayReason", @readonly = "readonly", style = "width:100%;color:#ff9900;background-color:white;font-weight: bold;" })
+        @Html.TextBox("message", "", new { @id = "displayReason", @readonly = "readonly", style = "width:97%;color:#ff9900;background-color:white;font-weight: bold;" })
     </div>
     <div class="divOffenderPart1tr" id="divCasenoteText">
-        @Html.TextArea("textarea", "", new { @id = "txtComment", @class = "textareaforcasemanngement", placeholder = "Note ...", spellcheck = "true", style = "width:100%;max-height:120px!important;background-color:white;font-size:15px", @rows = "6", @readonly = "readonly" })
+        @Html.TextArea("textarea", "", new { @id = "txtComment", @class = "textareaforcasemanngement", placeholder = "Note ...", spellcheck = "true", style = "width:97%;max-height:120px!important;background-color:white;font-size:15px", @rows = "6", @readonly = "readonly" })
     </div>
+ 

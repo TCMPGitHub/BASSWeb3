@@ -1,13 +1,13 @@
 ﻿@model System.Web.Mvc.HandleErrorInfo
-
 @{
     ViewBag.Title = "Error";
 
 }
-<div style="height:calc(100vh - 200px);">
+<div style="height:calc(100vh - 120px);">
 <h1 class="text-danger">Error.@Model.Exception.Message</h1>
-
-<h2 class="text-danger">An error occurred while processing your request.</h2>
-@*@using (Html.BeginForm("Logout", "BassAccount", FormMethod.Post, new { @id = "logoutForm" }))*@
-@Html.ActionLink("Logout", "Logout", "BassAccount", new { @id = "logoutForm" }))
+    <h2 class="text-danger">
+            An error occurred while processing your request.Please logout.
+            @Html.ActionLink("Logout", "Login", "BASSAccount")
+        </h2>
+   
 </div>

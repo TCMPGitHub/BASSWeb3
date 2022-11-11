@@ -41,6 +41,12 @@ namespace BassIdentityManagement.Entities
         public string NameWithCode { get; set; }
         public string Abbr { get; set; }
     }
+    public class FacilityList
+    {
+        [Key]
+        public int FacilityID { get; set; }
+        public string FacilityName { get; set; }
+    }
     public class Gender
     {
         [Key]

@@ -8,12 +8,12 @@
         text-align: center;
         vertical-align: middle;
     }
-    /*#gridInmatesDetails>div.k-header.k-grid-toolbar.k-grid-top{
-        width:109vw!important;
-    }*/
+    div#gridInmatesDetails.k-widget.k-grid.k-display-block{
+    /*>div.k-header.k-grid-toolbar.k-grid-top,gridInmatesDetails{*/
+        width:120vw!important;
+    }
 </style>
 <script>
-
     function execelexport() {
         var ds = $("#gridInmatesDetails").data("kendoGrid").dataSource;
 
@@ -96,7 +96,6 @@
             kendo.saveAs({ dataURI: workbook.toDataURL(), fileName: "InmatesDetails.xlsx" });
         });
     }
-
 </script>
 @*//$("#gridInmatesDetails ").getKendoGrid().saveAsExcel();
     //  }*@
@@ -121,8 +120,8 @@
                    column.Bound(m => m.CDCRNum).Width(60).Title("CDCR#").ClientFooterTemplate("Total: ").Filterable(false);
                    column.Bound(m => m.LastName).Width(60).Title("Last Name").ClientFooterTemplate("#=count#").Filterable(false);
                    column.Bound(m => m.FirstName).Width(60).Title("First Name").Filterable(false);
-                   column.Bound(m => m.FacilityName).HeaderTemplate(@<text><span class="greentext">Facility</span></text>).ClientFooterTemplate("Total : ").Filterable(fs => fs.Multi(true));
-                   //column.Bound(x => x.FacilityName).Width(50).Title("Facility").Filterable(f => f.Multi(true).DataSource(ds => ds.Read(r => r.Action("FilterInmatesDetailsFa_read", "Reports"))));
+                   column.Bound(m => m.FacilityName).Width(60).Filterable(ftb => ftb.Multi(true)
+                    .DataSource(ds => ds.Read(r => r.Action("FilterInmatesDetailsFa_read", "Reports").Data("{ field: 'FacilityName' }"))));
                    column.Bound(m => m.EPRD).Width(80).Title("EPRD").Format("{0:MM/dd/yyyy}").Filterable(false);
                    column.Bound(m => m.Housing).Width(130).Title("Housing").Filterable(false);
                    column.Bound(m => m.BenefitWorkerName).Width(150).Title("Benefit Worker").Filterable(false);

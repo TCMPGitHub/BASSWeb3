@@ -996,8 +996,8 @@ namespace BassWebV3.Controllers
 
         public ActionResult FilterInmatesDetailsFa_read()
         {
-            var query = @"SELECT FacilityID, (OrgCommonID + '-' + Name)NameWithCode, Abbr FROM dbo.Facility WHERE ISNULL(Disabled, 0) = 0";
-            var result = SqlHelper.ExecuteCommands<Facility>(query, 1);
+            var query = @"SELECT FacilityID, Abbr AS FacilityName FROM dbo.Facility WHERE ISNULL(Disabled, 0) = 0";
+            var result = SqlHelper.ExecuteCommands<FacilityList>(query, 1);
             return Json(result, JsonRequestBehavior.AllowGet);
         }
         private List<InmatesReleaseDetailsReportData> GetInmatesDetailsReport(DateTime StartDate, DateTime EndDate, int Details)

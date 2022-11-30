@@ -96,6 +96,19 @@
             kendo.saveAs({ dataURI: workbook.toDataURL(), fileName: "InmatesDetails.xlsx" });
         });
     }
+    function error_handler(e) {
+        if (e.errors) {
+            var message = "Errors:\n";
+            $.each(e.errors, function (key, value) {
+                if ('errors' in value) {
+                    $.each(value.errors, function () {
+                        message += this + "\n";
+                    });
+                }
+            });
+            alert(message);
+        }
+    }
 </script>
 @*//$("#gridInmatesDetails ").getKendoGrid().saveAsExcel();
     //  }*@
@@ -150,7 +163,7 @@
                  aggregates.Add(p => p.SsiApps).Sum();
                  aggregates.Add(p => p.SignedCid).Sum();
              })
-            .Batch(true)
+            .Events(events => events.Error("error_handler"))
             .ServerOperation(true)
             .PageSize(100)
             .Model(m =>

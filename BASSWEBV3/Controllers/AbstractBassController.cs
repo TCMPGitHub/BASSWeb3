@@ -119,7 +119,14 @@ namespace BassWebV3.Controllers
                 writer.WriteLine();
                 writer.Close();
             }
-
+            if (exception.Message == "Object reference not set to an instance of an object." ||
+                exception.Message.IndexOf("The parameters dictionary contains a null entry for") > -1 ||
+                exception.Message.IndexOf("A network-related or instance-specific error occurred") > -1)
+            {
+                var result = this.View("Error", new HandleErrorInfo(exception, filterContext.RouteData.Values["controller"].ToString(), filterContext.RouteData.Values["action"].ToString()));
+                filterContext.Result = result;
+                filterContext.ExceptionHandled = true;
+            }
             // Output a nice error page
             if (filterContext.HttpContext.IsCustomErrorEnabled)
             {

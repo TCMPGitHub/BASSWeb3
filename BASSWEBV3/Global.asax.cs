@@ -31,7 +31,7 @@ namespace BassWebV3
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
-            
+            //AntiForgeryConfig.SuppressIdentityHeuristicChecks = true;
         }
         protected void Application_BeginRequest(Object sender, EventArgs e)
         {

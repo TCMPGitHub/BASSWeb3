@@ -51,8 +51,15 @@ namespace BassWebV3.Controllers
         public ActionResult Index()
         {
             ViewBag.ControllerID = ControllerID.EditOffender;
+            if (CurrentUser == null && (ApplicationUser)Session["CurrentUser"] == null)
+            {
+                return RedirectToAction("Login", "BASSAccount");
+            }
+            else if(CurrentUser == null && (ApplicationUser)Session["CurrentUser"] != null)
+            { 
+              ViewBag.CurrentUser = (ApplicationUser)Session["CurrentUser"];
+            }
             ViewBag.IsAppViewOnly = CurrentUser.ViewBenefitOnly;
-            ViewBag.CurrentUser = (ApplicationUser)Session["CurrentUser"];
             try
             {
                 UserController.RecordPageLoad(CurrentUser.UserID, RouteData.Values["Controller"].ToString(), RouteData.Values["action"].ToString(),
@@ -499,10 +506,21 @@ namespace BassWebV3.Controllers
                 END
                ELSE
                BEGIN
+                 IF NOT EXISTS(SELECT 1 FROM [dbo].[Application] WHERE EpisodeID  = {1} AND [ApplicationTypeID] = {0} AND [ArchivedOnDate] IS NULL )
+                   BEGIN
               INSERT INTO [dbo].[Application]([ApplicationTypeID],[EpisodeID]
                     ,[ApplicationOutcomeID],[AgreesToApply],[AppliedOrRefusedOnDate],[PhoneInterviewDate]
                     ,[OutcomeDate],[BICNum],[IssuedOnDate],[ArchivedOnDate],[CreatedByUserID],[CustodyFacilityId]
                     ,[DateAction]) VALUES({0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11}, GetDate())
+                 END
+                 ELSE
+                 BEGIN
+                     UPDATE [dbo].[Application] SET [ApplicationTypeID] ={0} ,[EpisodeID] ={1}
+                    ,[ApplicationOutcomeID] = {2},[AgreesToApply] = {3},[AppliedOrRefusedOnDate] = {4}
+                    ,[PhoneInterviewDate] = {5}, [OutcomeDate]= {6},[BICNum] = {7},[IssuedOnDate] = {8}
+                    ,[ArchivedOnDate] = {9},[CreatedByUserID] = {10},[CustodyFacilityId] = {11}
+                    ,[DateAction] = GetDate(),[DHCSDate] = {12} WHERE ApplicationID = {13} 
+                 END
               END
               EXEC dbo.[spGetApplicationByType] {1},{10},{0}",
            AppData.App.ApplicationTypeID, AppData.App.EpisodeID,

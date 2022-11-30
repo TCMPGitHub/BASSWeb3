@@ -21,11 +21,15 @@
     @Scripts.Render("~/bundles/bass")
     @RenderSection("scripts", required: false)
 
-    
+
 </head>
-<body class="bassbody"> 
-    <script>
-        
+<body class="bassbody">
+    <div onload="initSession()" style="height:100%;">
+        @{
+            var currentUser = ViewBag.CurrentUser;
+        }
+        <script>
+
         function showLoadWindow(message, load) {
             return showPopup('#loadTemplate', message)
         };
@@ -50,16 +54,16 @@
             $('.loadMessage').html(message);
             return dfd.promise();
         };
-    </script>
-    <script id="loadTemplate" type="text/x-kendo-template">
-        <br />
-       <div class="loadMessage"></div>
-    </script>
+        </script>
+        <script id="loadTemplate" type="text/x-kendo-template">
+            <br />
+            <div class="loadMessage"></div>
+        </script>
         @if (ViewBag.CurrentUser == null)
         {
             <div class="bassbodyItem1">
                 <header style="background: url('../../Content/themes/base/Images/start.jpg') no-repeat; background-size: cover;height:80px;">
-                   <div class="headerItem">
+                    <div class="headerItem">
                         <div style="width:100%;height:20px"></div>
                         <div style="color:@BassConstants.BkgColor;font-size:xx-large; font-weight:bold;text-shadow: -1px -1px 0 #fff, 1px 1px 0 #ccc;">Welcome to Bass Web @BassConstants.Environment</div>
                         <div style="width:100%;height:20px"></div>
@@ -74,11 +78,11 @@
                 function Logout() {
                     $("#logoutForm").submit();
                 }
-           </script>
+            </script>
             <div class="bassbodyItem2">
                 <header style="height:30px;">
                     @using (Html.BeginForm("Logout", "BassAccount", FormMethod.Post, new { @id = "logoutForm" }))
-                    { @Html.AntiForgeryToken() }
+                    { @Html.AntiForgeryToken(); }
                     <div id="loadingDialog" class="hidden ui-dialog" title="Loading ... please wait"></div>
                     <div class="editHeaderItem">
                         <div class="editHeaderItem1">
@@ -107,20 +111,104 @@
                         <div class="editHeaderItem2">
                             @if(BassConstants.Environment == "Development")
                             {
-                                <span class ="redtext"><strong>[Development]</strong>&nbsp;&nbsp;</span>
+                            <span class="redtext"><strong>[Development]</strong>&nbsp;&nbsp;</span>
                             }
                             <span id="loading" class="hidden waitingtext"><strong>[Loading]</strong>&nbsp;&nbsp;</span><span style="color:greenyellow">Logged in as </span><span style="color:green;"><strong>@ViewBag.CurrentUser.UserName</strong></span>&nbsp;&nbsp;
                             @(Html.Kendo().Button().Name("logoutButton").Content("Logout")@*.Icon("logout")*@.Events(e => e.Click("Logout"))
                                   .HtmlAttributes(new { style = "width:60px;height:22px;background-color:darkblue;color:white;" }))
-                          </div>
+                        </div>
                     </div>
                 </header>
-                </div>
-                }
-                <div class=@(ViewBag.CurrentUser == null ? "bassbodyItem3": "bassbodyItem4")>
-                    @RenderBody()
-                </div>
-               
+            </div>
+        }
+        <div class=@(ViewBag.CurrentUser == null ? "bassbodyItem3": "bassbodyItem4")>
+            @RenderBody()
+        </div>
+    </div>
 </body>
 <Foot style="height:25px!important;">@Html.Partial("_Footer")</Foot>
 </html>
+
+<script type="text/javascript">
+    $("div[onload]").trigger('onload');
+   var sess_pollInterval = 60000;
+   var sess_expirationMinutes= @System.Configuration.ConfigurationManager.AppSettings["ExpirationMinutes"];
+   var sess_warningMinutes = sess_expirationMinutes - 5;
+   var sess_intervalID;
+   var sess_lastActivity;
+
+   function initSession() {
+       if($(".loginformAlign").length > 0)
+       {
+           return;
+       }
+       sess_lastActivity = new Date();
+       try{
+           sess_intervalID = setInterval('sessInterval()', sess_pollInterval);
+       }
+       catch(err){
+           clearInterval(sess_intervalID);
+           throw err;
+       }
+   }
+   function sessLogOut() {
+       clearInterval(sess_intervalID);
+       window.clearInterval();
+       sess_intervalID = null;
+       $("#logoutButton").trigger('click');
+   }
+   function sessInterval() {
+       var now = new Date();
+       //get milliseconds of differneces
+       var diff = now - sess_lastActivity;
+       //get minutes between differences
+       var diffMins = (diff / 1000 / 60);
+       if (diffMins > sess_warningMinutes) {
+           clearInterval(sess_intervalID);
+           window.clearInterval();
+           //warn before expiring, then stop the timer and prompt for attention
+           var active = confirm('Your session will expire in ' +
+           (sess_expirationMinutes - sess_warningMinutes) +
+           ' minutes (as of ' + now.toTimeString() + ')' +
+           ' press OK to remain logged in ' +
+           'or press Cancel to log out.' +
+           '\nIf you are logged out any changes will be lost.');
+           if (active == true) {
+               now = new Date();
+               diff = now - sess_lastActivity;
+               diffMins = (diff / 1000 / 60);
+               if (diffMins > sess_expirationMinutes) {
+                   alert("Your session has been expired.");
+                   sessLogOut();
+               }
+               else {
+                   initSession();
+               }
+           }
+           else {
+               sessLogOut();
+           }
+       }
+   }
+   //function url_redirect(url){
+   //    var X = setTimeout(function(){
+   //        window.location.replace(url);
+   //        return true;
+   //    },300);
+
+   //    if( window.location == url ){
+   //        clearTimeout(X);
+   //        return true;
+   //    } else {
+   //        if( window.location.href == url ){
+   //            clearTimeout(X);
+   //            return true;
+   //        }else{
+   //            clearTimeout(X);
+   //            window.location.replace(url);
+   //            return true;
+   //        }
+   //    }
+   //    return false;
+   //};
+</script>

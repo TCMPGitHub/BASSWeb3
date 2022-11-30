@@ -12,39 +12,41 @@
 </style>
 
 <script type="text/javascript">
-    $(function () {
-                var datestring = "60-Day Facility Outlook Report " + $("#FromDate").val() + " - " + $("#ToDate").val();
-                 $("#reportfospan").html(datestring);
-                });
-                function GridFADataBound() {
-                    var grid = $("#gridFAOutLook").data("kendoGrid");
-                    grid.thead.find('th').each(function () {
-                        $(this).prop('title', $(this).data('title'));
-                    })
-                }
-                function getTotalEPRDnext60daysPct() {
-                    var gridData = $("#gridFAOutLook").data("kendoGrid").dataSource.view();
-                    var total30 = 0;
-                    var total3060 = 0;
-                    var total60 = 0;
-                    var result = 0;
-                    for (var i = 0; i < gridData.length; i++) {
-                        total30 += gridData[i].Total30EPRD;
-                        total3060 += gridData[i].TotalNext30EPRD;
-                        total60 += gridData[i].TotalEPRDnext60days;
-                    }
-                    if ((total30 + total3060) > 0)
-                        result = total60 * 100.0 / (total30 + total3060);
+    //$(function () {
+    //    var datestring = "60-Day Facility Outlook Report " + $("#FromDate").val() + " - " + $("#ToDate").val();
+    //     $("#reportfospan").html(datestring);
+    //    });
+        function GridFADataBound() {
+            var grid = $("#gridFAOutLook").data("kendoGrid");
+            grid.thead.find('th').each(function () {
+                $(this).prop('title', $(this).data('title'));
+            })
+            var datestring = "60-Day Facility Outlook Report date start at " + $("#FromDate").val(); // + " - " + $("#ToDate").val();
+            $("#reportfospan").html(datestring);
+        }
+        function getTotalEPRDnext60daysPct() {
+            var gridData = $("#gridFAOutLook").data("kendoGrid").dataSource.view();
+            var total30 = 0;
+            var total3060 = 0;
+            var total60 = 0;
+            var result = 0;
+            for (var i = 0; i < gridData.length; i++) {
+                total30 += gridData[i].Total30EPRD;
+                total3060 += gridData[i].TotalNext30EPRD;
+                total60 += gridData[i].TotalEPRDnext60days;
+            }
+            if ((total30 + total3060) > 0)
+                result = total60 * 100.0 / (total30 + total3060);
 
-                    return Math.round(result).toFixed(1);
-                }
+            return Math.round(result).toFixed(1);
+        }
 
 </script>
 
 <script>
     function exportFOToExcel() {
         //header 1
-        var datestring = "60-Day Facility Outlook Report " + $("#FromDate").val() + " - " + $("#ToDate").val();
+        var datestring = "60-Day Facility Outlook Report date start at " + $("#FromDate").val(); //+ " - " + $("#ToDate").val();
         var rows = [{
             cells: [{ value: datestring, textAlign: "center", vAlign: "center", hAlign: "center", color: "#4e9a06", background: "#dcdcdc", colSpan: 10 }]
         }];

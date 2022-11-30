@@ -24,11 +24,11 @@ namespace BASSWEBV3
             app.UseCookieAuthentication(new CookieAuthenticationOptions
             {
                 AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
-                LoginPath = new PathString(VirtualPathUtility.ToAbsolute("~/BASSAccount/Login")),
-                LogoutPath = new PathString(VirtualPathUtility.ToAbsolute("~/BASSAccount/Logout")),
-                //LoginPath = new PathString(VirtualPathUtility.ToAbsolute("~/")),
-                //LogoutPath = new PathString(VirtualPathUtility.ToAbsolute("~/")),
-                ExpireTimeSpan = System.TimeSpan.FromMinutes(90),
+                //LoginPath = new PathString(VirtualPathUtility.ToAbsolute("~/BASSAccount/Login")),
+                //LogoutPath = new PathString(VirtualPathUtility.ToAbsolute("~/BASSAccount/Logout")),
+                LoginPath = new PathString(VirtualPathUtility.ToAbsolute("~/")),
+                LogoutPath = new PathString(VirtualPathUtility.ToAbsolute("~/")),
+                ExpireTimeSpan = System.TimeSpan.FromMinutes(10),
                 SlidingExpiration = true
             });
         }

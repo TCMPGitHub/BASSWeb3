@@ -17,7 +17,7 @@ using System.Web.Services;
 
 namespace BASSWEBV3.Controllers
 {
-    
+
     public class BASSAccountController : Controller
     {
         private ApplicationSignInManager _signInManager;
@@ -152,7 +152,7 @@ namespace BASSWEBV3.Controllers
         // public ISecureDataFormat<AuthenticationTicket> AccessTokenFormat { get; private set; }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
         public ActionResult Logout()
         {
             try

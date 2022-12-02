@@ -169,7 +169,7 @@
            //warn before expiring, then stop the timer and prompt for attention
            var active = confirm('Your session will expire in ' +
            (sess_expirationMinutes - sess_warningMinutes) +
-           ' minutes (as of ' + now.toTimeString() + ')' +
+           ' minutes (as of ' + now.toLocaleTimeString('en-US', { hour: 'numeric', hour12: true, minute: 'numeric' }) + ')' +
            ' press OK to remain logged in ' +
            'or press Cancel to log out.' +
            '\nIf you are logged out any changes will be lost.');

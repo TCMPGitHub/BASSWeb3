@@ -275,7 +275,7 @@
                 <div class="divOffenderPart1tbh">
                     <CDCR class="divOffenderPart1tbs">
                         <div style="height:22px!important;"><b>CDCR#&nbsp;</b></div>
-                        <div style="height:22px!important;margin-top:-5px;">
+                        <div style="height:22px!important;margin-top:-2px;">
                             @(Html.Kendo().TextBoxFor(m => m.Inmate.CDCRNum)
 .HtmlAttributes(new
 {
@@ -286,14 +286,14 @@
                    </CDCR>      
                     <CTRL class="divOffenderPart1tbs">
                         <div style="height:22px!important;"><b>CTRL&nbsp;</b></div>
-                        <div style="height:22px!important;margin-top:-5px;">
+                        <div style="height:22px!important;margin-top:-2px;">
                             @(Html.Kendo().TextBoxFor(m => m.DerivedSomsData.SomsReleaseDate).Format("{0:MM/dd/yyyy}")
   .HtmlAttributes(new { @readonly = "readonly", @style = "padding:0;width:80px!important;background-color:#f3f2f2;height:22px;" }))
                         </div>
                    </CTRL>
                     <CNDR class="divOffenderPart1tbs">
                        <div style="height:22px!important;"><b><scan class=@genderDiff title="@genderTitle" >GNDR&nbsp;</scan></b></div>
-                       <div style="height:22px!important;margin-top:-5px;">
+                       <div style="height:22px!important;margin-top:-2px;">
                            @(Html.Kendo().DropDownListFor(m => m.Inmate.GenderID).DataTextField("Code").DataValueField("GenderID")
    .BindTo(Model.AllGenders).Name("Inmate.GenderID").OptionLabel("")
    .Enable(Model.EditingEnabled)
@@ -306,7 +306,7 @@
                      </CNDR>
                     <DOB class="divOffenderPart1tbs">
                         <div style="height:22px!important;width:30px!important"><b><scan class=@dobDiff title="@dobTitle">DOB&nbsp;</scan></b>&nbsp;</div>
-                        <div style = "width:100%!important;margin-top:-5px;">
+                        <div style = "width:100%!important;margin-top:-2px;">
                             @(Html.Kendo().DatePickerFor(m => m.Inmate.DOB)
                              .Format("MM/dd/yyyy")
                              .Value(Model.Inmate.DOB.HasValue && Model.Inmate.DOB != DateTime.MinValue ? "" : Model.Inmate.DOB.Value.ToShortDateString()).Name("Inmate.DOB").DateInput()
@@ -319,11 +319,11 @@
                     </DOB>
                     <SSN class="divOffenderPart1tbs">
                       <div style="height:22px!important;"><b><scan class=@ssnDiff title="@ssnTitle">SSN&nbsp;</scan></b></div>
-                      <div>
+                      <div style="margin-top:-2px;">
                         @(Html.Kendo().MaskedTextBoxFor(m => m.Inmate.SSN).Mask("000-00-0000").Name("Inmate.SSN")
       .HtmlAttributes(new
       {
-          @style = "height:22px!important;width:90px!important;display:inline-block;padding:0;margin-top:-5px;",
+          @style = "height:22px!important;width:90px!important;display:inline-block;padding:0;",
           @class = "dynamicdisable overridable"
       }).Value((string.IsNullOrEmpty(Model.Inmate.SSN) || Model.Inmate.SSN == "0") ? "" : Model.Inmate.SSN))
                     </div>
@@ -332,7 +332,7 @@
            </div>
            <line style="height:2px!important;width:100%;"></line>
         </div>
-        <div id="divwscrollbar" class="divOffenderPart1tab" style="border-bottom:1px lightgray solid">
+        <div id="divwscrollbar" class="divOffenderPart1tab">
             <div class="divOffenderPart1tr">
                 <div class="divOffenderPart1tb" style="width:120px;text-align:right;"><b><scan class=@namepDiff title="@nameTitle">&nbsp;&nbsp;NAME&nbsp;(L,&nbsp;F,&nbsp;M)</scan></b></div>
                 <div class="divOffenderPart1tb" style="height:22px!important">
@@ -348,7 +348,9 @@
                           .HtmlAttributes(new { @MaxLength = "20", @placeholder = "Middle Name ...", @id = "middleNameTextBox", @class = "dynamicdisable", @style = "padding:0;width:100%!important;height:22px!important;" }))
                 </div>
             </div>
-        <line style="height:2px!important;width:100%;"></line>
+        </div>
+        <line style="height:2px!important;width:100%;border-bottom:1px lightgray solid;"></line>
+        <div class="divOffenderPart1tab">
             <div class="divOffenderPart1tr">
                 <div class="divOffenderPart1tbh">
                     <RELEASE class="divOffenderPart1tbs" style="width:50%!important">
@@ -428,33 +430,37 @@
                     </COUNTY>
                 </div>
             </div>
-        <line style="height:2px!important;width:100%;"></line>
-        <div class="divOffenderPart1tr">
-            <div class="divOffenderPart1tbh">
-                <div class="divOffenderPart1tbs">
-                    <div style="height:22px!important;width:110px;text-align:right;float:right!important;"><b>Benefit&nbsp;Worker&nbsp;</b></div>
-                    <div style="height:22px!important;">
-                        @(Html.Kendo().TextBoxFor(m => m.Inmate.BenefitWorkerName).Name("benefitWorkerTextbox").Enable(false)
+        </div>
+        <line style="height:2px!important;width:100%;border-bottom:1px lightgray solid;"></line>
+        <div class="divOffenderPart1tab">
+            <div class="divOffenderPart1tr">
+                <div class="divOffenderPart1tbh">
+                    <div class="divOffenderPart1tbs">
+                        <div style="height:22px!important;width:120px;text-align:right;float:right!important;"><b>Benefit&nbsp;Worker&nbsp;</b></div>
+                        <div style="height:22px!important;">
+                            @(Html.Kendo().TextBoxFor(m => m.Inmate.BenefitWorkerName).Name("benefitWorkerTextbox").Enable(false)
                     .HtmlAttributes(new
                     {
                         @placeholder = "Benefit worker ...",
                         @style = "padding:0;height:22px!important;width:200px;"
                     }))
+                        </div>
                     </div>
-                </div>
-                <div class="divOffenderPart1tbs">
-                    <div style="height:22px!important;">
-                        @if (Model.EditingEnabled)
-                        {
-                            @(Html.Kendo().Button().Name("unassignButton").Content("Unassign").Events(e => e.Click("ChangeUI"))
+                    <div class="divOffenderPart1tbs">
+                        <div style="height:22px!important;">
+                            @if (Model.EditingEnabled)
+                            {
+                                @(Html.Kendo().Button().Name("unassignButton").Content("Unassign").Events(e => e.Click("ChangeUI"))
                                 .HtmlAttributes(new { type = "button", style = "height:22px!important;" })
                                 .Enable(string.IsNullOrEmpty(Model.Inmate.BenefitWorkerName) ? false : true))
-                        }
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-            <line style="height:2px!important;width:100%;"></line>
+        <line style="height:2px!important;width:100%;border-bottom:1px lightgray solid;"></line>
+        <div class="divOffenderPart1tab">           
             <div id="ckgroup" class="divOffenderPart1tr">
                 <div class="divOffenderPart1tb" style="border: none;border-radius:4px;">
                     <div class="divOffenderPart1tbv">
@@ -480,7 +486,9 @@
                     </div>
                 </div>
             </div>
-            <line style="height:2px!important;width:100%;"></line>
+        @*</div>   
+        <line style="height:2px!important;width:100%;border-bottom:1px lightgray solid;"></line>
+        <div class="divOffenderPart1tab">*@
             <div class="divOffenderPart1tr" style="width:100%;">
                 <div class="divOffenderPart1tbh">
                     <RELEASE class="divOffenderPart1tbs">
@@ -500,14 +508,14 @@
                     </COUNTY>
                 </div>
             </div>
-            <line style="height:2px!important;width:100%;"></line>
+            <line style="height:2px!important;width:100%;border-bottom:1px lightgray solid;"></line>
         </div>
         <div id="divwscrollbar" class="divOffenderPart1tab" style="height:40px;">
             <div class="divOffenderPart1tr" style="overflow-x:auto;overflow-y:hidden;">
                 <div class="divOffenderPart1tbh">
                     <RELAESE class="divOffenderPart1tbs">
                         <div style="width:105px;height:22px!important;"><b>Screening Date&nbsp;</b></div>
-                        <div style="height:22px!important;margin-top:-5px;">
+                        <div style="height:22px!important;margin-top:-2px;">
                             @(Html.Kendo().DatePickerFor(m => m.Inmate.ScreeningDate).Format("MM/dd/yyyy")
                             .Value(Model.Inmate.ScreeningDate).Name("Inmate.ScreeningDate").DateInput()
                             .HtmlAttributes(new { style = "height:22px!important;width:120px!important;" }))

@@ -28,7 +28,7 @@ namespace BASSWEBV3
                 //LogoutPath = new PathString(VirtualPathUtility.ToAbsolute("~/BASSAccount/Logout")),
                 LoginPath = new PathString(VirtualPathUtility.ToAbsolute("~/")),
                 LogoutPath = new PathString(VirtualPathUtility.ToAbsolute("~/")),
-                ExpireTimeSpan = System.TimeSpan.FromMinutes(10),
+                ExpireTimeSpan = System.TimeSpan.FromMinutes(90),
                 SlidingExpiration = true
             });
         }

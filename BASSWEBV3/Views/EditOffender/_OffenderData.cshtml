@@ -130,7 +130,7 @@
 @using (Html.BeginForm("SaveOffenderData", "EditOffender", FormMethod.Post, new
 {
     @id = "offenderDataForm",
-    @style = "background-color:aliceblue;height:100%;border:1px lightblue solid;padding:0px;overflow:auto;"
+    @style = "background-color:aliceblue;min-height:500px;border:1px lightblue solid;padding:0px;overflow:auto;"
 }))
 {
     @Html.HiddenFor(m => m.Inmate.EpisodeID, new { id = "hdInmateEpisodeID" })
@@ -270,7 +270,7 @@
                 </span>
             </div>
         </div>
-        <div id="divwscrollbar" class="divOffenderPart1tab" style="height:40px!important;">
+        <div id="divwscrollbar" class="divOffenderPart1tab" style="height:30px!important;">
             <div class="divOffenderPart1tr" style="overflow-x:auto;overflow-y:hidden;">
                 <div class="divOffenderPart1tbh">
                     <CDCR class="divOffenderPart1tbs">
@@ -329,9 +329,9 @@
                     </div>
                 </SSN>
               </div>
-           </div>
-           <line style="height:2px!important;width:100%;"></line>
+           </div>          
         </div>
+        <line style="height:1px!important;width:100%;border-bottom:1px lightgray solid;"></line>
         <div id="divwscrollbar" class="divOffenderPart1tab">
             <div class="divOffenderPart1tr">
                 <div class="divOffenderPart1tb" style="width:120px;text-align:right;"><b><scan class=@namepDiff title="@nameTitle">&nbsp;&nbsp;NAME&nbsp;(L,&nbsp;F,&nbsp;M)</scan></b></div>
@@ -349,7 +349,7 @@
                 </div>
             </div>
         </div>
-        <line style="height:2px!important;width:100%;border-bottom:1px lightgray solid;"></line>
+        <line style="height:1px!important;width:100%;border-bottom:1px lightgray solid;"></line>
         <div class="divOffenderPart1tab">
             <div class="divOffenderPart1tr">
                 <div class="divOffenderPart1tbh">
@@ -361,7 +361,6 @@
                               .HtmlAttributes( new { style = "width:120px!important;" }))
                         </div>
                     </RELEASE>
-                    @*<NONE class="divOffenderPart1tbs" style="height:22px!important;width:6%!important"><div></div><div></div></NONE>*@
                     <COUNTY class="divOffenderPart1tbs" style="width:50%!important">
                         <div style="height:22px!important;text-align:right;float:left!important;width:150px!important;"><b><scan class=@countyDiff title="@countyTitle">County&nbsp;of&nbsp;Release&nbsp;</scan></b></div>
                         <div style="height:22px!important;float:left;width:72%!important;">
@@ -416,7 +415,6 @@
                        }))
                         </div>
                     </RELEASE>
-                    @*<NONE class="divOffenderPart1tbs" style="height:22px!important;"><div></div><div></div></NONE>*@
                     <COUNTY class="divOffenderPart1tbs" style="width:50%!important;">
                         <div style="height:22px!important;width:150px!important;text-align:right;float:left!important;"><b><scan class=@housingDiff title="@housingTitle">Housing&nbsp;</scan></b></div>
                         <div style="height:22px!important;float:left;width:72%!important;">
@@ -431,7 +429,7 @@
                 </div>
             </div>
         </div>
-        <line style="height:2px!important;width:100%;border-bottom:1px lightgray solid;"></line>
+        <line style="height:1px!important;width:100%;border-bottom:1px lightgray solid;"></line>
         <div class="divOffenderPart1tab">
             <div class="divOffenderPart1tr">
                 <div class="divOffenderPart1tbh">
@@ -458,9 +456,9 @@
                     </div>
                 </div>
             </div>
-        </div>
+        @*</div>
         <line style="height:2px!important;width:100%;border-bottom:1px lightgray solid;"></line>
-        <div class="divOffenderPart1tab">           
+        <div class="divOffenderPart1tab">*@           
             <div id="ckgroup" class="divOffenderPart1tr">
                 <div class="divOffenderPart1tb" style="border: none;border-radius:4px;">
                     <div class="divOffenderPart1tbv">
@@ -485,10 +483,7 @@
                         <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.Lifer).Name("Inmate.Lifer").Enable(Model.EditingEnabled)<scan class=@liferDiff title="@liferTitle">Lifer</scan></div>
                     </div>
                 </div>
-            </div>
-        @*</div>   
-        <line style="height:2px!important;width:100%;border-bottom:1px lightgray solid;"></line>
-        <div class="divOffenderPart1tab">*@
+            </div>      
             <div class="divOffenderPart1tr" style="width:100%;">
                 <div class="divOffenderPart1tbh">
                     <RELEASE class="divOffenderPart1tbs">
@@ -508,9 +503,10 @@
                     </COUNTY>
                 </div>
             </div>
-            <line style="height:2px!important;width:100%;border-bottom:1px lightgray solid;"></line>
+        
         </div>
-        <div id="divwscrollbar" class="divOffenderPart1tab" style="height:40px;">
+        <line style="height:1px!important;width:100%;border-bottom:1px lightgray solid;"></line>
+        <div id="divwscrollbar" class="divOffenderPart1tab" style="height:30px;">
             <div class="divOffenderPart1tr" style="overflow-x:auto;overflow-y:hidden;">
                 <div class="divOffenderPart1tbh">
                     <RELAESE class="divOffenderPart1tbs">
@@ -539,7 +535,7 @@
                 </div>
             </div>
          </div>
-            <line style="height:2px!important;width:100%;border-bottom: 1px solid lightgray;"></line>
+            <line style="height:1px!important;width:100%;border-bottom: 1px solid lightgray;"></line>
         <div class="divOffenderPart1tab">
              <div class="divOffenderPart1tr"><strong><scan style="color:saddlebrown"> MISCELLANEOUS&nbsp;QUESTIONS</scan></strong></div>
             <div class="divOffenderPart1tr">
@@ -599,7 +595,7 @@
                     </div>
                 </CTRL>
             </div>
-            <line style="height:5px!important;width:100%;"></line>
+            @*<line style="height:5px!important;width:100%;"></line>*@
             <div class="divOffenderPart1tr">
                 <div class="divOffenderPart1tb" style="width:185px;"><span style="width:150px;"></span><b>CalFresh&nbsp;Referral&nbsp;</b></div>
                 <div class="divOffenderPart1tb">
@@ -626,7 +622,7 @@
                           .Enable(Model.EditingEnabled).Checked(Model.Inmate.CalWorksRef.HasValue && Model.Inmate.CalWorksRef.Value == false))
                 </div>
             </div>
-            <line style="height:200px!important;width:100%;"></line>
+            <line style="height:60px!important;width:100%;"></line>
             <div class="divOffenderPart1tr">
                 <div class="divOffenderPart1tb" style="width:185px;"><span style="width:150px;"></span><b>DHCS&nbsp;Eligibility&nbsp;</b></div>
                 <div class="divOffenderPart1tb" style="margin-top:5px;">
@@ -727,9 +723,9 @@
                     if (initdata === nowdata) OFFENDERButtonDisable(false);
                     else OFFENDERButtonDisable(true);
                 });
-                var vph = window.innerHeight;
-                if (vph < 800)
-                    $("#ckgroup").css({"height" : "300px"});
+                //var vph = window.innerHeight;
+                //if (vph < 800)
+                //    $("#ckgroup").css({"height" : "300px"});
             });
 
             $("#offenderDataForm .CalFreshRef").click(function (e) {

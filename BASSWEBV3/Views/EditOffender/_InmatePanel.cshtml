@@ -49,7 +49,7 @@
             .Items(tabstrip =>
             {
             tabstrip.Add().Text(" OFFENDER DATA ").Selected(true).HtmlAttributes(new { style = "height:18px!important;" }).Content(@<text>
-        <div class="parent-flex">
+        <div class="parent-flex" style="overflow-y:auto;">
             <div class="flex-item-b" style="overflow:auto!important;">@Html.Partial("_OffenderData", Model.Offender)</div>
             <div class="flex-item-a" >@Html.Partial("_Applications", Model.Appliations)</div>
             <div class="flex-item-s">@Html.Partial("_CaseNoteFile", Model.CaseNF)</div>

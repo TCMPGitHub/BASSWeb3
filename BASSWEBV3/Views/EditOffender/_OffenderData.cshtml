@@ -130,7 +130,7 @@
 @using (Html.BeginForm("SaveOffenderData", "EditOffender", FormMethod.Post, new
 {
     @id = "offenderDataForm",
-    @style = "background-color:aliceblue;min-height:500px;border:1px lightblue solid;padding:0px;overflow:auto;"
+    @style = "background-color:aliceblue;height:99.5%;border:1px lightblue solid;padding:0px;overflow:auto;"
 }))
 {
     @Html.HiddenFor(m => m.Inmate.EpisodeID, new { id = "hdInmateEpisodeID" })
@@ -309,7 +309,7 @@
                         <div style = "width:100%!important;margin-top:-2px;">
                             @(Html.Kendo().DatePickerFor(m => m.Inmate.DOB)
                              .Format("MM/dd/yyyy")
-                             .Value(Model.Inmate.DOB.HasValue && Model.Inmate.DOB != DateTime.MinValue ? "" : Model.Inmate.DOB.Value.ToShortDateString()).Name("Inmate.DOB").DateInput()
+                             .Value(Model.Inmate.DOB.HasValue && Model.Inmate.DOB != DateTime.MinValue ? Model.Inmate.DOB.Value.ToShortDateString() : "").Name("Inmate.DOB").DateInput()
 .HtmlAttributes(new
 {
     @style = "padding:0.5px;margin-top:0.5px;width:100px!important;",

@@ -126,11 +126,10 @@
             SaveAssignment(0);
     }
   </script>
-
 @using (Html.BeginForm("SaveOffenderData", "EditOffender", FormMethod.Post, new
 {
     @id = "offenderDataForm",
-    @style = "background-color:aliceblue;height:99.5%;border:1px lightblue solid;padding:0px;overflow:auto;"
+    @style = "background-color:aliceblue;border:1px lightblue solid;padding:0px;min-height:630px;height:99.8%;min-width:500px!important;width:99.5%;"
 }))
 {
     @Html.HiddenFor(m => m.Inmate.EpisodeID, new { id = "hdInmateEpisodeID" })
@@ -270,7 +269,7 @@
                 </span>
             </div>
         </div>
-        <div id="divwscrollbar" class="divOffenderPart1tab" style="height:30px!important;">
+        <div id="divwscrollbar" class="divOffenderPart1tab" style="height:22px!important;">
             <div class="divOffenderPart1tr" style="overflow-x:auto;overflow-y:hidden;">
                 <div class="divOffenderPart1tbh">
                     <CDCR class="divOffenderPart1tbs">
@@ -332,7 +331,7 @@
            </div>          
         </div>
         <line style="height:1px!important;width:100%;border-bottom:1px lightgray solid;"></line>
-        <div id="divwscrollbar" class="divOffenderPart1tab">
+        <div id="divwscrollbar" class="divOffenderPart1tab" style="height:22px!important;">
             <div class="divOffenderPart1tr">
                 <div class="divOffenderPart1tb" style="width:120px;text-align:right;"><b><scan class=@namepDiff title="@nameTitle">&nbsp;&nbsp;NAME&nbsp;(L,&nbsp;F,&nbsp;M)</scan></b></div>
                 <div class="divOffenderPart1tb" style="height:22px!important">
@@ -350,7 +349,7 @@
             </div>
         </div>
         <line style="height:1px!important;width:100%;border-bottom:1px lightgray solid;"></line>
-        <div class="divOffenderPart1tab">
+        <div class="divOffenderPart1tab" style="height:70px!important;">
             <div class="divOffenderPart1tr">
                 <div class="divOffenderPart1tbh">
                     <RELEASE class="divOffenderPart1tbs" style="width:50%!important">
@@ -430,7 +429,7 @@
             </div>
         </div>
         <line style="height:1px!important;width:100%;border-bottom:1px lightgray solid;"></line>
-        <div class="divOffenderPart1tab">
+        <div class="divOffenderPart1tab" style="height:22px!important;">
             <div class="divOffenderPart1tr">
                 <div class="divOffenderPart1tbh">
                     <div class="divOffenderPart1tbs">
@@ -455,14 +454,13 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        @*</div>
-        <line style="height:2px!important;width:100%;border-bottom:1px lightgray solid;"></line>
-        <div class="divOffenderPart1tab">*@           
+            </div> 
+        </div>
+        <div class="divOffenderPart1tab" style="height:105px!important;">
             <div id="ckgroup" class="divOffenderPart1tr">
-                <div class="divOffenderPart1tb" style="border: none;border-radius:4px;">
+                <div class="divOffenderPart1tb" style="border: none;border-radius:4px;height:105px!important;">
                     <div class="divOffenderPart1tbv">
-                        <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.LongTermMedCare).Name("Inmate.LongTermMedCare").Enable(Model.EditingEnabled).Label("Long-Term Medi. Care")</div>
+                        <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.LongTermMedCare).Name("Inmate.LongTermMedCare").Enable(Model.EditingEnabled).Label("LT Medi. Care")</div>
                         <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.Hospice).Name("Inmate.Hospice").Enable(Model.EditingEnabled).Label("Hospice")</div>
                         <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.AssistedLiving).Name("Inmate.AssistedLiving").Enable(Model.EditingEnabled).Label("Assisted Living")</div>
                         <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.HIVPos).Name("Inmate.HIVPos").Enable(Model.EditingEnabled).Label("CID")</div>
@@ -483,7 +481,10 @@
                         <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.Lifer).Name("Inmate.Lifer").Enable(Model.EditingEnabled)<scan class=@liferDiff title="@liferTitle">Lifer</scan></div>
                     </div>
                 </div>
-            </div>      
+            </div>
+        </div>
+        <line style="height:1px!important;width:100%;border-bottom:1px lightgray solid;"></line>
+        <div class="divOffenderPart1tab" style="height:22px!important;">              
             <div class="divOffenderPart1tr" style="width:100%;">
                 <div class="divOffenderPart1tbh">
                     <RELEASE class="divOffenderPart1tbs">
@@ -502,11 +503,10 @@
                         <div></div>
                     </COUNTY>
                 </div>
-            </div>
-        
+            </div>     
         </div>
         <line style="height:1px!important;width:100%;border-bottom:1px lightgray solid;"></line>
-        <div id="divwscrollbar" class="divOffenderPart1tab" style="height:30px;">
+        <div id="divwscrollbar" class="divOffenderPart1tab" style="height:23px;">
             <div class="divOffenderPart1tr" style="overflow-x:auto;overflow-y:hidden;">
                 <div class="divOffenderPart1tbh">
                     <RELAESE class="divOffenderPart1tbs">
@@ -535,8 +535,8 @@
                 </div>
             </div>
          </div>
-            <line style="height:1px!important;width:100%;border-bottom: 1px solid lightgray;"></line>
-        <div class="divOffenderPart1tab">
+        <line style="height:1px!important;width:100%;border-bottom: 1px solid lightgray;"></line>
+        <div class="divOffenderPart1tab" style="height:230px!important;">
              <div class="divOffenderPart1tr"><strong><scan style="color:saddlebrown"> MISCELLANEOUS&nbsp;QUESTIONS</scan></strong></div>
             <div class="divOffenderPart1tr">
                 <div class="divOffenderPart1tbh">
@@ -561,7 +561,7 @@
                     </CTRL>
                 </div>
             </div>
-            <div class="divOffenderPart1tr">
+            <div class="divOffenderPart1tr" style="height:105px!important;">
                 <RELAESE class="divOffenderPart1tbs">
                     <div class="divOffenderPart1tb" style="width:185px;"><span style="width:100px;"></span><b>Import&nbsp;Date&nbsp;</b></div>
                     <div class="divOffenderPart1tb" style="height:22px!important;">
@@ -571,15 +571,12 @@
                     </div>
                 </RELAESE>
                 <CTRL class="divOffenderPart1tbs" style="width:100%;">
-                    @*<div class="divOffenderPart1tr" style="width:100%;">
-                           <div class="divOffenderPart1tb" style="width:100%;"><span style="width:20px;"></span><b>Release&nbsp;Date&nbsp;Changes</b></div>
-                        </div>*@
                     <span style="width:20px;"></span>
                     <div class="divOffenderPart1tr" style="width:100%;">
-                        <div class="divOffenderPart1tb" style="height:22px!important;width:100%;">
+                        <div class="divOffenderPart1tb" style="width:100%;">
                             @(Html.Kendo().Grid(Model.SomsReleaseDates)
                           .Name("SomsReleaseDates").ToolBar(t => t.Template(@<text><span style="font-size:16px; font-weight:bold;">Release Date Changes</span></text>))
-                          .HtmlAttributes(new { style = "max-height:70px;max-width:250px;width:100%!important;float:left;" })
+                          .HtmlAttributes(new { style = "max-height:90px;max-width:250px;width:100%!important;float:left;" })
                           .Selectable(s => s.Enabled(true)).Scrollable(s => s.Height(70))
                           .Columns(columns =>
                           {
@@ -595,7 +592,6 @@
                     </div>
                 </CTRL>
             </div>
-            @*<line style="height:5px!important;width:100%;"></line>*@
             <div class="divOffenderPart1tr">
                 <div class="divOffenderPart1tb" style="width:185px;"><span style="width:150px;"></span><b>CalFresh&nbsp;Referral&nbsp;</b></div>
                 <div class="divOffenderPart1tb">
@@ -611,7 +607,7 @@
                 </div>
             </div>
             <div class="divOffenderPart1tr">
-                <div class="divOffenderPart1tb" style="width:185px;"><span style="width:150px;"></span><b>CalWORKS&nbsp;Referral&nbsp;</b></div>
+                <div class="divOffenderPart1tb" style="width:185px;"><span style="width:150px;"></span><b>CalWorks&nbsp;Referral&nbsp;</b></div>
                 <div class="divOffenderPart1tb">
                     @Html.HiddenFor(m => m.Inmate.CalWorksRef, new { @id = "hdCalWorksRef" })
                     @(Html.Kendo().CheckBox().Label("YES").Name("CalWorksRefY").HtmlAttributes(new { @class = "CalWorksRef" })
@@ -622,7 +618,6 @@
                           .Enable(Model.EditingEnabled).Checked(Model.Inmate.CalWorksRef.HasValue && Model.Inmate.CalWorksRef.Value == false))
                 </div>
             </div>
-            <line style="height:60px!important;width:100%;"></line>
             <div class="divOffenderPart1tr">
                 <div class="divOffenderPart1tb" style="width:185px;"><span style="width:150px;"></span><b>DHCS&nbsp;Eligibility&nbsp;</b></div>
                 <div class="divOffenderPart1tb" style="margin-top:5px;">
@@ -717,15 +712,11 @@
                         }
                     });
                 });
-                
                 $('#offenderDataForm :input').change(function (e) {
                     var nowdata = serialize(document.getElementById('offenderDataForm')); 
                     if (initdata === nowdata) OFFENDERButtonDisable(false);
                     else OFFENDERButtonDisable(true);
-                });
-                //var vph = window.innerHeight;
-                //if (vph < 800)
-                //    $("#ckgroup").css({"height" : "300px"});
+                });          
             });
 
             $("#offenderDataForm .CalFreshRef").click(function (e) {

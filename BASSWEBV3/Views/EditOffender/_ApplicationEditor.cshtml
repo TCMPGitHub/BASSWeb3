@@ -23,7 +23,7 @@
                 typeid = 0;
             else if (appId == "VA")
                 typeid = 1;
-            var form = $("#appForm" + appId);
+            //var form = $("#appForm" + appId);
             $.ajax({
                 url: "@Url.Action("GetApplicationBox", "EditOffender")",
                 data: { EpisodeID : $("#hdAppEpisodeID").val(), AppTypeID : typeid },
@@ -31,7 +31,8 @@
             type: "POST",
             dataType: "html",
             success: function (data, textStatus, XMLHttpRequest) {
-                form.html(data);
+                //form.html(data);
+                $("#appForm" + appId).replaceWith(data);
             }});
         };
         function ArchiveApplication(e){

@@ -8,7 +8,7 @@
         background-image: url('../../Content/themes/base/images/edit1.ico');
     }
     </style>
-<div class="divCaseNoteFileMain" style="border: 1px lightblue solid;">
+<div class="divCaseNoteFileMain" style="border: 1px lightblue solid;min-height:99.5%!important;">
     <div class="divOffenderPart1tab">
         <div class="divOffenderPart1tr" style="color:#3465A4;"><b>CASE NOTES&nbsp;</b></div>
     </div>
@@ -41,12 +41,12 @@
      </div>
     </div>
 <script type="text/javascript">
-    $(function () {
-        resizeDiv();
-    });
+    //$(function () {
+    //    resizeDiv();
+    //});
     function resizeDiv() {
-        var vpw = window.innerWidth;
-        if (vpw == 1283 || vpw < 1283)
+        var vpw = $("#offendertabstrip-1").width;
+        if (vpw < 1100)
             $('.divCaseNoteFileMain').css({ 'width': '90%' });
         else {
             $('.divCaseNoteFileMain').css({ 'width': '98%' });

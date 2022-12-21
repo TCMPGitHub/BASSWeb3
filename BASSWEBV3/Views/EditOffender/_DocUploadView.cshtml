@@ -102,7 +102,7 @@
 )
 
 <div class="divOffenderPart1tr">
-   <div class="divOffenderPart1tb" style="width:95%">
+   <div class="divOffenderPart1tb" style="width:99.5%">
             @(Html.Kendo().Upload()
             .Name("files")
             .Async(a => a
@@ -136,7 +136,7 @@
        .Sortable(sortable => sortable.AllowUnsort(true))
         .Scrollable(a => a.Enabled(true))
         .Navigatable()
-        .HtmlAttributes(new { style = "height:180px;padding:0px;width:97%;" })
+        .HtmlAttributes(new { style = "height:180px;padding:0px;width:99.5%;" })
         .DataSource(dataSource => dataSource
           .Ajax()
           .Model(m => m.Id(f => f.ID))

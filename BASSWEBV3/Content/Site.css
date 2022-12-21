@@ -8,6 +8,7 @@ body{
     margin: 0px;
     padding: 0px;
    font-family: Calibri; /*'Global Serif';*/
+   overflow:hidden;
     /*font-size:1.5vmin;   0.9em;*/
 }
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active){

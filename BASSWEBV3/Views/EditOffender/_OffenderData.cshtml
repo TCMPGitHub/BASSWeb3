@@ -536,7 +536,7 @@
             </div>
          </div>
         <line style="height:1px!important;width:100%;border-bottom: 1px solid lightgray;"></line>
-        <div class="divOffenderPart1tab" style="height:230px!important;">
+        <div class="divOffenderPart1tab" style="height:260px!important;">
              <div class="divOffenderPart1tr"><strong><scan style="color:saddlebrown"> MISCELLANEOUS&nbsp;QUESTIONS</scan></strong></div>
             <div class="divOffenderPart1tr">
                 <div class="divOffenderPart1tbh">
@@ -561,7 +561,7 @@
                     </CTRL>
                 </div>
             </div>
-            <div class="divOffenderPart1tr" style="height:105px!important;">
+            <div class="divOffenderPart1tr" style="height:160px!important;">
                 <RELAESE class="divOffenderPart1tbs">
                     <div class="divOffenderPart1tb" style="width:185px;"><span style="width:100px;"></span><b>Import&nbsp;Date&nbsp;</b></div>
                     <div class="divOffenderPart1tb" style="height:22px!important;">
@@ -571,12 +571,12 @@
                     </div>
                 </RELAESE>
                 <CTRL class="divOffenderPart1tbs" style="width:100%;">
-                    <span span id="wscan" style="width:10px;"></span>
+                    <span span id="wscan1" style="width:10px;"></span>
                     <div class="divOffenderPart1tr" style="width:100%;">
                         <div class="divOffenderPart1tb" style="width:100%;">
                             @(Html.Kendo().Grid(Model.SomsReleaseDates)
                           .Name("SomsReleaseDates").ToolBar(t => t.Template(@<text><span style="font-size:16px; font-weight:bold;">Release Date Changes</span></text>))
-                          .HtmlAttributes(new { style = "max-height:90px;max-width:220px;width:100%!important;float:left;" })
+                          .HtmlAttributes(new { style = "max-height:110px;max-width:220px;width:100%!important;float:left;" })
                           .Selectable(s => s.Enabled(true)).Scrollable(s => s.Height(70))
                           .Columns(columns =>
                           {
@@ -628,8 +628,9 @@
                     @(Html.Kendo().CheckBoxFor(m => m.Inmate.DHCSEligibility).Label("NO").HtmlAttributes(new { @class = "DHCSEligibility" })
                           .Checked(Model.Inmate.DHCSEligibility.HasValue && Model.Inmate.DHCSEligibility.Value == false).Enable(false))
                 </div>
+                <scan id="wscan2" style="width:10px;"></scan>
                 <div class="divOffenderPart1tb" style="width:185px;">
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Date:&nbsp;@(Html.Kendo().TextBoxFor(m => m.Inmate.DHCSEligibilityDate).Enable(false).Format("MM/dd/yyyy")
+                    Date:&nbsp;@(Html.Kendo().TextBoxFor(m => m.Inmate.DHCSEligibilityDate).Enable(false).Format("MM/dd/yyyy")
 .HtmlAttributes(new { @style = "width:100px!important;height:22px!important;", @MaxLength = "10" }))
                 </div>
             </div>
@@ -717,12 +718,18 @@
                     if (initdata === nowdata) OFFENDERButtonDisable(false);
                     else OFFENDERButtonDisable(true);
                 }); 
-                if ($(".divOffenderMain").width > 600)
-                    $("#wscan").css("width", "60px");  
-                else
-                    $("#wscan").css("width", "10px");   
+                
             });
-
+            if ($(".divOffenderMain").width() > 600){
+                $("#wscan").css("width", "60px");
+                $("#wscan1").css("width", "60px");
+                $("#wscan2").css("width", "70px");
+            }
+            else{
+                $("#wscan").css("width","10px");
+                $("#wscan1").css("width", "10px");
+                $("#wscan2").css("width", "20px");
+            }
             $("#offenderDataForm .CalFreshRef").click(function (e) {
                 if ($(this).prop('checked')) {
                     var obj = $(this);

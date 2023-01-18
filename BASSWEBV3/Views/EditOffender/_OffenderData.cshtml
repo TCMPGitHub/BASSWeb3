@@ -129,7 +129,7 @@
 @using (Html.BeginForm("SaveOffenderData", "EditOffender", FormMethod.Post, new
 {
     @id = "offenderDataForm",
-    @style = "background-color:aliceblue;border:1px lightblue solid;padding:0px;min-height:630px;min-width:500px!important;width:99.5%;"
+    @style = "background-color:aliceblue;border:1px lightblue solid;padding:0px;min-height:630px;min-width:500px!important;width:99.5%;height:99.8%!important;"
 }))
 {
     @Html.HiddenFor(m => m.Inmate.EpisodeID, new { id = "hdInmateEpisodeID" })
@@ -139,7 +139,7 @@
     @Html.HiddenFor(m => m.Inmate.ReviewStatus)
     @Html.Hidden("AppFlagChanged", "False", new { id = "hdAppFlagChanged" })
    
-    <div class="divOffenderMain" style="min-height:99.5%!important;">
+    <div class="divOffenderMain">
         @{
             var colorDiff = "colorDiff";
             var genderDiff = (Model.DerivedSomsData != null && Model.DerivedSomsData.GenderID != Model.Inmate.GenderID) ? colorDiff : "";

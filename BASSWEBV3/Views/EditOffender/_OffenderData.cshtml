@@ -212,7 +212,7 @@
                     @if (Model.Inmate.ReviewStatus == (int)BassIdentityManagement.Entities.ReviewStatusCode.ReviewComplete)
                     { <span class="greentext">[Reviewed]</span> }
                 </div>
-                <div class="divOffenderPart1tb" style="width:34%;justify-content:flex-end;margin-top:-2px;">
+                <div class="divOffenderPart1tb" style="width:37%;justify-content:flex-end;margin-top:-2px;">
                     <div class="divOffenderPart1tb" style="width:60px;color:#3465A4;"><b>EPISODE:&nbsp;</b></div>
                     <div class="divOffenderPart1tb" style="height:22px;">
                         <script>
@@ -551,12 +551,12 @@
                     </RELAESE>
                     @*<div class="divOffenderPart1tr">*@
                     <CTRL class="divOffenderPart1tbs">
-                        <div class="divOffenderPart1tb"><span style="width:20px;"></span><b>Released&nbsp;To&nbsp;</b></div>
+                        <div class="divOffenderPart1tb"><span id="wscan" style="width:10px;"></span><b>Released&nbsp;To&nbsp;</b></div>
                         <div class="divOffenderPart1tb">
                             @(Html.Kendo().DropDownListFor(m => m.Inmate.DestinationID).DataValueField("lkValue").DataTextField("lkdescr_short")
                                   .Name("Inmate.DestinationID").BindTo(Model.AllDestinationIDs).OptionLabel("Select a Destination")
                                   .Enable(Model.EditingEnabled)
-                                  .HtmlAttributes(new { @style = "width:110px;", @data_orig = Model.Inmate.DestinationID }))
+                                  .HtmlAttributes(new { @style = "width:100px;", @data_orig = Model.Inmate.DestinationID }))
                         </div>
                     </CTRL>
                 </div>
@@ -571,12 +571,12 @@
                     </div>
                 </RELAESE>
                 <CTRL class="divOffenderPart1tbs" style="width:100%;">
-                    <span style="width:20px;"></span>
+                    <span span id="wscan" style="width:10px;"></span>
                     <div class="divOffenderPart1tr" style="width:100%;">
                         <div class="divOffenderPart1tb" style="width:100%;">
                             @(Html.Kendo().Grid(Model.SomsReleaseDates)
                           .Name("SomsReleaseDates").ToolBar(t => t.Template(@<text><span style="font-size:16px; font-weight:bold;">Release Date Changes</span></text>))
-                          .HtmlAttributes(new { style = "max-height:90px;max-width:250px;width:100%!important;float:left;" })
+                          .HtmlAttributes(new { style = "max-height:90px;max-width:220px;width:100%!important;float:left;" })
                           .Selectable(s => s.Enabled(true)).Scrollable(s => s.Height(70))
                           .Columns(columns =>
                           {
@@ -716,7 +716,11 @@
                     var nowdata = serialize(document.getElementById('offenderDataForm')); 
                     if (initdata === nowdata) OFFENDERButtonDisable(false);
                     else OFFENDERButtonDisable(true);
-                });          
+                }); 
+                if ($(".divOffenderMain").width > 600)
+                    $("#wscan").css("width", "60px");  
+                else
+                    $("#wscan").css("width", "10px");   
             });
 
             $("#offenderDataForm .CalFreshRef").click(function (e) {

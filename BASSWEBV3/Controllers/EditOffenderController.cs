@@ -792,7 +792,7 @@ namespace BassWebV3.Controllers
                   submitModel.Inmate.DestinationID.HasValue ? submitModel.Inmate.DestinationID.Value.ToString() : "null",
                   submitModel.Inmate.OffenderID,
                   submitModel.Inmate.DOB.HasValue ? "'" + submitModel.Inmate.DOB.Value + "'" : "null", submitModel.Inmate.GenderID,
-                  string.IsNullOrEmpty(submitModel.Inmate.MiddleName) ? "null" : "'" + submitModel.Inmate.MiddleName + "'",
+                  string.IsNullOrEmpty(submitModel.Inmate.MiddleName) ? "null" : "'" +  RemoveUnprintableChars(submitModel.Inmate.MiddleName) + "'",
                   submitModel.Inmate.LongTermMedCare ? "1" : "0", submitModel.Inmate.PC290 ? "1" : "0", submitModel.Inmate.PC457 ? "1" : "0", 
                   submitModel.Inmate.Hospice ? "1" : "0", submitModel.Inmate.AssistedLiving ? "1" : "0", 
                   submitModel.Inmate.ChronicIllness ? "1" : "0", submitModel.Inmate.EOP ? "1" : "0", submitModel.Inmate.CCCMS ? "1" : "0",

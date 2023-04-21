@@ -77,6 +77,61 @@
         function NoteCanEdit(dataItem) {
             return (dataItem.NoteCanEdit && dataItem.ActionStatus != 10);
         }
+        function exportNoteToExcel() {
+            //header 1
+            var datestring = "Case Notes for " + $("#hdCDCRNum").val();
+            var rows = [{
+                cells: [{ value: datestring, textAlign: "left", vAlign: "center", bold: true, color: "#4e9a06", background: "#dcdcdc", fontSize:"20", colSpan: 6 }]
+            }];
+            rows.push({
+                cells: [
+                    { background: "#BDD7EE", value: "Created Date", bold: true, vAlign: "center", textAlign: "center" },
+                    { background: "#BDD7EE", value: "Event Date", bold: true, vAlign: "center", textAlign: "center" },
+                    { background: "#BDD7EE", value: "Case Note Type", bold: true, vAlign: "center", textAlign: "center" },
+                    { background: "#BDD7EE", value: "Case Note Type Reason", bold: true, vAlign: "center", textAlign: "center" },
+                    { background: "#BDD7EE", value: "Note", bold: true, vAlign: "center", textAlign: "center" },
+                    { background: "#BDD7EE", value: "Entered By", bold: true, vAlign: "center", textAlign: "center" }
+                ]
+            });
+
+            //data rows
+            var grid = $("#gridCaseNoteHis").getKendoGrid();
+            var trs = grid.dataSource;
+            var filteredDataSource = new kendo.data.DataSource({
+                data: trs.data(),
+                filter: trs.filter()
+            });
+
+            filteredDataSource.read();
+            var data = filteredDataSource.view();
+            for (var i = 0; i < data.length; i++) {
+                rows.push({
+                    cells: [
+                      { value: data[i].CreateDate, format: "MM/dd/yyyy hh:mm AM/PM" },
+                      { value: data[i].EventDate },
+                      { value: data[i].CaseNoteType },
+                      { value: data[i].CaseNoteTypeReason },
+                      { value: data[i].Text },
+                      { value: data[i].CreatedBy }
+                    ]
+                });
+            }
+
+            var workbook = new kendo.ooxml.Workbook({
+                sheets: [
+                  {
+                      columns: [{ width: 150 }, { width: 80 }, { width: 200 }, { width: 250 },{ width: 500 }, { width: 100 }],
+                      title: "Case Note Report",
+                      rows: rows
+                  }
+                ]
+            });
+
+            kendo.saveAs({
+                dataURI: workbook.toDataURL(),
+                fileName: "CaseNoteReport.xlsx"
+            });
+        }
     </script>
     @(Html.Kendo().Tooltip()
                     .For("#gridCaseNoteHis")
@@ -97,9 +152,14 @@
         .Scrollable(s => s.Height("74vh"))
         .Selectable()
         .Events(e => { e.DataBound("gridDataBound"); e.Edit("insertPopupCaption"); })
-        .ToolBar(toolbar => { toolbar.Create().Text("Add New Note"); })
+        .ToolBar(toolbar =>
+        {
+        toolbar.Template(@<text>
+            <a class='k-button k-grid-add' title='Add New Note' style="height:25px;font-size:14px;"><span class="k-icon k-i-add"></span>Add New Note</a>
+            <a class='k-button k-grid-export' title='Export to excel' href="javascript:exportNoteToExcel()" style="height:25px;font-size:14px;"><span class="k-icon k-i-excel"></span>Export To Excel</a></text>);
+        })
+        //.ToolBar(toolbar => toolbar.Excel().Text("Export To Excel")).Excel(exl => exl.FileName("CaseNote.xlsx").Filterable(true).AllPages(true))
         .ClientDetailTemplateId("notetemplate")
-        @*.ToolBar(toolbar => toolbar.Excel().Text("Export To Excel")).Excel(exl => exl.FileName("CaseNote.xlsx").Filterable(true).AllPages(true))*@
         .Editable(editable => editable.Mode(GridEditMode.PopUp).TemplateName("_NewNote").Window(w => w.Title("Edit Case Note").Width(700).Height(250)))
         .Sortable(sortable => sortable.AllowUnsort(true))
         .Filterable(filterable => filterable
@@ -124,7 +184,7 @@
             columns.Bound(f => f.EventDate).Title("Date").Format("{0:MM/dd/yyyy}").Width(60);
             columns.Bound(f => f.CaseNoteType).Title("Type").Width(90).Filterable(fs => fs.UI("typeFilter"));
             columns.Bound(f => f.CaseNoteTypeReason).Title("Reason").Width(100).Filterable(fs => fs.UI("reasonFilter"));
-            columns.Bound(f => f.Text).Width(200).ClientTemplate("<textarea class='textareaforcasemanngement'  readonly='readonly' style='width:99%'>#= Text#</textarea>").Title("Note"); ;
+            columns.Bound(f => f.Text).Width(200).ClientTemplate("<textarea class='textareaforcasemanngement'  readonly='readonly' style='width:99%;border-style:none;'>#= Text#</textarea>").Title("Note"); ;
             columns.Bound(f => f.CreatedBy).Title("Creator").Width(100);
             columns.Bound(f => f.CreateDate).Title("Creat Date").Format("{0:MM/dd/yyyy hh:mm tt}").Width(100);
             columns.Command(command => { command.Edit().Text(" ").Visible("NoteCanEdit"); command.Destroy().Text(" ").Visible("NoteCanEdit"); }).Width(45);
@@ -132,7 +192,7 @@
         .Pageable()
         .DataSource(ds => ds.Ajax()
             .Batch(true)
-            .ServerOperation(false)          
+            .ServerOperation(false)
             .PageSize(100)
             .Events(e => { e.RequestEnd("RefreshGrid"); })
             .Model(m =>

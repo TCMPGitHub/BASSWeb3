@@ -57,7 +57,7 @@
                 </text>);
                 tabstrip.Add().Text("  IRP  ").HtmlAttributes(new { style = "height:18px!important;" }).Visible(false)
                 .LoadContentFrom(Url.Action("GetIRP", "EditOffender", new { CDCRNum = Model.Offender.Inmate.CDCRNum, EpisodeID = 0, IRPID = 0 }));
-                tabstrip.Add().Text(" Case Note List ").HtmlAttributes(new { style = "height:18px!important;" })
+                tabstrip.Add().Text(" CASE NOTE LIST ").HtmlAttributes(new { style = "height:18px!important;" })
                 .LoadContentFrom(Url.Action("GetCaseNoteHistory", "EditOffender", new { EpisodeId = Model.EpisodeID })).Visible(Model.ShowCaseNoteList);
             }
            ))

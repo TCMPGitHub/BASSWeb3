@@ -146,7 +146,11 @@
                    column.Bound(m => m.SignedCid).Width(50).Title("CID Created").ClientFooterTemplate("#=sum#").Filterable(false);
                    column.Bound(m => m.Release).Width(50).Title("Parole/PRCS (OLD)").Filterable(false);
                    column.Bound(m => m.MentallyIll).Width(150).Title("Mentally Ill?").Filterable(false);
+                   column.Bound(m => m.Elderly).Width(30).Title("Elderly").Filterable(false);
                    column.Bound(m => m.Gender).Width(30).Title("Gender").Filterable(false);
+                   column.Bound(m => m.MediOutcomeDate).Width(80).Title("MediCal Outcome").Filterable(false);
+                   column.Bound(m => m.VAOutcomeDate).Width(80).Title("VA Outcome").Filterable(false);
+                   column.Bound(m => m.SSIOutcomeDate).Width(80).Title("SSI Outcome").Filterable(false);
                })
              .Resizable(resize => resize.Columns(true))
              .Pageable(pageable => pageable

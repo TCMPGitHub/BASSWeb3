@@ -1287,15 +1287,10 @@ namespace BassWebV3.Controllers
 
         public JsonResult GetCaseNoteTypeReasonList(int? CaseNoteTypeID)
         {
-            var query = string.Format(@"DECLARE @CaseNoteTypeID int = {0}
-                  DECLARE @CanAccessReports bit =(SELECT ISNULl(CanAccessReports, 0) FROM [User] WHERE UserID = {1})
-                  DECLARE @Report bit = (SELECT (CASE WHEN @CaseNoteTypeID = 6 AND @CanAccessReports = 1 THEN 1 ELSE 0 END))
-                      SELECT CaseNoteTypeReasonID, CaseNoteTypeID, Name, Position FROM CaseNoteTypeReason
-                       WHERE ISNULl(Disabled, 0)<> 1 AND 
-                            ((@CaseNoteTypeID <> 6 AND CaseNoteTypeID = @CaseNoteTypeID) OR (
-                            (@CaseNoteTypeID = 6 AND (@Report = 1 AND CaseNoteTypeID = @CaseNoteTypeID) OR (@Report = 0 AND CaseNoteTypeID = @CaseNoteTypeID AND CaseNoteTypeReasonID NOT IN (47, 52)))))
-                      Order BY Position", CaseNoteTypeID.HasValue ? CaseNoteTypeID : 0, CurrentUser.UserID);
-            var result = SqlHelper.ExecuteCommands<CaseNoteTypeReasonList>(query, 1);
+            List<ParameterInfo> parameters = new List<ParameterInfo>();
+            parameters.Add(new ParameterInfo() { ParameterName = "CurrentUserID", ParameterValue = CurrentUser.UserID });
+            parameters.Add(new ParameterInfo() { ParameterName = "CaseNoteTypeID", ParameterValue = CaseNoteTypeID });
+            List<CaseNoteTypeReasonList> result = SqlHelper.GetRecords<CaseNoteTypeReasonList>("spGetCaseNoteTypeReasonList", parameters);
             return Json(result, JsonRequestBehavior.AllowGet);
         }
         //[HttpPost]

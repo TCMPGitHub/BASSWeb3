@@ -148,17 +148,17 @@
         result = temp;
         return result;
     }
-    function GetBenefitWorkerID() {
-        //var id = 0;
-        //if ($("#AllBfUsers").val().length > 0)
-        //    id = $("#AllBfUsers").val();
-        //else if ($("#hdUserBFW").val() == "True")
-        //    id = $("#hdUserID").val();
-        return { BenefitWorkerID: $("#UserID").val() };
+    function GetBenefitWorkerID() {      
+        var id = 0;
+        if ($("#UserID").val() !== undefined)
+            id = $("#UserID").val();
+        else
+            id = $("#hdLoginUserId").val();
+        return { BenefitWorkerID: id };
     }
 
 </script>
-
+@Html.HiddenFor(m=> m.UserId, new { id="hdLoginUserId" })
 @(Html.Kendo().Grid<BassIdentityManagement.Entities.BenefitWorkerAssignedCase>()
       .Name("gridMyAssignments")
       .NoRecords("No Assignment found...")

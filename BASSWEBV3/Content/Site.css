@@ -9,7 +9,6 @@ body{
     padding: 0px;
    font-family: Calibri; /*'Global Serif';*/
    overflow:hidden;
-    /*font-size:1.5vmin;   0.9em;*/
 }
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active){
     .ie10up {
@@ -113,16 +112,16 @@ body{
 }
 
 .headerItem {
-  display: flex;  
-  flex-flow: row wrap;
-  position: relative;
-  font-weight: bold;
-  text-align: center; 
-  align-items:center;
-  width: 100vw;
-  height:100vh;
-  padding:0;
-  justify-content:center;
+    display: flex;    
+    flex-flow: row wrap;
+    position: relative;
+    font-weight: bold;
+    text-align: center;
+    align-items:center;
+    width: 100vw;
+    height:100vh;
+    padding:0;
+    justify-content:center;
 }
 .headerItem:first-child {
   height:20px;

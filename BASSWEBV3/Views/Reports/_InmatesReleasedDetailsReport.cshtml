@@ -10,7 +10,7 @@
     }
     /*div#gridInmatesDetails.k-widget.k-grid.k-display-block{
     /*>div.k-header.k-grid-toolbar.k-grid-top,gridInmatesDetails{
-        width:140vw!important;
+        width:120vw!important;
     }*/
 </style>
 <script>
@@ -109,16 +109,13 @@
             alert(message);
         }
     }
-    function ResetGideWidth(){
-        $("#gridInmatesDetails ").width();
-}
 </script>
 @*//$("#gridInmatesDetails ").getKendoGrid().saveAsExcel();
     //  }*@
 
 @(Html.Kendo().Grid<BassIdentityManagement.Entities.InmatesReleaseDetailsReportData>()
                .Name("gridInmatesDetails")
-               .Selectable(s => s.Enabled(true)).HtmlAttributes(new { @style = "height:calc(100vh - 110px);width:calc(100vw + 600px);" })
+               .Selectable(s => s.Enabled(true)).HtmlAttributes(new { @style = "height:calc(100vh - 110px);width:calc(100vw * 1.4);" })
                 .Filterable(filterable => filterable
                  .Extra(false)
                  .Operators(operators => operators
@@ -160,7 +157,6 @@
              .Refresh(true)
              .PageSizes(new List<object> { 20, 30, 50, 100 })
              .ButtonCount(5))
-             //.Events(e=> { e.DataBound("ResetGideWidth"); })
              .DataSource(ds => ds.Ajax()
              .Aggregates(aggregates =>
              {
@@ -171,7 +167,7 @@
                  aggregates.Add(p => p.SsiApps).Sum();
                  aggregates.Add(p => p.SignedCid).Sum();
              })
-            .Events(events => { events.Error("error_handler"); })
+            .Events(events => events.Error("error_handler"))
             .ServerOperation(true)
             .PageSize(100)
             .Model(m =>

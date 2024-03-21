@@ -197,13 +197,9 @@
                $("#CaseNoteTypeReasonID_validationMessage").hide();
                var ddltype = $("#CaseNoteTypeID").data("kendoDropDownList");
                var ddlreason = $("#CaseNoteTypeReasonID").data("kendoDropDownList");
-               if ($("#CaseNoteTypeID").val() == "5" || $("#CaseNoteTypeID").val() == "8" || $("#CaseNoteTypeID").val() == "10") {
+               if ($("#CaseNoteTypeID").val() == "5" || $("#CaseNoteTypeID").val() == "8" || $("#CaseNoteTypeID").val() == "10" || $("#CaseNoteTypeID").val() == "1") {
                    if (ddlreason.value().length ==0 )
                       ddlreason.select(1);
-               }
-               if ($("#CaseNoteTypeID").val() == "1") {
-                   if (ddlreason.value().length == 0)
-                       ddlreason.select(3);
                }
                if (ddlreason.dataSource._data.length == 0)
                    ddlreason.enable(false);

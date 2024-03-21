@@ -566,9 +566,11 @@
     <Content Include="Content\themes\base\Images\FolderOpen1.png" />
     <Content Include="Content\themes\base\Images\loading.gif" />
     <Content Include="Content\themes\base\Images\loadingBlueTransparent.gif" />
+    <Content Include="Content\themes\base\Images\start.gif" />
     <Content Include="Content\themes\base\Images\start.jpg" />
     <Content Include="Content\themes\base\Images\trash.ico" />
     <Content Include="Content\themes\base\Images\undo.ico" />
+    <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Scripts\Bass\Bass.js" />
@@ -670,6 +672,11 @@
     <Content Include="Content\Telerik\2019.3.11\kendo.uniform.mobile.min.css.map" />
     <Content Include="Scripts\dist\clipboard.js" />
     <Content Include="Scripts\dist\clipboard.min.js" />
+    <Content Include="fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff" />
+    <None Include="Properties\PublishProfiles\BASSWeb.pubxml" />
+    <None Include="Properties\PublishProfiles\BASSWEBDEV.pubxml" />
     <None Include="Properties\PublishProfiles\BASSWEBV3.pubxml" />
     <None Include="Properties\PublishProfiles\BASSWEBV3DEV.pubxml" />
     <None Include="Scripts\jquery-3.3.1-vsdoc.js" />
@@ -999,13 +1006,11 @@
     <Content Include="Views\EditOffender\_BHRIRP.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Content\fonts\" />
     <Folder Include="Models\" />
     <Folder Include="Views\AbstractBass\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="fonts\glyphicons-halflings-regular.woff" />
-    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
-    <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="packages.config">
       <SubType>Designer</SubType>
     </Content>

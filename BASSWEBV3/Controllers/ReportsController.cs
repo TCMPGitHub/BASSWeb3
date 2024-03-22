@@ -683,12 +683,12 @@ namespace BassWebV3.Controllers
             var workbook = new HSSFWorkbook();
             IFont font1 = workbook.CreateFont();
             font1.FontHeightInPoints = 11;
-            font1.Boldweight = (short)FontBoldWeight.Bold;
+            font1.IsBold = true;
             font1.Color = HSSFColor.DarkBlue.Index;
 
             IFont font2 = workbook.CreateFont();
             font2.FontHeightInPoints = 10;
-            font2.Boldweight = (short)FontBoldWeight.Bold;
+            font2.IsBold = true;
             font2.Color = HSSFColor.Green.Index;
 
             HSSFCellStyle style = workbook.CreateCellStyle() as HSSFCellStyle;

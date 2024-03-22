@@ -197,7 +197,7 @@ INSERT INTO dbo.CaseAssignment (BenefitWorkerID, EpisodeID,AssignedDateTime, Act
             var font = workbook.CreateFont();
             font.FontHeightInPoints = 11;
             font.FontName = "Calibri";
-            font.Boldweight = (short)NPOI.SS.UserModel.FontBoldWeight.Bold;
+            font.IsBold = true;
 
             //(Optional) set the width of the columns
             sheet.SetColumnWidth(0, 10 * 256);
@@ -219,7 +219,7 @@ INSERT INTO dbo.CaseAssignment (BenefitWorkerID, EpisodeID,AssignedDateTime, Act
 
             IFont font1 = workbook.CreateFont();
             font1.FontHeightInPoints = 11;
-            font1.Boldweight = (short)FontBoldWeight.Bold;
+            font1.IsBold = true;
             font1.Color = HSSFColor.DarkBlue.Index;
 
             HSSFCellStyle style = workbook.CreateCellStyle() as HSSFCellStyle;
@@ -334,8 +334,8 @@ INSERT INTO dbo.CaseAssignment (BenefitWorkerID, EpisodeID,AssignedDateTime, Act
             byte[] bytes = WriteExcel(models, columnsData.Where(x => x.Hidden == false && x.Field != null).Select(s => s.Field).ToArray());
             return File(bytes, "application/vnd.ms-excel", "CaseAssignments.xls");
 
-            var workbook = new HSSFWorkbook();
-
+			var workbook = new HSSFWorkbook();
+            
             //Create new Excel sheet
             var sheet = workbook.CreateSheet();
             var headerRow = sheet.CreateRow(0);
@@ -395,7 +395,7 @@ INSERT INTO dbo.CaseAssignment (BenefitWorkerID, EpisodeID,AssignedDateTime, Act
             HSSFWorkbook workbook = new HSSFWorkbook();
             ISheet sheet = workbook.CreateSheet();
             IFont headerFont = workbook.CreateFont();
-            headerFont.Boldweight = (short)FontBoldWeight.Bold;
+            headerFont.IsBold = true;
             ICellStyle headerStyle = workbook.CreateCellStyle();
             headerStyle.SetFont(headerFont);
             headerStyle.Alignment = HorizontalAlignment.Center;

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BassIdentityManagement.Entities.EditOffender
+namespace BassIdentityManagement.Entities
 {
     public enum CASE_NOTE_TYPE_REASON
     {

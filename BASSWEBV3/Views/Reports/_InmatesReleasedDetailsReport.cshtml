@@ -148,9 +148,9 @@
                    column.Bound(m => m.MentallyIll).Width(150).Title("Mentally Ill?").Filterable(false);
                    column.Bound(m => m.Elderly).Width(30).Title("Elderly").Filterable(false);
                    column.Bound(m => m.Gender).Width(30).Title("Gender").Filterable(false);
-                   column.Bound(m => m.MediOutcomeDate).Width(80).Title("MediCal Outcome").Filterable(false);
-                   column.Bound(m => m.VAOutcomeDate).Width(80).Title("VA Outcome").Filterable(false);
-                   column.Bound(m => m.SSIOutcomeDate).Width(80).Title("SSI Outcome").Filterable(false);
+                   column.Bound(m => m.MediApplyDate).Width(80).Title("MediCal Applied").Filterable(false);
+                   column.Bound(m => m.VAApplyDate).Width(80).Title("VA Applied").Filterable(false);
+                   column.Bound(m => m.SSIApplyDate).Width(80).Title("SSI Applied").Filterable(false);
                })
              .Resizable(resize => resize.Columns(true))
              .Pageable(pageable => pageable

@@ -81,9 +81,9 @@ namespace BassIdentityManagement.Entities
         public string Gender { get; set; }
         public string MentallyIll { get; set; }
         public string Elderly { get; set; }
-        public string MediOutcomeDate { get; set; }
-        public string SSIOutcomeDate { get; set; }
-        public string VAOutcomeDate { get; set; }
+        public string MediApplyDate { get; set; }
+        public string SSIApplyDate { get; set; }
+        public string VAApplyDate { get; set; }
         public string BenefitWorkerName { get; set; }
     }
 

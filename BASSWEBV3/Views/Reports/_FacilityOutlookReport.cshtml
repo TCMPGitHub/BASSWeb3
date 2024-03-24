@@ -21,7 +21,7 @@
             grid.thead.find('th').each(function () {
                 $(this).prop('title', $(this).data('title'));
             })
-            var datestring = "60-Day Facility Outlook Report date start at " + $("#FromDate").val(); // + " - " + $("#ToDate").val();
+            var datestring = "120-Day Facility Outlook Report date start at " + $("#FromDate").val(); // + " - " + $("#ToDate").val();
             $("#reportfospan").html(datestring);
         }
         function getTotalEPRDnext60daysPct() {
@@ -32,7 +32,7 @@
             var result = 0;
             for (var i = 0; i < gridData.length; i++) {
                 total30 += gridData[i].Total30EPRD;
-                total3060 += gridData[i].TotalNext30EPRD;
+                total3060 += gridData[i].Total30TO60EPRD;
                 total60 += gridData[i].TotalEPRDnext60days;
             }
             if ((total30 + total3060) > 0)
@@ -46,7 +46,7 @@
 <script>
     function exportFOToExcel() {
         //header 1
-        var datestring = "60-Day Facility Outlook Report date start at " + $("#FromDate").val(); //+ " - " + $("#ToDate").val();
+        var datestring = "120-Day Facility Outlook Report date start at " + $("#FromDate").val(); //+ " - " + $("#ToDate").val();
         var rows = [{
             cells: [{ value: datestring, textAlign: "center", vAlign: "center", hAlign: "center", color: "#4e9a06", background: "#dcdcdc", colSpan: 10 }]
         }];
@@ -55,6 +55,8 @@
                 { background: "#BDD7EE", value: "Facility Name", bold: true, vAlign: "center", rowSpan: 2 },
                 { background: "#FFC000", value: "Total EPRD next 30 days", bold: true, vAlign: "center", rowSpan: 2 },
                 { background: "#FFC000", value: "Total EPRD next 31-60 days", bold: true, vAlign: "center", rowSpan: 2 },
+                { background: "#FFC000", value: "Total EPRD next 61-90 days", bold: true, vAlign: "center", rowSpan: 2 },
+                { background: "#FFC000", value: "Total EPRD next 91-120 days", bold: true, vAlign: "center", rowSpan: 2 },
                 { background: "#FFC000", value: "Total EPRD Difference  31-60 days", bold: true, vAlign: "center", rowSpan: 2 },
                 { background: "#F4B084", value: "Unknown Disposition (EPRD next 30 days)", bold: true, vAlign: "center", colSpan: 2 },
                 { background: "#F4B084", value: "Unknown Disposition (EPRD next 31-60 days)", bold: true, vAlign: "center", colSpan: 2 },
@@ -84,7 +86,9 @@
         filteredDataSource.read();
         var data = filteredDataSource.view();
         var TTotal30EPRD = 0;
-        var TTotalNext30EPRD = 0;
+        var TTotal30TO60EPRD = 0;
+        var TTotal60TO90EPRD = 0;
+        var TTotal90TO120EPRD = 0;
         var TTotalDiffNext30EPRD = 0;
         var TUnknownDispNext30EPRD = 0;
         var TUnknownDispNextNext30EPRD = 0;
@@ -94,7 +98,9 @@
                 cells: [
                   { value: data[i].FacilityName },
                   { value: data[i].Total30EPRD },
-                  { value: data[i].TotalNext30EPRD },
+                  { value: data[i].Total30TO60EPRD },
+                  { value: data[i].Total60TO90EPRD },
+                  { value: data[i].Total90TO120EPRD },
                   { value: data[i].TotalDiffNext30EPRD },
                   { value: data[i].UnknownDispNext30EPRD },
                   { value: data[i].UnknownDispNext30EPRDPct },
@@ -106,7 +112,7 @@
             });
 
             TTotal30EPRD += data[i].Total30EPRD;
-            TTotalNext30EPRD += data[i].TotalNext30EPRD;
+            TTotalNext30EPRD += data[i].Total30TO60EPRD;
             TUnknownDispNext30EPRD += data[i].UnknownDispNext30EPRD;
             TUnknownDispNextNext30EPRD += data[i].UnknownDispNextNext30EPRD;
             TTotalEPRDnext60days += data[i].TotalEPRDnext60days;
@@ -115,12 +121,14 @@
             cells: [
                 { background: "#ADD8E6", value: "Total:" },
                 { background: "#ADD8E6", value: TTotal30EPRD },
-                { background: "#ADD8E6", value: TTotalNext30EPRD },
-                { background: "#ADD8E6", value: TTotalNext30EPRD - TTotal30EPRD },
+                { background: "#ADD8E6", value: TTotal30TO60EPRD },
+                { background: "#ADD8E6", value: TTotal60TO90EPRD },
+                { background: "#ADD8E6", value: TTotal90TO120EPRD },
+                { background: "#ADD8E6", value: TTotal30TO60EPRD - TTotal30EPRD },
                 { background: "#ADD8E6", value: TUnknownDispNext30EPRD },
                 { background: "#ADD8E6", value: TTotal30EPRD === 0 ? 0 : Math.round(TUnknownDispNext30EPRD * 100.0 / TTotal30EPRD) },
                 { background: "#ADD8E6", value: TUnknownDispNextNext30EPRD },
-                { background: "#ADD8E6", value: TTotalNext30EPRD === 0 ? 0 : Math.round(TUnknownDispNextNext30EPRD * 100.0 / TTotalNext30EPRD) },
+                { background: "#ADD8E6", value: TTotal30TO600EPRD === 0 ? 0 : Math.round(TUnknownDispNextNext30EPRD * 100.0 / TTotal30TO60EPRD) },
                 { background: "#ADD8E6", value: TTotalEPRDnext60days },
                 { background: "#ADD8E6", value: getTotalEPRDnext60daysPct(), vAlign: "right" }
             ]
@@ -129,7 +137,7 @@
         var workbook = new kendo.ooxml.Workbook({
             sheets: [
               {
-                  columns: [{ width: 250 }, { width: 160 }, { width: 160 }, { width: 150 },
+                  columns: [{ width: 250 }, { width: 160 }, { width: 160 }, { width: 160 }, { width: 160 }, { width: 150 },
                              { width: 50 }, { width: 50 }, { width: 50 }, { width: 50 }, { width: 50 }, { width: 50 }],
                   title: "Facility Outlook Report",
                   rows: rows
@@ -158,8 +166,10 @@
 .Columns(info =>
 {
 info.Bound(m => m.FacilityName).Width(250).HeaderHtmlAttributes(new { @class = "lightblue" }).HeaderTemplate(@<text>Facility Name</text>).ClientFooterTemplate("Total : ");
-info.Bound(m => m.Total30EPRD).Width(150).HeaderHtmlAttributes(new { style = "background-color: #FFC000;" }).HeaderTemplate(@<text>Total EPRD next 30 days</text>).ClientFooterTemplate("#=sum#");
-info.Bound(m => m.TotalNext30EPRD).Width(150).HeaderHtmlAttributes(new { style = "background-color: #FFC000;" }).HeaderTemplate(@<text>Total EPRD next 31-60 days</text>).ClientFooterTemplate("#=sum#");
+info.Bound(m => m.Total30EPRD).Width(80).HeaderHtmlAttributes(new { style = "background-color: #FFC000;" }).HeaderTemplate(@<text>Total EPRD next 30 days</text>).ClientFooterTemplate("#=sum#");
+info.Bound(m => m.Total30TO60EPRD).Width(80).HeaderHtmlAttributes(new { style = "background-color: #FFC000;" }).HeaderTemplate(@<text>Total EPRD next 31-60 days</text>).ClientFooterTemplate("#=sum#");
+info.Bound(m => m.Total60TO90EPRD).Width(80).HeaderHtmlAttributes(new { style = "background-color: #FFC000;" }).HeaderTemplate(@<text>Total EPRD next 61-90 days</text>).ClientFooterTemplate("#=sum#");
+info.Bound(m => m.Total90TO120EPRD).Width(80).HeaderHtmlAttributes(new { style = "background-color: #FFC000;" }).HeaderTemplate(@<text>Total EPRD next 91-120 days</text>).ClientFooterTemplate("#=sum#");
 info.Bound(m => m.TotalDiffNext30EPRD).Width(150).HeaderHtmlAttributes(new { style = "background-color: #FFC000;" }).HeaderTemplate(@<text>Total EPRD Difference  31-60 days</text>).ClientFooterTemplate("#= sum#");
 info.Group(g1 => g1.HeaderHtmlAttributes(new { style = "background-color: #F4B084;" }).HeaderTemplate(@<text>Unknown Disposition (EPRD next 30 days)</text>)
             .Columns(info1 =>
@@ -188,7 +198,9 @@ info1.Bound(m => m.TotalEPRDnext60daysPct).Width(50).HeaderHtmlAttributes(new { 
              .Aggregates(aggregates =>
              {
                  aggregates.Add(p => p.Total30EPRD).Sum().Average();
-                 aggregates.Add(p => p.TotalNext30EPRD).Sum().Average();
+                 aggregates.Add(p => p.Total30TO60EPRD).Sum().Average();
+                 aggregates.Add(p => p.Total60TO90EPRD).Sum().Average();
+                 aggregates.Add(p => p.Total90TO120EPRD).Sum().Average();
                  aggregates.Add(p => p.TotalDiffNext30EPRD).Sum();
                  aggregates.Add(p => p.UnknownDispNext30EPRD).Sum();
                  aggregates.Add(p => p.UnknownDispNextNext30EPRD).Sum();

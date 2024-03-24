@@ -169,9 +169,13 @@ namespace BassIdentityManagement.Entities
     {
         [Key]
         public string FacilityName { get; set; }
-        [Display(Name = "Total EPRD next 30 days")]
         public int Total30EPRD { get; set; }
         [Display(Name = "Total EPRD next 31-60 days")]
+        public int Total30TO60EPRD { get; set; }
+        [Display(Name = "Total EPRD next 61-90 days")]
+        public int Total60TO90EPRD { get; set; }
+        [Display(Name = "Total EPRD next 91-120 days")]
+        public int Total90TO120EPRD { get; set; }
         public int TotalNext30EPRD { get; set; }
         [Display(Name = "Total EPRD Difference  31-60 days")]
         public int TotalDiffNext30EPRD { get; set; }

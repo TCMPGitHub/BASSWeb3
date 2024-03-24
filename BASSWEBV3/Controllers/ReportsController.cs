@@ -1000,6 +1000,15 @@ namespace BassWebV3.Controllers
             var result = SqlHelper.ExecuteCommands<FacilityList>(query, 1);
             return Json(result, JsonRequestBehavior.AllowGet);
         }
+        public JsonResult GetFacilityBWUsers(string FacilityID, DateTime StartDate, DateTime EndDate)
+        {
+            var query = string.Format(@"SELECT STRING_AGG(BenefitWorkerID, ',') FROM (SELECT distinct t1.BenefitWorkerID from caseassignment t1 
+                         INNER JOIN Episode t2 on t1.EpisodeID = t2.EpisodeID Where t2.CustodyFacilityID = {0}
+ and t2.ReleaseDate >= '{1}' and t2.ReleaseDate <= '{2}' and t1.UnAssignedDateTime is null)T",
+          FacilityID, StartDate, EndDate);
+            var result = SqlHelper.ExecuteCommands<string>(query, 1)[0];
+            return Json(result == null ? "" : result, JsonRequestBehavior.AllowGet);
+        }
         private List<InmatesReleaseDetailsReportData> GetInmatesDetailsReport(DateTime StartDate, DateTime EndDate, int Details)
         {
             List<ParameterInfo> ParamList = new List<ParameterInfo> {

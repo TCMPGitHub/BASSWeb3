@@ -15,7 +15,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>BassWebV3</RootNamespace>
     <AssemblyName>BassWebV3</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
@@ -26,7 +26,6 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <TargetFrameworkProfile />
-    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -44,6 +43,8 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PublishDatabases>true</PublishDatabases>
+    <ExcludeGeneratedDebugSymbol>true</ExcludeGeneratedDebugSymbol>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BassIdentityManagement">
@@ -78,6 +79,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.DirectoryServices.AccountManagement" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web.DynamicData" />
@@ -114,6 +116,9 @@
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web.Http, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.Http.WebHost, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.3\lib\net45\System.Web.Http.WebHost.dll</HintPath>
     </Reference>
@@ -136,6 +141,7 @@
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="Telerik.Documents.SpreadsheetStreaming">
       <HintPath>..\..\BASSWEBV2\BASS\bin\Telerik.Documents.SpreadsheetStreaming.dll</HintPath>
     </Reference>
@@ -566,11 +572,9 @@
     <Content Include="Content\themes\base\Images\FolderOpen1.png" />
     <Content Include="Content\themes\base\Images\loading.gif" />
     <Content Include="Content\themes\base\Images\loadingBlueTransparent.gif" />
-    <Content Include="Content\themes\base\Images\start.gif" />
     <Content Include="Content\themes\base\Images\start.jpg" />
     <Content Include="Content\themes\base\Images\trash.ico" />
     <Content Include="Content\themes\base\Images\undo.ico" />
-    <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Scripts\Bass\Bass.js" />
@@ -672,12 +676,8 @@
     <Content Include="Content\Telerik\2019.3.11\kendo.uniform.mobile.min.css.map" />
     <Content Include="Scripts\dist\clipboard.js" />
     <Content Include="Scripts\dist\clipboard.min.js" />
-    <Content Include="fonts\glyphicons-halflings-regular.eot" />
-    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
-    <Content Include="fonts\glyphicons-halflings-regular.woff" />
     <None Include="Properties\PublishProfiles\BASSWeb.pubxml" />
-    <None Include="Properties\PublishProfiles\BASSWEBDEV.pubxml" />
-    <None Include="Properties\PublishProfiles\BASSWEBV3.pubxml" />
+    <None Include="Properties\PublishProfiles\BASSWebDEV.pubxml" />
     <None Include="Properties\PublishProfiles\BASSWEBV3DEV.pubxml" />
     <None Include="Scripts\jquery-3.3.1-vsdoc.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
@@ -1003,14 +1003,15 @@
     <Content Include="Views\EditOffender\_IRP.cshtml" />
     <Content Include="Views\TeamManagement\Index.cshtml" />
     <Content Include="Views\EditOffender\ViewAppOnly.cshtml" />
-    <Content Include="Views\EditOffender\_BHRIRP.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Content\fonts\" />
     <Folder Include="Models\" />
     <Folder Include="Views\AbstractBass\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="packages.config">
       <SubType>Designer</SubType>
     </Content>

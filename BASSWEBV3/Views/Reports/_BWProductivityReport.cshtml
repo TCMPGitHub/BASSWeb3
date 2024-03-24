@@ -1,13 +1,17 @@
 ﻿@using Kendo.Mvc.UI
 @using Kendo.Mvc.Extensions
-@*<style>
-    #gridBWProductivity>.k-grid-norecords{
+<style>
+    /*#gridBWProductivity>.k-grid-norecords{
             height:calc(100vh - 220px)!important;
         }
     #gridBWProductivity>.k-grid-content-expander{
         width:calc(100vh - 120px)!important;
+    }*/
+    .k-i-arrow-60-down, .k-i-calendar{
+        padding: 0;
+        margin-top: -10px !important;
     }
-</style>*@
+</style>
 <script>
     function BWGridDataBound(e) {
        var grid = $("#gridBWProductivity").data("kendoGrid");
@@ -187,6 +191,43 @@
     function GetFilterParameter() {
         return { BfWorkerIDs: $("#RptBfUsers").data("kendoMultiSelect").value().join(',') };
     }
+    function SelectFacility(e) {
+        var sel = $("#Facility").data("kendoDropDownList").value();
+        console.log("Facility Selected: " + sel);
+        $.ajax({
+            url: "@Url.Action("GetFacilityBWUsers", "Reports")",
+            data: { FacilityID: sel, StartDate: $("#FromDate").val(), EndDate: $("#ToDate").val() },
+            cache: false,
+            contentType: "application/json; charset=utf-8",
+            success: function (data, textStatus, XMLHttpRequest) {
+                var init = data.split(",");
+                var multiSelect = $("#RptBfUsers").data("kendoMultiSelect");
+                multiSelect.value(0);
+                var selectedValues = [];
+                if (init !== undefined && init.length > 0) {
+
+                    for (var i = 0; i < init.length; i++) {
+                        selectedValues.push(init[i]);
+                    }
+                    multiSelect.value(selectedValues);
+                }
+
+                var items = $("#RptBfUsers").data("kendoMultiSelect").ul.find("li");
+                for (var i = 0; i < items.length; i++) {
+                    if (selectedValues.length > 0 && selectedValues.indexOf(items[i].children.cb.value) > -1) {
+                        items[i].children.cb.checked = true;
+                    }
+                    else {
+                        items[i].children.cb.checked = false;
+                    }
+                }
+                multiSelect.trigger("change");
+                var grid = $("#gridInmatesProductivity").data("kendoGrid");
+                grid.dataSource.read({ FromDate: $("#FromDate").val(), ToDate: $("#ToDate").val(), BfWorkerIDs: data });
+                grid.refresh();
+            }
+        });
+    }
     function SetBWDefault() {
         var items = $("#RptBfUsers").data("kendoMultiSelect").ul.find("li");
         checkInputs(items);
@@ -222,6 +263,24 @@
                toolbar.Template(@<text>
         <div class="row">
             <div class="col" style="float:left"><a style="height:25px;" class="k-button export" href='@Url.Action("ExportExcel", "Reports", new { page = 1, pageSize = "~", filter = "~", sort = "~", data = "~" })'><span class="k-icon k-i-excel"></span>Export To Excel</a></div>
+            <div class="col" style="float:left;margin-top:5px;margin-left:10px;"><label class="category-label" for="AllRptfacility" style="font-weight:bold;color:darkblue;">Facility:</label></div>
+            <div class="col" style="float:left; margin-left:5px">
+                @(Html.Kendo().DropDownList()
+                .Name("Facility")
+                .OptionLabel("Select Facility ...").OptionLabelTemplate("<span style=\"color:gray;text-align:center;\">Select Facility ...</span>")
+                .HtmlAttributes(new { style = "width:120px;margin-top:5px;" })
+                .DataTextField("FacilityName")
+                .DataValueField("FacilityID")
+                .Events(e => e.Change("SelectFacility"))
+                .DataSource(source =>
+                {
+                    source.Read(read =>
+                    {
+                        read.Action("FilterInmatesDetailsFa_read", "Reports");
+                    });
+                })
+                )
+            </div>
             <div class="col" style="float:left;margin-top:5px;margin-left:10px;"><label class="category-label" for="AllRptBfUsers" style="font-weight:bold;color:darkblue;">Benefit Worker:</label></div>
             <div class="col" style="float:left; margin-left:5px">
                 @(Html.Kendo().MultiSelect()

@@ -193,7 +193,7 @@
     }
     function SelectFacility(e) {
         var sel = $("#Facility").data("kendoDropDownList").value();
-        console.log("Facility Selected: " + sel);
+        //console.log("Facility Selected: " + sel);
         $.ajax({
             url: "@Url.Action("GetFacilityBWUsers", "Reports")",
             data: { FacilityID: sel, StartDate: $("#FromDate").val(), EndDate: $("#ToDate").val() },
@@ -222,11 +222,9 @@
                     }
                 }
                 multiSelect.trigger("change");
-                var grid = $("#gridInmatesProductivity").data("kendoGrid");
-                grid.dataSource.read({ FromDate: $("#FromDate").val(), ToDate: $("#ToDate").val(), BfWorkerIDs: data });
-                grid.refresh();
             }
         });
+        
     }
     function SetBWDefault() {
         var items = $("#RptBfUsers").data("kendoMultiSelect").ul.find("li");
@@ -234,6 +232,8 @@
 
         var selectItems = $("#RptBfUsers").data("kendoMultiSelect").dataItems();
         $("#rptprodspan").html(GetDispayClientNames(selectItems));
+
+        //$("#k-i-refresh").trigger("click");
     }
     function onRequestStart(e) {
         e.preventDefault();
@@ -245,12 +245,13 @@
        
         //return false;
     }
+    
 </script>
 
 @(Html.Kendo().Grid<BassIdentityManagement.Entities.BWProductivityReportData>()
                .Name("gridBWProductivity")
                .NoRecords("No Data Found.")
-               .Sortable(s => s.AllowUnsort(false))/*.HtmlAttributes(new { @style = "height:calc(100vh - 110px);" })*/
+               .Sortable(s => s.AllowUnsort(false)).HtmlAttributes(new { @style = "height:calc(100vh - 110px);" })
                .Selectable(s => s.Enabled(true))
                .Scrollable(sb=>sb.Enabled(true).Height("55vh"))
                .Events(e => { e.DataBound("BWGridDataBound"); e.ColumnMenuInit("columnMenuInit"); })
@@ -312,7 +313,7 @@
                })
             .Columns(column =>
             {
-                //column.Bound(m => m.BenefitWorkerId).Hidden();
+                column.Bound(m => m.BenefitWorkerId).Hidden();
                 column.Bound(m => m.BenefitWorkerName).Hidden();
                 column.Bound(m => m.ClientName).Width(100).Title("Client")
                     .ClientGroupHeaderTemplate("Total")

@@ -98,7 +98,7 @@
         datePickerTo.value(date);
     }
     function GetReports() {
-        $("#gridFAOutLook").data("kendoGrid").dataSource.read();
+        $("#gridFAOutLook").data("kendoGrid").dataSource.read({ FromDate: $("#FromDate").val() });
         $('#gridFAOutLook').data('kendoGrid').refresh();
 
         $("#gridInmates").data("kendoGrid").dataSource.read();
@@ -128,7 +128,7 @@
     }
     function GetProductivityReport(e) {
         var grid = $("#gridInmatesProductivity").data("kendoGrid");
-        grid.dataSource.read();
+        grid.dataSource.read({ FromDate: $("#FromDate").val(), ToDate: $("#ToDate").val(), BfWorkerIDs: $("#RptBfUsers").data("kendoMultiSelect").value().join(',') });
         grid.refresh();
         var datestring = kendo.toString($("#FromDate").val() + " - " + $("#ToDate").val());
         var items = $("#AllRptBfUsers").data("kendoMultiSelect").dataItems();

@@ -7,10 +7,10 @@
     <WebStackScaffolding_IsPartialViewSelected>False</WebStackScaffolding_IsPartialViewSelected>
     <WebStackScaffolding_IsReferencingScriptLibrariesSelected>False</WebStackScaffolding_IsReferencingScriptLibrariesSelected>
     <WebStackScaffolding_LayoutPageFile />
-    <NameOfLastUsedPublishProfile>BASSWEBDEV</NameOfLastUsedPublishProfile>
+    <NameOfLastUsedPublishProfile>BASSWeb</NameOfLastUsedPublishProfile>
     <LastActiveSolutionConfig>Debug|Any CPU</LastActiveSolutionConfig>
     <Use64BitIISExpress />
-    <IISExpressSSLPort />
+    <IISExpressSSLPort>44385</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
@@ -36,7 +36,7 @@
           <StartWorkingDirectory>
           </StartWorkingDirectory>
           <EnableENC>True</EnableENC>
-          <AlwaysStartWebServerOnDebug>False</AlwaysStartWebServerOnDebug>
+          <AlwaysStartWebServerOnDebug>True</AlwaysStartWebServerOnDebug>
         </WebProjectProperties>
       </FlavorProperties>
     </VisualStudio>

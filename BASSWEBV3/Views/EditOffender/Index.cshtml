@@ -6,6 +6,7 @@
 @model BassWebV3.ViewModels.OffenderSearch
 @using BassWebV3.DataAccess
 
+
 @section Scripts {
 <style>
     .k-i-arrow-60-down, .k-i-calendar{
@@ -268,7 +269,7 @@
                         @if (!(Model.LoginUser.CanEditAllCases && !Model.LoginUser.IsBenefitWorker))
                         {
                             <a id="getAssignedCase" href="#" title="Show Assigned Cases">
-                                <img src="~/Content/themes/base/images/FolderOpen1.png" style="width:25px;height:22px;" />
+                                <img src="~/Content/themes/base/Images/FolderOpen1.png" style="width:25px;height:22px;" />
                             </a>
                         }
                     </div>

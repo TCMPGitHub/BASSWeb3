@@ -46,6 +46,7 @@
 <script>
     function exportFOToExcel() {
         //header 1
+        debugger
         var datestring = "120-Day Facility Outlook Report date start at " + $("#FromDate").val(); //+ " - " + $("#ToDate").val();
         var rows = [{
             cells: [{ value: datestring, textAlign: "center", vAlign: "center", hAlign: "center", color: "#4e9a06", background: "#dcdcdc", colSpan: 10 }]
@@ -112,10 +113,13 @@
             });
 
             TTotal30EPRD += data[i].Total30EPRD;
-            TTotalNext30EPRD += data[i].Total30TO60EPRD;
+            TTotal30TO60EPRD += data[i].Total30TO60EPRD;
+            TTotal60TO90EPRD += data[i].Total60TO90EPRD;
+            TTotal90TO120EPRD += data[i].Total90TO120EPRD;
             TUnknownDispNext30EPRD += data[i].UnknownDispNext30EPRD;
             TUnknownDispNextNext30EPRD += data[i].UnknownDispNextNext30EPRD;
             TTotalEPRDnext60days += data[i].TotalEPRDnext60days;
+
         }
         rows.push({
             cells: [
@@ -128,7 +132,7 @@
                 { background: "#ADD8E6", value: TUnknownDispNext30EPRD },
                 { background: "#ADD8E6", value: TTotal30EPRD === 0 ? 0 : Math.round(TUnknownDispNext30EPRD * 100.0 / TTotal30EPRD) },
                 { background: "#ADD8E6", value: TUnknownDispNextNext30EPRD },
-                { background: "#ADD8E6", value: TTotal30TO600EPRD === 0 ? 0 : Math.round(TUnknownDispNextNext30EPRD * 100.0 / TTotal30TO60EPRD) },
+                { background: "#ADD8E6", value: TTotal30TO60EPRD === 0 ? 0 : Math.round(TUnknownDispNextNext30EPRD * 100.0 / TTotal30TO60EPRD) },
                 { background: "#ADD8E6", value: TTotalEPRDnext60days },
                 { background: "#ADD8E6", value: getTotalEPRDnext60daysPct(), vAlign: "right" }
             ]
@@ -183,7 +187,7 @@ info.Group(g1 => g1.HeaderHtmlAttributes(new { style = "background-color: #F4B08
             {
                 info1.Bound(m => m.UnknownDispNextNext30EPRD).Width(50).HeaderHtmlAttributes(new { style = "background-color: #BDD7EE;" }).HeaderTemplate(@<text>Count</text>).ClientFooterTemplate("#= sum#");
                 info1.Bound(m => m.UnknownDispNextNext30EPRDPct).Width(50).HeaderHtmlAttributes(new { style = "background-color: #BDD7EE;" }).HeaderTemplate(@<text>%</text>)
-                     .ClientFooterTemplate("#= kendo.toString(data.UnknownDispNextNext30EPRD.sum * 100 / data.TotalNext30EPRD.sum, 'd')#");
+                     .ClientFooterTemplate("#= kendo.toString(data.UnknownDispNextNext30EPRD.sum * 100 / data.Total30TO60EPRD.sum, 'd')#");
             }));
 info.Group(g1 => g1.HeaderHtmlAttributes(new { style = "background-color: #C6E0B4;" }).HeaderTemplate(@<text>Referrals less than 60 days before EPRD (EPRD next 60 days)</text>)
             .Columns(info1 =>

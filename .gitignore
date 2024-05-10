@@ -175,3 +175,11 @@
 /BASSWEBV3/bin/System.Web.WebPages.xml
 /BASSWEBV3/.vs/BASSWebV3.csproj.dtbcache.json
 /.gitignore
+/.vs/slnx.sqlite
+/.gitignore
+/BassIdentityManagement/obj/Debug/BassIden.4BE0B64B.Up2Date
+/BASSWEBV3/BASSWebV3.csproj
+/BASSWEBV3/Controllers/EditOffenderController.cs
+/BASSWEBV3/Views/EditOffender/_Applications.cshtml
+/BASSWEBV3/Views/Reports/_BWProductivityReport.cshtml
+/BASSWEBV3/BASSWebV3.csproj

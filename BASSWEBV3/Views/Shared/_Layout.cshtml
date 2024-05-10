@@ -99,8 +99,8 @@
                             {
                             <text>&nbsp;|&nbsp;</text>
                             <span class="@(ViewBag.ControllerID == @BassConstants.ControllerID.Reports ? "highlight" : "")">@Html.ActionLink("Reports", "Index", "Reports")</span>
-                            <text>&nbsp;|&nbsp;</text>
-                            <span class="@(ViewBag.ControllerID == @BassConstants.ControllerID.TeamManagement ? "highlight" : "")">@Html.ActionLink("Management", "Index", "TeamManagement")</span>
+                            @*<text>&nbsp;|&nbsp;</text>
+                            <span class="@(ViewBag.ControllerID == @BassConstants.ControllerID.TeamManagement ? "highlight" : "")">@Html.ActionLink("Management", "Index", "TeamManagement")</span>*@
                             }
                         }
                         else

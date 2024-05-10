@@ -139,8 +139,16 @@
                             grid.dataSource.read({ EpisodeID : selectedSearchResult, ApplicationTypeID: -1, CountyID:-1  })
                             grid.refresh();
                         }
-                        function GetEpisodeID(){
-                            return { EpisodeID : $("#AllSelectedOffenderEpisodeResult").val(), ApplicationTypeID:-1, CountyID : -1 };
+                            function GetEpisodeID() {
+                                var epi = $("#AllSelectedOffenderEpisodeResult").data("kendoDropDownList").value();
+                                var cid = $("#AllCounties").data("kendoDropDownList").value();
+                                if (epi == undefined || epi == "" || epi == "0") {
+                                    epi = -1;
+                                }
+                                else {
+                                    cid = -1;
+                                }
+                            return { EpisodeID : epi, ApplicationTypeID:-1, CountyID : cid };
                         }
                         function GetAppParameters(obj)
                         {
@@ -231,20 +239,22 @@
     .Scrollable(a => a.Enabled(true))
     .Sortable(s => s.Enabled(true)).Filterable(f => f.Enabled(true))
     .Resizable(resize => resize.Columns(true))
+    .Reorderable(reorderable => reorderable.Columns(true))
     .Pageable(pageable => pageable
         .Refresh(true)
-        .PageSizes(new List<object> { 5, 10, 20, 30, 50 })
-        .ButtonCount(5))
+        .PageSizes(new List<object>
+    { 5, 10, 20, 30, 50 })
+    .ButtonCount(5))
     .DataSource(dataSource => dataSource
-        .Ajax()
-        .ServerOperation(false)
-        .Read(read => read.Action("OffenderBenefitRead", "EditOffender").Data("GetEpisodeID"))
-        .PageSize(50)
-        .Model(model =>
-        {
-            model.Id(g => g.ApplicationID);
-        })))
-                <script id="hcbenefittemplate" type="text/kendo-tmpl">
+    .Ajax()
+    .Read(read => read.Action("OffenderBenefitRead", "EditOffender").Data("GetEpisodeID"))
+    .Model(model =>
+    {
+        model.Id(g => g.ApplicationID);
+        //model.Field(f=>f.EpisodeID).Editable(false);
+        //model.Field(f=>f.ApplicationTypeID).Editable(false);
+    })))
+    <script id="hcbenefittemplate" type="text/kendo-tmpl">
                     @(Html.Kendo().Grid<BassWebV3.ViewModels.ApplicationReadonly>()
    .Name("grid_#=ApplicationTypeID#")
    .Resizable(r => r.Columns(true))
@@ -272,20 +282,20 @@
                 //.ToClientTemplate()
                     )
 
-                </script>
-            </div>
+    </script>
+</div>
         </div>
     </div>
     <script type="text/javascript">
         $('.k-i-refresh').click(function () {
+            
             var ddlOffender = $("#AllSearchResults").data("kendoDropDownList");
             var id = "0";
-            var cid = "0";
+            var cid = "-1";
             if (ddlOffender != null && ddlOffender != undefined)
                 id = $("#AllSearchResults").data("kendoDropDownList").value();
 
             cid = $("#AllCounties").data("kendoDropDownList").value();
-
             var grid = $('#gridAppSet').data('kendoGrid');
             grid.dataSource.read({ EpisodeID: id, ApplicationTypeID: -1, CountyID: cid })
             grid.refresh();

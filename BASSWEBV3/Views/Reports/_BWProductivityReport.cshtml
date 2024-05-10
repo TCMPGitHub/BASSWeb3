@@ -109,7 +109,7 @@
             var input = element.children("input");
             if (input.val() === e.dataItem.Value) {
                 input.prop("checked", false);
-                return;
+               //eturn;
             }
         });
 
@@ -124,7 +124,7 @@
             $("#rptprodspan").html(GetDispayClientNames(dataItems));
         }
     }
-    function onSelect(e) {
+    function onSelect(e) {        
         var items = $('#RptBfUsers').data("kendoMultiSelect").ul.find("li");
         items.each(function () {
             var element = $(this);
@@ -133,7 +133,7 @@
                 input.prop("checked", true);
                 return;
             }
-        });
+        });           
     }
     function execelexport() {
         var ds = $("#gridBWProductivity").data("kendoGrid").dataSource;

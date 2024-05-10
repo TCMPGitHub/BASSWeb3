@@ -741,7 +741,6 @@ toolbar.Template(@<text>
         //.Batch(true)
         //.ServerOperation(true)
         .PageSize(100)
-        .Events(events => { events.Error("error_handler"); /*events.RequestStart("showLoading");*/ })
         .Model(m =>
         {
             m.Id(f => f.EpisodeID);

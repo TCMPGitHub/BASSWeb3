@@ -84,11 +84,9 @@
         return { FromDate: $("#FromDate").val(), ToDate: $("#ToDate").val(), BfWorkerIDs: $("#AllRptBfUsers").data("kendoMultiSelect").value().join(',') }
     }
     function getbwprams() {
-        return { FromDate: $("#FromDate").val(), ToDate: $("#ToDate").val(), BfWorkerIDs: $("#RptBfUsers").data("kendoMultiSelect").value().join(',') }
+        return { FromDate: $("#FromDate").val(), ToDate: $("#ToDate").val(), BfWorkerIDs: $("#RptBW").data("kendoMultiSelect").value().join(',') }
     }
-    function getbwdprams() {
-        return { FromDate: $("#FromDate").val(), ToDate: $("#ToDate").val(), BfWorkerID: 0 }
-    }
+    
     function DateChanged(e) {
        var start = $('#FromDate').val();
         var date = new Date(start);
@@ -101,11 +99,11 @@
         $("#gridFAOutLook").data("kendoGrid").dataSource.read({ FromDate: $("#FromDate").val() });
         $('#gridFAOutLook').data('kendoGrid').refresh();
 
-        $("#gridInmates").data("kendoGrid").dataSource.read();
+        $("#gridInmates").data("kendoGrid").dataSource.read({ FromDate: $("#FromDate").val(), ToDate: $("#ToDate").val() });
         $('#gridInmates').data('kendoGrid').refresh();
         $("#reportspan").html($("#FromDate").val() + " - " + $("#ToDate").val());
 
-        $("#gridInmatesDetails").data("kendoGrid").dataSource.read();
+        $("#gridInmatesDetails").data("kendoGrid").dataSource.read({ FromDate: $("#FromDate").val(), ToDate: $("#ToDate").val() });
         $('#gridInmatesDetails').data('kendoGrid').refresh();
 
         GetProductivityReport($("#gridInmatesProductivity").data("kendoGrid"));
@@ -128,7 +126,7 @@
     }
     function GetProductivityReport(e) {
         var grid = $("#gridInmatesProductivity").data("kendoGrid");
-        grid.dataSource.read({ FromDate: $("#FromDate").val(), ToDate: $("#ToDate").val(), BfWorkerIDs: $("#RptBfUsers").data("kendoMultiSelect").value().join(',') });
+        grid.dataSource.read({ FromDate: $("#FromDate").val(), ToDate: $("#ToDate").val(), BfWorkerIDs: $("#AllRptBfUsers").data("kendoMultiSelect").value().join(',') });
         grid.refresh();
         var datestring = kendo.toString($("#FromDate").val() + " - " + $("#ToDate").val());
         var items = $("#AllRptBfUsers").data("kendoMultiSelect").dataItems();
@@ -137,16 +135,17 @@
         }
         $("#rptprodspan").html(datestring);
     }
-    function GetBWProductivityReport() {
-        var grid = $("#gridBWProductivity").data("kendoGrid");
-        grid.dataSource.read();
-        grid.refresh();
+    function GetBWProductivityReport(e) {  
         var datestring = kendo.toString($("#FromDate").val() + " - " + $("#ToDate").val());
-        var items = $("#RptBfUsers").data("kendoMultiSelect").dataItems();
+        var selectItem = "-1";
+        var items = $("#RptBW").data("kendoMultiSelect").dataItems();
         if (items.length > 0) {
             datestring = GetDispayClientNames(items);
         }
         $("#rptprodspan").html(datestring);
+        var grid = $("#gridBWProductivity").data("kendoGrid");
+        grid.dataSource.read({ FromDate: $("#FromDate").val(), ToDate: $("#ToDate").val(), BfWorkerIDs: $("#RptBW").data("kendoMultiSelect").value().join(',') });
+        grid.refresh();
     }
    function GetNewDate(obj) {
         return new Date(obj.getFullYear(), obj.getMonth(), 1)

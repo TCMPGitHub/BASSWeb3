@@ -51,7 +51,7 @@
         var dataFiletr = [];
         if (grid.dataSource.filter() !== undefined &&
             grid.dataSource.filter().filters.length > 0) {
-            var selectItems = $("#RptBfUsers").data("kendoMultiSelect").dataItems();
+            var selectItems = $("#RptBW").data("kendoMultiSelect").dataItems();
             for (var i = 0; i < grid.dataSource.filter().filters.length; i++) {
                 var val = grid.dataSource.filter().filters[i].value;
                 for (var j = 0; j < selectItems.length; j++) {
@@ -103,7 +103,7 @@
         });
     }
     function onDeselect(e) {
-        var items = $('#RptBfUsers').data("kendoMultiSelect").ul.find("li");
+        var items = $('#RptBW').data("kendoMultiSelect").ul.find("li");
         items.each(function () {
             var element = $(this);
             var input = element.children("input");
@@ -113,7 +113,7 @@
             }
         });
 
-        var dataItems = $("#RptBfUsers").data("kendoMultiSelect").dataItems();
+        var dataItems = $("#RptBW").data("kendoMultiSelect").dataItems();
         if (dataItems.length > 0) {
             for (var i = 0; i < dataItems.length; i++) {
                 if (dataItems[i].Value === e.dataItem.Value) {
@@ -125,7 +125,7 @@
         }
     }
     function onSelect(e) {        
-        var items = $('#RptBfUsers').data("kendoMultiSelect").ul.find("li");
+        var items = $('#RptBW').data("kendoMultiSelect").ul.find("li");
         items.each(function () {
             var element = $(this);
             var input = element.children("input");
@@ -189,7 +189,7 @@
         });
     }
     function GetFilterParameter() {
-        return { BfWorkerIDs: $("#RptBfUsers").data("kendoMultiSelect").value().join(',') };
+        return { BfWorkerIDs: $("#RptBW").data("kendoMultiSelect").value().join(',') };
     }
     function SelectFacility(e) {
         var sel = $("#Facility").data("kendoDropDownList").value();
@@ -201,7 +201,7 @@
             contentType: "application/json; charset=utf-8",
             success: function (data, textStatus, XMLHttpRequest) {
                 var init = data.split(",");
-                var multiSelect = $("#RptBfUsers").data("kendoMultiSelect");
+                var multiSelect = $("#RptBW").data("kendoMultiSelect");
                 multiSelect.value(0);
                 var selectedValues = [];
                 if (init !== undefined && init.length > 0) {
@@ -212,7 +212,7 @@
                     multiSelect.value(selectedValues);
                 }
 
-                var items = $("#RptBfUsers").data("kendoMultiSelect").ul.find("li");
+                var items = $("#RptBW").data("kendoMultiSelect").ul.find("li");
                 for (var i = 0; i < items.length; i++) {
                     if (selectedValues.length > 0 && selectedValues.indexOf(items[i].children.cb.value) > -1) {
                         items[i].children.cb.checked = true;
@@ -222,15 +222,19 @@
                     }
                 }
                 multiSelect.trigger("change");
+
+                var grid = $("#gridBWProductivity").data("kendoGrid");
+                grid.dataSource.read({ FromDate: $("#FromDate").val(), ToDate: $("#ToDate").val(), BfWorkerIDs: $("#RptBW").data("kendoMultiSelect").value().join(',') });
+                grid.refresh();
             }
         });
         
     }
     function SetBWDefault() {
-        var items = $("#RptBfUsers").data("kendoMultiSelect").ul.find("li");
+        var items = $("#RptBW").data("kendoMultiSelect").ul.find("li");
         checkInputs(items);
 
-        var selectItems = $("#RptBfUsers").data("kendoMultiSelect").dataItems();
+        var selectItems = $("#RptBW").data("kendoMultiSelect").dataItems();
         $("#rptprodspan").html(GetDispayClientNames(selectItems));
 
         //$("#k-i-refresh").trigger("click");
@@ -239,11 +243,6 @@
         e.preventDefault();
         if (e.sender.data().length === 0)
             return;
-
-        //var selectItems = $("#RptBfUsers").data("kendoMultiSelect").dataItems();
-        //if(selectItems.length == 0)
-       
-        //return false;
     }
     
 </script>
@@ -285,7 +284,7 @@
             <div class="col" style="float:left;margin-top:5px;margin-left:10px;"><label class="category-label" for="AllRptBfUsers" style="font-weight:bold;color:darkblue;">Benefit Worker:</label></div>
             <div class="col" style="float:left; margin-left:5px">
                 @(Html.Kendo().MultiSelect()
-.Name("RptBfUsers")
+.Name("RptBW")
 .AutoClose(false)
 .HtmlAttributes(new { style = "width:540px" })
 .Placeholder("Select a benefit worker ...")

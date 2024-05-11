@@ -972,6 +972,8 @@ namespace BassWebV3.Controllers
 
         private List<ProductivityReportRowDetail> GetProductivityReport(DateTime FromDate, DateTime ToDate, string BfWorkerIDs)
         {
+            if (string.IsNullOrEmpty(BfWorkerIDs)) return new List<ProductivityReportRowDetail>();
+
             List<ParameterInfo> ParamList = new List<ParameterInfo>
             {
                new ParameterInfo {ParameterName="FromDate", ParameterValue=FromDate },
@@ -1022,6 +1024,8 @@ namespace BassWebV3.Controllers
 
         private List<BWProductivityReportData> GetBWProductivityReport(DateTime FromDate, DateTime ToDate, string BfWorkerIDs)
         {
+            if (string.IsNullOrEmpty(BfWorkerIDs)) return new List<BWProductivityReportData>();
+
             List<ParameterInfo> ParamList = new List<ParameterInfo>
             {
                 new ParameterInfo { ParameterName="FromDate", ParameterValue=FromDate },

@@ -478,7 +478,7 @@
                         <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.Elderly).Name("Inmate.Elderly").Enable(Model.EditingEnabled).Label("Elderly")</div>
                         <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.DSH).Name("Inmate.DSH").Enable(Model.EditingEnabled).Label("DSH")</div>
                         <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.SSI).Name("Inmate.SSI").Enable(false)<scan class=@ssiDiff title="@ssiTitle">SSI</scan></div>
-                        <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.Lifer).Name("Inmate.Lifer").Enable(Model.EditingEnabled)<scan class=@liferDiff title="@liferTitle">Lifer</scan></div>
+                        <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.Lifer).Name("Inmate.Lifer").Enable(Model.EditingEnabled && !Model.Inmate.Lifer)<scan class=@liferDiff title="@liferTitle">Lifer</scan></div>
                     </div>
                 </div>
             </div>

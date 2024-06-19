@@ -810,19 +810,7 @@ namespace BassWebV3.Controllers
                 firstrow = rowNumber;
             }
 
-            var groups = productivities.OrderByDescending(o => o.BenefitWorkerId).ToList();
-            int fcount = 1;
-            int ecount = 0;
-            for (int i = 0; i < arrayBWID.Length; i++)
-            {
-                var plist = productivities.Where(w => w.BenefitWorkerId == arrayBWID[i]).Count();
-                ecount += (plist + 2);
-                var region = new CellRangeAddress(fcount, ecount, 0, 0);
-                sheet.AddMergedRegion(region);
-                sheet.GroupRow(fcount, ecount - 1);
-                sheet.SetRowGroupCollapsed(fcount, true);
-                fcount = (ecount + 1);
-            }
+            
 
             int mergedRegions = sheet.NumMergedRegions;
             for (int regs = 0; regs < mergedRegions; regs++)

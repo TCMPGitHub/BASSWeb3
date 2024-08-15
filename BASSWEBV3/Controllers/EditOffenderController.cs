@@ -744,7 +744,7 @@ namespace BassWebV3.Controllers
         }
         public ActionResult GetReleaseDateChangs([DataSourceRequest] DataSourceRequest request, int EpisodeID)
         {
-            var query = string.Format(@"SELECT FileDate, ScheduledReleaseDate FROM  [dbo].[fnGetReleaseHistory]({0})", EpisodeID);
+            var query = string.Format(@"SELECT FileDate, ScheduledReleaseDate FROM  [dbo].[fnGetReleaseHistory]({0}) ORDER BY FileDate", EpisodeID);
             //'BE3758'
             //List<ReleaseDateChanges> rdChanges = new List<ReleaseDateChanges>();
             var rdChanges = SqlHelper.ExecuteCommands<ReleaseDateChanged>(query, 1).ToList();

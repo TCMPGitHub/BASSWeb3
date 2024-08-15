@@ -575,19 +575,21 @@
                     <div class="divOffenderPart1tr" style="width:100%;">
                         <div class="divOffenderPart1tb" style="width:100%;">
                             @(Html.Kendo().Grid(Model.SomsReleaseDates)
-                          .Name("SomsReleaseDates").ToolBar(t => t.Template(@<text><span style="font-size:16px; font-weight:bold;">Release Date Changes</span></text>))
-                          .HtmlAttributes(new { style = "max-height:110px;max-width:220px;width:100%!important;float:left;" })
+                          .Name("SomsReleaseDates").ToolBar(t => t.Template(@<text><span style="font-size:14px; font-weight:bold;">SOMS Release Date Changes</span></text>))
+                          .HtmlAttributes(new { style = "max-height:120px;max-width:200px;width:100%!important;float:left;" })
                           .Selectable(s => s.Enabled(true)).Scrollable(s => s.Height(70))
                           .Columns(columns =>
                           {
-                              columns.Bound(o => o.FileDate).Title("Date Changed").Format("{0:MM/dd/yyyy}").Width(90)
+                              columns.Bound(o => o.FileDate).Title("Date Changed").Format("{0:MM/dd/yyyy}").Width(80)
                                      .HeaderHtmlAttributes(new { Style = "border-left:1px solid lightgrey;" })
                                      .HtmlAttributes(new { Style = "border-left:1px solid lightgrey;" });
-                              columns.Bound(o => o.ScheduledReleaseDate).Title("Release Date").Format("{0:MM/dd/yyyy}").Width(90)
+                              columns.Bound(o => o.ScheduledReleaseDate).Title("Release Date").Format("{0:MM/dd/yyyy}").Width(80)
                                      .HeaderHtmlAttributes(new { Style = "border-right:1px solid lightgrey;" })
                                      .HtmlAttributes(new { Style = "border-right:1px solid lightgrey;" });
-                          }).DataSource(dataSource => dataSource.Ajax().Read(r => r.Action("GetReleaseDateChangs", "EditOffender", new { EpisodeID = Model.Inmate.EpisodeID }))
-                                                   ))
+                          }).DataSource(dataSource => dataSource
+                            .Ajax()
+                            .Read(r => r.Action("GetReleaseDateChangs", "EditOffender", new { EpisodeID = Model.Inmate.EpisodeID }))
+                            ))
                         </div>
                     </div>
                 </CTRL>

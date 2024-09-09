@@ -176,6 +176,10 @@ namespace BassIdentityManagement.Entities
         public int Total60TO90EPRD { get; set; }
         [Display(Name = "Total EPRD next 91-120 days")]
         public int Total90TO120EPRD { get; set; }
+        [Display(Name = "Total EPRD next 121-150 days")]
+        public int Total120TO150EPRD { get; set; }
+        [Display(Name = "Total EPRD next 151-180 days")]
+        public int Total150TO180EPRD { get; set; }
         [Display(Name = "Total EPRD Difference  31-60 days")]
         public int TotalDiffNext30EPRD { get; set; }
         [Display(Name = "Unknown Disposition (EPRD next 30 days)")]

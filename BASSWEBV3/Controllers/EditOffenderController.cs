@@ -221,7 +221,7 @@ namespace BassWebV3.Controllers
         {
           var query = string.Format(@"SELECT [ApplicationID], t1.[ApplicationTypeID], [AgreesToApply], [EpisodeID], 
                 (CASE WHEN ISNULl(t1.ApplicationOutcomeID, 0) = 0 THEN 'Pending' ELSE t3.Name END)Outcome,
-                ISNULl([OutcomeDate], '')OutcomeDate,ISNULl([IssuedOnDate], '')IssuedOnDate,[BICNum],
+                ISNULl([OutcomeDate], '')OutcomeDate,ISNULl([IssuedOnDate], '')IssuedOnDate,[BICNum],[CINNum],
                 [AppliedOrRefusedOnDate], ISNULL([ArchivedOnDate], '')ArchivedOnDate, ISNULL([PhoneInterviewDate], '')PhoneInterviewDate
            FROM [dbo].[Application] t1 LEFT OUTER JOIN[dbo].[ApplicationOutcome] t3 ON t1.ApplicationOutcomeID = t3.ApplicationOutcomeID
           WHERE EpisodeID = @EpisodeID = {0} AND ApplicationTypeID = {1}", EpisodeID, ApplicationTypeID);
@@ -492,15 +492,15 @@ namespace BassWebV3.Controllers
                 BEGIN
             INSERT INTO [dbo].[ApplicationTrace]([ApplicationID],[ApplicationTypeID],[EpisodeID]
                                 ,[ApplicationOutcomeID],[AgreesToApply],[AppliedOrRefusedOnDate],[PhoneInterviewDate]
-                                ,[OutcomeDate],[BICNum],[IssuedOnDate],[ArchivedOnDate],[CreatedByUserID],[CustodyFacilityId]
+                                ,[OutcomeDate],[BICNum],[CINNum],[IssuedOnDate],[ArchivedOnDate],[CreatedByUserID],[CustodyFacilityId]
                                 ,[DateAction]) 
             SELECT [ApplicationID],[ApplicationTypeID],[EpisodeID],[ApplicationOutcomeID],[AgreesToApply]
-                  ,[AppliedOrRefusedOnDate],[PhoneInterviewDate],[OutcomeDate],[BICNum],[IssuedOnDate],[ArchivedOnDate]
+                  ,[AppliedOrRefusedOnDate],[PhoneInterviewDate],[OutcomeDate],[BICNum],[CINNum],[IssuedOnDate],[ArchivedOnDate]
                   ,[CreatedByUserID],[CustodyFacilityId],[DateAction]
              FROM [dbo].[Application] WHERE ApplicationID  = @ApplicationID
                   UPDATE [dbo].[Application] SET [ApplicationTypeID] ={0} ,[EpisodeID] ={1}
                     ,[ApplicationOutcomeID] = {2},[AgreesToApply] = {3},[AppliedOrRefusedOnDate] = {4}
-                    ,[PhoneInterviewDate] = {5}, [OutcomeDate]= {6},[BICNum] = {7},[IssuedOnDate] = {8}
+                    ,[PhoneInterviewDate] = {5}, [OutcomeDate]= {6},[BICNum] = {7},[CINNum] = {14},[IssuedOnDate] = {8}
                     ,[ArchivedOnDate] = {9},[CreatedByUserID] = {10},[CustodyFacilityId] = {11}
                     ,[DateAction] = GetDate(),[DHCSDate] = {12} WHERE ApplicationID = {13} 
                 END
@@ -510,14 +510,14 @@ namespace BassWebV3.Controllers
                    BEGIN
               INSERT INTO [dbo].[Application]([ApplicationTypeID],[EpisodeID]
                     ,[ApplicationOutcomeID],[AgreesToApply],[AppliedOrRefusedOnDate],[PhoneInterviewDate]
-                    ,[OutcomeDate],[BICNum],[IssuedOnDate],[ArchivedOnDate],[CreatedByUserID],[CustodyFacilityId]
-                    ,[DateAction]) VALUES({0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11}, GetDate())
+                    ,[OutcomeDate],[BICNum],[CINNUm],[IssuedOnDate],[ArchivedOnDate],[CreatedByUserID],[CustodyFacilityId]
+                    ,[DateAction]) VALUES({0},{1},{2},{3},{4},{5},{6},{7},{14},{8},{9},{10},{11}, GetDate())
                  END
                  ELSE
                  BEGIN
                      UPDATE [dbo].[Application] SET [ApplicationTypeID] ={0} ,[EpisodeID] ={1}
                     ,[ApplicationOutcomeID] = {2},[AgreesToApply] = {3},[AppliedOrRefusedOnDate] = {4}
-                    ,[PhoneInterviewDate] = {5}, [OutcomeDate]= {6},[BICNum] = {7},[IssuedOnDate] = {8}
+                    ,[PhoneInterviewDate] = {5}, [OutcomeDate]= {6},[BICNum] = {7},[CINNum]={14},[IssuedOnDate] = {8}
                     ,[ArchivedOnDate] = {9},[CreatedByUserID] = {10},[CustodyFacilityId] = {11}
                     ,[DateAction] = GetDate(),[DHCSDate] = {12} WHERE ApplicationID = {13} 
                  END
@@ -533,7 +533,8 @@ namespace BassWebV3.Controllers
            AppData.App.IssuedOnDate.HasValue ? "'" + AppData.App.IssuedOnDate.Value.ToShortDateString() + "'" : "null",
            AppData.App.ArchivedOnDate.HasValue ? "'" + AppData.App.ArchivedOnDate.Value.ToShortDateString() + "'" : "null",
            CurrentUser.UserID, AppData.App.CustodyFacilityId.HasValue ? AppData.App.CustodyFacilityId.ToString() : "null",
-           AppData.App.DHCSDate.HasValue ? "'" + AppData.App.DHCSDate.Value.ToShortDateString() + "'" : "null", AppData.App.ApplicationID);
+           AppData.App.DHCSDate.HasValue ? "'" + AppData.App.DHCSDate.Value.ToShortDateString() + "'" : "null", AppData.App.ApplicationID,
+           string.IsNullOrEmpty(AppData.App.CINNum) ? "null" : "'" + AppData.App.CINNum + "'");
 
                 var results = SqlHelper.ExecuteMultipleAppCommands(query).ToList();
 
@@ -919,7 +920,7 @@ namespace BassWebV3.Controllers
         {
             var query = string.Format(@"SELECT t1.ApplicationID, t1.ApplicationTypeID, t1.AgreesToApply, t2.Name AS ApplicationTypeName, 
                 t1.AppliedOrRefusedOnDate, t1.ArchivedOnDate, t1.PhoneInterviewDate, t1.IssuedOnDate, t1.OutcomeDate, 
-                t3.Abbr AS CustodyFacility, t4.Name AS Outcome, t1.BICNum
+                t3.Abbr AS CustodyFacility, t4.Name AS Outcome, t1.BICNum, t1.CINNum
                 From dbo.[Application] t1 INNER JOIN dbo.[ApplicationType] t2 ON t1.ApplicationTypeID = t2.ApplicationTypeID 
                  LEFT OUTER JOIN dbo.[Facility] t3 ON t1.CustodyFacilityID = t3.FacilityID
                  LEFT OUTER JOIN dbo.[ApplicationOutcome] t4 ON t1.ApplicationOutcomeID = t4.ApplicationOutcomeID

@@ -141,37 +141,37 @@
                     </div>
                 </div>
            <div id=@devname style="display:@apptDetails">
-                @if (Model.NeedPI)
-                {
-                    <div class="divOffenderPart1tr">
-                        <div class="divOffenderPart2tbs" style="width:50%;float:right">
-                            <scan style="width: 100%; text-align: right; margin-right: 5px;">Phone Interview</scan>
-                        </div>
-                        <script>
-                        function SetApplicationPIDate(e) {
-                            e.sender.element[0].form['App.PhoneInterviewDate'].value = kendo.toString(new Date(this.value()), "d");
-                        }
-                         </script>
-                        <div class="divOffenderPart2tbs" style="width:50%;float:left;">
-                            @(Html.Kendo().DatePickerFor(m => m.App.PhoneInterviewDate).Format("MM/dd/yyyy").DateInput()
+               @if (Model.NeedPI)
+               {
+                   <div class="divOffenderPart1tr">
+                       <div class="divOffenderPart2tbs" style="width:50%;float:right">
+                           <scan style="width: 100%; text-align: right; margin-right: 5px;">Phone Interview</scan>
+                       </div>
+                       <script>
+                           function SetApplicationPIDate(e) {
+                               e.sender.element[0].form['App.PhoneInterviewDate'].value = kendo.toString(new Date(this.value()), "d");
+                           }
+                       </script>
+                       <div class="divOffenderPart2tbs" style="width:50%;float:left;">
+                           @(Html.Kendo().DatePickerFor(m => m.App.PhoneInterviewDate).Format("MM/dd/yyyy").DateInput()
                         .Value(Model.App.PhoneInterviewDate).Name("App.PhoneInterviewDate" + Model.ApplicationTypeName)
                         .HtmlAttributes(new { @style = "width:120px!important;height:22px!important;" })
                         .Enable(Model.App.IsEditable)
                         .Events(e => e.Change("SetApplicationPIDate")))
-                        </div>
-                    </div>
-                }
-                <div class="divOffenderPart1tr">
-                    <div class="divOffenderPart2tbs" style="width:50%;float:right">
-                        <scan style="width: 100%; text-align: right; margin-right: 5px;">Outcome</scan>
-                    </div>
-                    <div class="divOffenderPart2tbs" style="width:50%;float:left;">
-                        <script>
-                function SetApplicationOutcomeID(e) {
-                    e.sender.element[0].form['App.ApplicationOutcomeID'].value = kendo.toString(this.value());
-                }
-                        </script>
-                        @(Html.Kendo().DropDownListFor(m => m.App.ApplicationOutcomeID)
+                       </div>
+                   </div>
+               }
+               <div class="divOffenderPart1tr">
+                   <div class="divOffenderPart2tbs" style="width:50%;float:right">
+                       <scan style="width: 100%; text-align: right; margin-right: 5px;">Outcome</scan>
+                   </div>
+                   <div class="divOffenderPart2tbs" style="width:50%;float:left;">
+                       <script>
+                           function SetApplicationOutcomeID(e) {
+                               e.sender.element[0].form['App.ApplicationOutcomeID'].value = kendo.toString(this.value());
+                           }
+                       </script>
+                       @(Html.Kendo().DropDownListFor(m => m.App.ApplicationOutcomeID)
         .Name("App.ApplicationOutcomeID" + Model.ApplicationTypeName)
         .DataTextField("Name")
         .DataValueField("ApplicationOutcomeID")
@@ -180,50 +180,58 @@
         .Events(e => e.Change("SetApplicationOutcomeID"))
         .BindTo(Model.Outcomes).Enable(Model.App.IsEditable)
                         )
-                    </div>
-                </div>
-                <div class="divOffenderPart1tr">
-                    <div class="divOffenderPart2tbs" style="width:50%;">
-                        <scan style="width: 100%; text-align: right; margin-right: 5px;">Outcome Date</scan>
-                    </div>
-                    <script>
-                function SetApplicationOutcomeDate(e) {
-                    e.sender.element[0].form['App.OutcomeDate'].value = kendo.toString(new Date(this.value()), "d");
-                }
-                    </script>
-                    <div class="divOffenderPart2tbs" style="width:50%;">
-                        @(Html.Kendo().DatePickerFor(m => m.App.OutcomeDate).Format("MM/dd/yyyy").DateInput()
+                   </div>
+               </div>
+               <div class="divOffenderPart1tr">
+                   <div class="divOffenderPart2tbs" style="width:50%;">
+                       <scan style="width: 100%; text-align: right; margin-right: 5px;">Outcome Date</scan>
+                   </div>
+                   <script>
+                       function SetApplicationOutcomeDate(e) {
+                           e.sender.element[0].form['App.OutcomeDate'].value = kendo.toString(new Date(this.value()), "d");
+                       }
+                   </script>
+                   <div class="divOffenderPart2tbs" style="width:50%;">
+                       @(Html.Kendo().DatePickerFor(m => m.App.OutcomeDate).Format("MM/dd/yyyy").DateInput()
         .Value(Model.App.OutcomeDate).Name("App.OutcomeDate" + Model.ApplicationTypeName).HtmlAttributes(new { @style= "width:120px!important;height:22px!important;" })
         .Enable(Model.App.IsEditable).Events(e => e.Change("SetApplicationOutcomeDate")))
-                    </div>
-                </div>
-                @if (Model.Needbic)
-                {
-                    <div class="divOffenderPart1tr">
-                        <div class="divOffenderPart2tbs" style="width:50%;">
-                            <scan style="width: 100%; text-align: right; margin-right: 5px;">BIC #</scan>
-                        </div>
-                        <div class="divOffenderPart2tbs" style="width:50%;">
-                            @(Html.Kendo().TextBoxFor(m => m.App.BICNum).Name("App.BICNum").HtmlAttributes(new { @maxlength = "14", style = "height:20px;width:80%" }).Enable(Model.App.IsEditable))
-                        </div>
-                    </div>
-                    <div class="divOffenderPart1tr">
-                        <div class="divOffenderPart2tbs" style="width:50%;">
-                            <scan style="width: 100%; text-align: right; margin-right: 5px;">Issued On</scan>
-                        </div>
-                        <script>
-                        function SetApplicationIssuedOnDate(e) {
-                            e.sender.element[0].form['App.IssuedOnDate'].value = kendo.toString(new Date(this.value()), "d");
-                        }
-                        </script>
-                        <div class="divOffenderPart2tbs" style="width:50%;">
-                            @(Html.Kendo().DatePickerFor(m => m.App.IssuedOnDate).Format("MM/dd/yyyy").DateInput()
+                   </div>
+               </div>
+               @if (Model.Needbic)
+               {
+                   <div class="divOffenderPart1tr">
+                       <div class="divOffenderPart2tbs" style="width:50%;">
+                           <scan style="width: 100%; text-align: right; margin-right: 5px;">BIC #</scan>
+                       </div>
+                       <div class="divOffenderPart2tbs" style="width:50%;">
+                           @(Html.Kendo().TextBoxFor(m => m.App.BICNum).Name("App.BICNum").HtmlAttributes(new { @maxlength = "14", style = "height:20px;width:80%" }).Enable(Model.App.IsEditable))
+                       </div>
+                   </div>
+                   <div class="divOffenderPart1tr">
+                       <div class="divOffenderPart2tbs" style="width:50%;">
+                           <scan style="width: 100%; text-align: right; margin-right: 5px;">CIN #</scan>
+                       </div>
+                       <div class="divOffenderPart2tbs" style="width:50%;">
+                           @(Html.Kendo().TextBoxFor(m => m.App.CINNum).Name("App.CINNum").HtmlAttributes(new { @maxlength = "10", style = "height:20px;width:80%" }).Enable(Model.App.IsEditable))
+                       </div>
+                   </div>
+                   <div class="divOffenderPart1tr">
+                       <div class="divOffenderPart2tbs" style="width:50%;">
+                           <scan style="width: 100%; text-align: right; margin-right: 5px;">Issued On</scan>
+                       </div>
+                       <script>
+                           function SetApplicationIssuedOnDate(e) {
+                               e.sender.element[0].form['App.IssuedOnDate'].value = kendo.toString(new Date(this.value()), "d");
+                           }
+                       </script>
+                       <div class="divOffenderPart2tbs" style="width:50%;">
+                           @(Html.Kendo().DatePickerFor(m => m.App.IssuedOnDate).Format("MM/dd/yyyy").DateInput()
     .Value(Model.App.IssuedOnDate).Name("App.IssuedOnDate" + Model.ApplicationTypeName).HtmlAttributes(new { @style = "width:120px!important;height:22px!important;" })
     .Enable(Model.App.IsEditable).Events(e => e.Change("SetApplicationIssuedOnDate")))
-                        </div>
-                    </div>
-                }
-            </div>
+                       </div>
+                   </div>
+               }
+           </div>
         </div>
         <script type="text/javascript">
             $(function (e) {
@@ -381,7 +389,8 @@
                 if (appname == "SSI") SetDatePickerPlaceHolder($("#App_PhoneInterviewDate" + appname));
                 if (appname == "MediCal"){
                     SetDatePickerPlaceHolder($("#App_IssuedOnDate" + appname));
-                    $("#App_BICNum")[0].disabled = true;
+                    $("#App_BICNum")[0].disabled = !editable;
+                    $("#App_CINNum")[0].disabled = !editable;
                 }
                 if (tempDLF != undefined) tempDLF.enable(false);
                 if (tempDLO != undefined) tempDLO.enable(false);
@@ -400,8 +409,8 @@
                         if (tempDPI != undefined) tempDPI.enable(true);
                         if (tempDPO != undefined) tempDPO.enable(true);
                         if (tempDPS != undefined) tempDPS.enable(true);
-                        if (appname == "MediCal")
-                            $("#App_BICNum")[0].disabled = false;
+                        //if (appname == "MediCal")
+                            //$("#App_BICNum")[0].disabled = false;
                     }
                     else if (chinput !== undefined && chinput !== "" && appID > 0 && AllowPartialEditAppt){
                         if(chinput == "False"){

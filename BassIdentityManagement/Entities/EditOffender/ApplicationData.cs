@@ -24,6 +24,7 @@ namespace BassIdentityManagement.Entities
         public DateTime? PhoneInterviewDate { get; set; }
         public DateTime? OutcomeDate { get; set; }
         public string BICNum { get; set; }
+        public string CINNum { get; set; }
         public DateTime? IssuedOnDate { get; set; }
         public DateTime? ArchivedOnDate { get; set; }
         public int CreatedByUserID { get; set; }
@@ -58,5 +59,6 @@ namespace BassIdentityManagement.Entities
         public string CustodyFacility { get; set; }
         public string Outcome { get; set; }
         public string BICNum { get; set; }
+        public string CINNum { get; set; }
     }
 }

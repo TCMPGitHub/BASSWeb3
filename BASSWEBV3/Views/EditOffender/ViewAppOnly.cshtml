@@ -234,6 +234,7 @@
             column.Bound(p => p.PhoneInterviewDate).Format("{0:MM/dd/yyyy}").Title("Phone Interview Date").Width(80).Filterable(false);
             column.Bound(p => p.ArchivedOnDate).Format("{0:MM/dd/yyyy}").Title("Archived Date").Width(80).Filterable(false);
             column.Bound(p => p.BICNum).Title("BIC Number").Width(120).Filterable(false);
+            column.Bound(p => p.CINNum).Title("CIN Number").Width(120).Filterable(false);
         })
     //.ClientDetailTemplateId("hcbenefittemplate")
     .Scrollable(a => a.Enabled(true))
@@ -274,6 +275,7 @@
            columns.Bound(p => p.PhoneInterviewDate).Format("{0:MM/dd/yyyy}").Title("Phone Interview Date").Width(100);
            columns.Bound(p => p.ArchivedOnDate).Format("{0:MM/dd/yyyy}").Title("Archived Date").Width(100);
            columns.Bound(s => s.BICNum).Title("BIC Number").Width(100);
+           columns.Bound(s => s.CINNum).Title("CIN Number").Width(100);
        }).DataSource(dataSource => dataSource
                  .Ajax()
                  .Read(read => read.Action("HierarchyBinding_Application", "EditOffender").Data("GetAppParameters('#=ApplicationTypeID#')"))

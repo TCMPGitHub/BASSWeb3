@@ -11,4 +11,10 @@ namespace BassWebV3.ViewModels
         public bool IsBenifitWorker { get; set; }
         public UserAssignment() { }
     }
+    public class UserWorkLocation
+    {
+        public int UserId { get; set; }
+        public bool IsBenifitWorker { get; set; }
+        public UserWorkLocation() { }
+    }
 }

@@ -1,65 +1,69 @@
 ﻿@model BassWebV3.ViewModels.OffenderData
 @using Kendo.Mvc.UI
 <style>
-    .k-listbox .k-list-scroller ul{
-        line-height:80%;
+    .k-listbox .k-list-scroller ul {
+        line-height: 80%;
     }
-    .k-listbox .k-item li{
-        line-height:80%;
+
+    .k-listbox .k-item li {
+        line-height: 80%;
     }
-    #divwscrollbar>::-webkit-scrollbar {
+
+    #divwscrollbar > ::-webkit-scrollbar {
         height: 2px;
-        width:2px;
+        width: 2px;
     }
-    #divwscrollbar>::-webkit-scrollbar-track {
-        box-shadow: inset 0 0 2px grey; 
+
+    #divwscrollbar > ::-webkit-scrollbar-track {
+        box-shadow: inset 0 0 2px grey;
         border-radius: 2px;
     }
-    #divwscrollbar>::-webkit-scrollbar-thumb {
-        background:darkgrey; 
+
+    #divwscrollbar > ::-webkit-scrollbar-thumb {
+        background: darkgrey;
         border-radius: 2px;
     }
-    #divwscrollbar>::-webkit-scrollbar-thumb:hover {
-        background:darkblue; 
-    }
+
+        #divwscrollbar > ::-webkit-scrollbar-thumb:hover {
+            background: darkblue;
+        }
     /*#offenderDataForm>::-webkit-scrollbar {
         height: 5px;
         width:5px;
     }
     #offenderDataForm>::-webkit-scrollbar-track {
-        box-shadow: inset 0 0 2px grey; 
+        box-shadow: inset 0 0 2px grey;
         border-radius: 2px;
     }
     #offenderDataForm>::-webkit-scrollbar-thumb {
-        background:darkgrey; 
+        background:darkgrey;
         border-radius: 2px;
     }
     #offenderDataForm>::-webkit-scrollbar-thumb:hover {
-        background:darkblue; 
+        background:darkblue;
     }*/
     .tooltip {
-      position: relative;
-      display: inline-block;
-      border-bottom: 1px dotted black;
+        position: relative;
+        display: inline-block;
+        border-bottom: 1px dotted black;
     }
 
-    .tooltip .tooltiptext {
-      visibility: hidden;
-      width: 120px;
-      background-color: black;
-      color: #fff;
-      text-align: center;
-      border-radius: 6px;
-      padding: 5px 0;
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 120px;
+            background-color: black;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 0;
+            /* Position the tooltip */
+            position: absolute;
+            z-index: 1;
+        }
 
-      /* Position the tooltip */
-      position: absolute;
-      z-index: 1;
-    }
-
-    .tooltip:hover .tooltiptext {
-      visibility: visible;
-    }
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+        }
 </style>
 <script>
     function ReloadApplication() {
@@ -125,7 +129,7 @@
         else
             SaveAssignment(0);
     }
-  </script>
+</script>
 @using (Html.BeginForm("SaveOffenderData", "EditOffender", FormMethod.Post, new
 {
     @id = "offenderDataForm",
@@ -138,7 +142,7 @@
     @Html.HiddenFor(m => m.Inmate.CaseAssigned, new { id = "hdCaseAssigned" })
     @Html.HiddenFor(m => m.Inmate.ReviewStatus)
     @Html.Hidden("AppFlagChanged", "False", new { id = "hdAppFlagChanged" })
-   
+
     <div class="divOffenderMain">
         @{
             var colorDiff = "colorDiff";
@@ -210,7 +214,7 @@
                 </div>
                 <div class="divOffenderPart1tb" style="width:40px;height:22px;">
                     @if (Model.Inmate.ReviewStatus == (int)BassIdentityManagement.Entities.ReviewStatusCode.ReviewComplete)
-                    { <span class="greentext">[Reviewed]</span> }
+                    {<span class="greentext">[Reviewed]</span>}
                 </div>
                 <div class="divOffenderPart1tb" style="width:37%;justify-content:flex-end;margin-top:-2px;">
                     <div class="divOffenderPart1tb" style="width:60px;color:#3465A4;"><b>EPISODE:&nbsp;</b></div>
@@ -219,7 +223,7 @@
                             function  ReloadOffenderData(){
                                 $.when(showLoadWindow("\r\nLoading page...", 0)).then(function () {
                                     kendo.ui.progress($('#loadWindow'), true);
-                                    if($('#loadWindow').data('kendoWindow') !== undefined)                                                       
+                                    if($('#loadWindow').data('kendoWindow') !== undefined)
                                         $('#loadWindow').data('kendoWindow').close();
                                     //$('#popupWindow .confirm_no').trigger('click');
                                 });
@@ -281,19 +285,19 @@
     @readonly = "readonly",
     @style = "padding:0;width:55px!important;font-weight:bold;color:saddlebrown!important;background-color:#f3f2f2;height:22px;",
 }))
-                       </div>
-                   </CDCR>      
+                        </div>
+                    </CDCR>
                     <CTRL class="divOffenderPart1tbs">
                         <div style="height:22px!important;"><b>CTRL&nbsp;</b></div>
                         <div style="height:22px!important;margin-top:-2px;">
                             @(Html.Kendo().TextBoxFor(m => m.DerivedSomsData.SomsReleaseDate).Format("{0:MM/dd/yyyy}")
   .HtmlAttributes(new { @readonly = "readonly", @style = "padding:0;width:80px!important;background-color:#f3f2f2;height:22px;" }))
                         </div>
-                   </CTRL>
+                    </CTRL>
                     <CNDR class="divOffenderPart1tbs">
-                       <div style="height:22px!important;"><b><scan class=@genderDiff title="@genderTitle" >GNDR&nbsp;</scan></b></div>
-                       <div style="height:22px!important;margin-top:-2px;">
-                           @(Html.Kendo().DropDownListFor(m => m.Inmate.GenderID).DataTextField("Code").DataValueField("GenderID")
+                        <div style="height:22px!important;"><b><scan class=@genderDiff title="@genderTitle">GNDR&nbsp;</scan></b></div>
+                        <div style="height:22px!important;margin-top:-2px;">
+                            @(Html.Kendo().DropDownListFor(m => m.Inmate.GenderID).DataTextField("Code").DataValueField("GenderID")
    .BindTo(Model.AllGenders).Name("Inmate.GenderID").OptionLabel("")
    .Enable(Model.EditingEnabled)
    .HtmlAttributes(new
@@ -301,11 +305,11 @@
        @style = "padding:0; width:60px;text-align:top;",
        @class = "overridable",
    }))
-                       </div>
-                     </CNDR>
+                        </div>
+                    </CNDR>
                     <DOB class="divOffenderPart1tbs">
                         <div style="height:22px!important;width:30px!important"><b><scan class=@dobDiff title="@dobTitle">DOB&nbsp;</scan></b>&nbsp;</div>
-                        <div style = "width:100%!important;margin-top:-2px;">
+                        <div style="width:100%!important;margin-top:-2px;">
                             @(Html.Kendo().DatePickerFor(m => m.Inmate.DOB)
                              .Format("MM/dd/yyyy")
                              .Value(Model.Inmate.DOB.HasValue && Model.Inmate.DOB != DateTime.MinValue ? Model.Inmate.DOB.Value.ToShortDateString() : "").Name("Inmate.DOB").DateInput()
@@ -317,18 +321,18 @@
                         </div>
                     </DOB>
                     <SSN class="divOffenderPart1tbs">
-                      <div style="height:22px!important;"><b><scan class=@ssnDiff title="@ssnTitle">SSN&nbsp;</scan></b></div>
-                      <div style="margin-top:-2px;">
-                        @(Html.Kendo().MaskedTextBoxFor(m => m.Inmate.SSN).Mask("000-00-0000").Name("Inmate.SSN")
+                        <div style="height:22px!important;"><b><scan class=@ssnDiff title="@ssnTitle">SSN&nbsp;</scan></b></div>
+                        <div style="margin-top:-2px;">
+                            @(Html.Kendo().MaskedTextBoxFor(m => m.Inmate.SSN).Mask("000-00-0000").Name("Inmate.SSN")
       .HtmlAttributes(new
       {
           @style = "height:22px!important;width:90px!important;display:inline-block;padding:0;",
           @class = "dynamicdisable overridable"
       }).Value((string.IsNullOrEmpty(Model.Inmate.SSN) || Model.Inmate.SSN == "0") ? "" : Model.Inmate.SSN))
-                    </div>
-                </SSN>
-              </div>
-           </div>          
+                        </div>
+                    </SSN>
+                </div>
+            </div>
         </div>
         <line style="height:1px!important;width:100%;border-bottom:1px lightgray solid;"></line>
         <div id="divwscrollbar" class="divOffenderPart1tab" style="height:22px!important;">
@@ -376,7 +380,7 @@
                         </div>
                     </COUNTY>
                 </div>
-            </div>      
+            </div>
             <div class="divOffenderPart1tr">
                 <div class="divOffenderPart1tbh">
                     <RELEASE class="divOffenderPart1tbs" style="width:50%!important;">
@@ -454,7 +458,7 @@
                         </div>
                     </div>
                 </div>
-            </div> 
+            </div>
         </div>
         <div class="divOffenderPart1tab" style="height:105px!important;">
             <div id="ckgroup" class="divOffenderPart1tr">
@@ -484,7 +488,7 @@
             </div>
         </div>
         <line style="height:1px!important;width:100%;border-bottom:1px lightgray solid;"></line>
-        <div class="divOffenderPart1tab" style="height:22px!important;">              
+        <div class="divOffenderPart1tab" style="height:22px!important;">
             <div class="divOffenderPart1tr" style="width:100%;">
                 <div class="divOffenderPart1tbh">
                     <RELEASE class="divOffenderPart1tbs">
@@ -503,7 +507,7 @@
                         <div></div>
                     </COUNTY>
                 </div>
-            </div>     
+            </div>
         </div>
         <line style="height:1px!important;width:100%;border-bottom:1px lightgray solid;"></line>
         <div id="divwscrollbar" class="divOffenderPart1tab" style="height:23px;">
@@ -534,10 +538,10 @@
                     </COUNTY>
                 </div>
             </div>
-         </div>
+        </div>
         <line style="height:1px!important;width:100%;border-bottom: 1px solid lightgray;"></line>
         <div class="divOffenderPart1tab" style="height:240px!important;">
-             <div class="divOffenderPart1tr"><strong><scan style="color:saddlebrown"> MISCELLANEOUS&nbsp;QUESTIONS</scan></strong></div>
+            <div class="divOffenderPart1tr"><strong><scan style="color:saddlebrown"> MISCELLANEOUS&nbsp;QUESTIONS</scan></strong></div>
             <div class="divOffenderPart1tr">
                 <div class="divOffenderPart1tbh">
                     <RELAESE class="divOffenderPart1tbs">
@@ -637,136 +641,131 @@
                 </div>
             </div>
             <line style="height:20px!important;width:100%;"></line>
-     </div>
         </div>
-        <script type="text/javascript">
-            function OFFENDERButtonDisable(disabled) {
-                var buttonR = $("#revertEpisodeButton").data("kendoButton");
-                buttonR.enable(disabled);
-                var buttonS = $("#saveEpisodeButton").data("kendoButton");
-                buttonS.enable(disabled);
-            };
-           
-            $(function () {
-                //var initdata = $('#offenderDataForm').serialize(); //($(".flex-item-b")); // serialiseForm($('#offenderDataForm')); // $('#offenderDataForm').serialize();
-                var initdata = serialize(document.getElementById('offenderDataForm'));
-                SetDatePickerPlaceHolder($("#Inmate_DOB"));
-                SetDatePickerPlaceHolder($("#Inmate_ScreeningDate"));
-                SetDatePickerPlaceHolder($("#Inmate_CIDServiceRefusalDate"));
-                SetDatePickerPlaceHolder($("#Inmate_ReleaseDate"));
-                var screendate = $("#Inmate_ScreeningDate").val();
-                var InfoSigned = $('#Inmate_ReleaseOfInfoSigned').prop('checked');
-                var authchecked = $("#Inmate_AuthToRepresent").prop('checked');
-                var enabled = $("#hdEditingEnabled").val() == "False" ? false : true;
-                var vrss =  $("#Inmate_VRSS").prop('checked');
-                var vet = $("#Inmate_USVet").prop('checked');
-                $(".k-list-container").each(function () {
-                    var elementId = this.id.substring(0, this.id.length - 5).replace('_', '.')
-                    if (elementId != "FacilityID" && elementId != "AllSearchResults" && elementId != "RefEpisode" && elementId != "UserID") {
-                        var tempDL = $("#" + elementId).data("kendoDropDownList");
-                        if (tempDL != undefined) {
-                            if (elementId == "UserID" &&
-                                ($("#hdIsLoginUserBFW").val() == "False" || $("#hdCanEditAllCases").val() == "True"))
-                                tempDL.enable(false);
-                            else
-                                tempDL.enable(enabled);
-                        }
+    </div>
+    <script type="text/javascript">
+        function OFFENDERButtonDisable(disabled) {
+            var buttonR = $("#revertEpisodeButton").data("kendoButton");
+            buttonR.enable(disabled);
+            var buttonS = $("#saveEpisodeButton").data("kendoButton");
+            buttonS.enable(disabled);
+        };       
+        $(function () {
+            //var initdata = $('#offenderDataForm').serialize(); //($(".flex-item-b")); // serialiseForm($('#offenderDataForm')); // $('#offenderDataForm').serialize();
+            var initdata = serialize(document.getElementById('offenderDataForm'));
+            SetDatePickerPlaceHolder($("#Inmate_DOB"));
+            SetDatePickerPlaceHolder($("#Inmate_ScreeningDate"));
+            SetDatePickerPlaceHolder($("#Inmate_CIDServiceRefusalDate"));
+            SetDatePickerPlaceHolder($("#Inmate_ReleaseDate"));
+            var screendate = $("#Inmate_ScreeningDate").val();
+            var InfoSigned = $('#Inmate_ReleaseOfInfoSigned').prop('checked');
+            var authchecked = $("#Inmate_AuthToRepresent").prop('checked');
+            var enabled = $("#hdEditingEnabled").val() == "False" ? false : true;
+            var vrss = $("#Inmate_VRSS").prop('checked');
+            var vet = $("#Inmate_USVet").prop('checked');
+            $(".k-list-container").each(function () {
+                var elementId = this.id.substring(0, this.id.length - 5).replace('_', '.')
+                if (elementId != "FacilityID" && elementId != "AllSearchResults" && elementId != "RefEpisode" && elementId != "UserID") {
+                    var tempDL = $("#" + elementId).data("kendoDropDownList");
+                    if (tempDL != undefined) {
+                        if (elementId == "UserID" &&
+                            ($("#hdIsLoginUserBFW").val() == "False" || $("#hdCanEditAllCases").val() == "True"))
+                            tempDL.enable(false);
+                        else
+                            tempDL.enable(enabled);
                     }
-                });
-                $('#offenderDataForm .dynamicdisable').each(function (e) {
-                    if (!enabled)
-                        $(this).prop('disabled', 'true');
-                    else
-                        $(this).removeAttr('disabled');
-                })
-                $(".k-calendar-container").each(function () {
-                    var nameArray = this.id.split('_');
-                    var elementId = nameArray[0] + "_" + nameArray[1];
-                    var tempDP = $("#" + elementId).data("kendoDatePicker");
-                    if (tempDP != undefined)
-                        tempDP.enable(enabled);
-                });
-                
-                $('#offenderDataForm').submit(function (e) {
-                    e.preventDefault();
-                    var screendate1 = $("#Inmate_ScreeningDate").val();
-                    var InfoSigned1 = $('#Inmate_ReleaseOfInfoSigned').prop('checked');
-                    var authchecked1 = $("#Inmate_AuthToRepresent").prop('checked');
-                    var vrss1 =  $("#Inmate_VRSS").prop('checked');
-                    var vet1 = $("#Inmate_USVet").prop('checked');
-                    var actionText = UnsavedChanges("offenderDataForm");
-                    if(actionText.length > 0)
-                    {
-                        if(!confirm("WARNING: You have unsaved changes in " + actionText + " that will be lost if you save Offender changes.\n\nIf you'd like to discard your changes and continue, click \"OK\"; otherwise, click \"Cancel\".")){
-                            e.stopPropagation();
-                            return false;
-                        }                      
-                    }
-                    var nowdata = $('#offenderDataForm').serialize(); //serialize($(".flex-item-b"));  //serialiseForm($('#offenderDataForm'));
-                    if (initdata === nowdata) {
-                        e.stopPropagation();
-                        return false;
-                    }                 
-                    OFFENDERButtonDisable(false);
-                    initdata = nowdata;
-                    postFormAndReplaceDivHtml($(".flex-item-b"), function(e){ 
-                        if (screendate != screendate1 || authchecked != authchecked1 || InfoSigned != InfoSigned1 || vrss !=  vrss1 || vet != vet1 ) {
-                            ReloadApplication();
-                        }
-                    });
-                });
-                $('#offenderDataForm :input').change(function (e) {
-                    var nowdata = serialize(document.getElementById('offenderDataForm')); 
-                    if (initdata === nowdata) OFFENDERButtonDisable(false);
-                    else OFFENDERButtonDisable(true);
-                }); 
-                
-            });
-            if ($(".divOffenderMain").width() > 600){
-                $("#wscan").css("width", "60px");
-                $("#wscan1").css("width", "60px");
-                $("#wscan2").css("width", "70px");
-            }
-            else{
-                $("#wscan").css("width","10px");
-                $("#wscan1").css("width", "10px");
-                $("#wscan2").css("width", "20px");
-            }
-            $("#offenderDataForm .CalFreshRef").click(function (e) {
-                if ($(this).prop('checked')) {
-                    var obj = $(this);
-                    if (this.id == "CalFreshRefY")
-                    {
-                        $("#hdCalFreshRef").val("True");
-                    }
-                    else if (this.id == "CalFreshRefN")
-                    {
-                        $("#hdCalFreshRef").val("False");
-                    }   
-                    $(".CalFreshRef").each(function () {
-                        if (this.id != obj[0].id)
-                            $(this).prop('checked', false);
-                    });
                 }
+            });
+            $('#offenderDataForm .dynamicdisable').each(function (e) {
+                if (!enabled)
+                    $(this).prop('disabled', 'true');
+                else
+                    $(this).removeAttr('disabled');
+            })
+            $(".k-calendar-container").each(function () {
+                var nameArray = this.id.split('_');
+                var elementId = nameArray[0] + "_" + nameArray[1];
+                var tempDP = $("#" + elementId).data("kendoDatePicker");
+                if (tempDP != undefined)
+                    tempDP.enable(enabled);
             });
 
-            $("#offenderDataForm .CalWorksRef").click(function (e) {
-                if ($(this).prop('checked')) {
-                    var obj = $(this);   
-                    if (this.id == "CalWorksRefY")
-                    {
-                        $("#hdCalWorksRef").val("True");
+            $('#offenderDataForm').submit(function (e) {
+                e.preventDefault();
+                var screendate1 = $("#Inmate_ScreeningDate").val();
+                var InfoSigned1 = $('#Inmate_ReleaseOfInfoSigned').prop('checked');
+                var authchecked1 = $("#Inmate_AuthToRepresent").prop('checked');
+                var vrss1 = $("#Inmate_VRSS").prop('checked');
+                var vet1 = $("#Inmate_USVet").prop('checked');
+                var actionText = UnsavedChanges("offenderDataForm");
+                if (actionText.length > 0) {
+                    if (!confirm("WARNING: You have unsaved changes in " + actionText + " that will be lost if you save Offender changes.\n\nIf you'd like to discard your changes and continue, click \"OK\"; otherwise, click \"Cancel\".")) {
+                        e.stopPropagation();
+                        return false;
                     }
-                    else if (this.id == "CalWorksRefN")
-                    {
-                        $("#hdCalWorksRef").val("False");
-                    }             
-                    $(".CalWorksRef").each(function () {
-                        if (this.id != obj[0].id)
-                            $(this).prop('checked', false);
-                    });
                 }
-                else  $("#hdCalWorksRef").val("");   
+                var nowdata = $('#offenderDataForm').serialize(); //serialize($(".flex-item-b"));  //serialiseForm($('#offenderDataForm'));
+                if (initdata === nowdata) {
+                    e.stopPropagation();
+                    return false;
+                }
+                OFFENDERButtonDisable(false);
+                initdata = nowdata;
+                postFormAndReplaceDivHtml($(".flex-item-b"), function (e) {
+                    if (screendate != screendate1 || authchecked != authchecked1 || InfoSigned != InfoSigned1 || vrss != vrss1 || vet != vet1) {
+                        ReloadApplication();
+                    }
+                });
             });
-        </script>
+            $('#offenderDataForm :input').change(function (e) {
+                var nowdata = serialize(document.getElementById('offenderDataForm'));
+                if (initdata === nowdata) OFFENDERButtonDisable(false);
+                else OFFENDERButtonDisable(true);
+            });
+           
+        });
+        if ($(".divOffenderMain").width() > 600) {
+            $("#wscan").css("width", "60px");
+            $("#wscan1").css("width", "60px");
+            $("#wscan2").css("width", "70px");
+        }
+        else {
+            $("#wscan").css("width", "10px");
+            $("#wscan1").css("width", "10px");
+            $("#wscan2").css("width", "20px");
+        }
+        $("#offenderDataForm .CalFreshRef").click(function (e) {
+            if ($(this).prop('checked')) {
+                var obj = $(this);
+                if (this.id == "CalFreshRefY") {
+                    $("#hdCalFreshRef").val("True");
+                }
+                else if (this.id == "CalFreshRefN") {
+                    $("#hdCalFreshRef").val("False");
+                }
+                $(".CalFreshRef").each(function () {
+                    if (this.id != obj[0].id)
+                        $(this).prop('checked', false);
+                });
             }
+        });
+
+        $("#offenderDataForm .CalWorksRef").click(function (e) {
+            if ($(this).prop('checked')) {
+                var obj = $(this);
+                if (this.id == "CalWorksRefY") {
+                    $("#hdCalWorksRef").val("True");
+                }
+                else if (this.id == "CalWorksRefN") {
+                    $("#hdCalWorksRef").val("False");
+                }
+                $(".CalWorksRef").each(function () {
+                    if (this.id != obj[0].id)
+                        $(this).prop('checked', false);
+                });
+            }
+            else $("#hdCalWorksRef").val("");
+        });
+        //accessWindow.center().open();
+    </script>
+}

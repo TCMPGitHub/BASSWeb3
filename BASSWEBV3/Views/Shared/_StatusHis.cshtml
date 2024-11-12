@@ -1,0 +1,139 @@
+﻿@model BassWebV3.ViewModels.UserWorkLocation
+@using Kendo.Mvc.UI
+@Html.HiddenFor(m => m.UserId, new { @id = "hdUserID" })
+<style>
+    .k-grid-header th.k-header > .k-link {
+        min-height: 15px;
+        line-height: 15px;
+    }
+
+    .widget div {
+        padding: 2px;
+        min-height: 20px;
+    }
+
+    .k-grid {
+        font-size: 12px;
+    }
+
+        .k-grid td {
+            border: 0.5px lightgray solid;
+            border-width: 0.5px 0 0.5px 0.5px;
+            padding: .2em .1em;
+            overflow: hidden;
+            line-height: 1.4em;
+            vertical-align: middle;
+            text-overflow: ellipsis;
+        }
+
+        .k-grid tbody .k-button {
+            min-width: 0px;
+            width: 16px;
+            min-height: 15px;
+            height: 15px;
+        }
+
+    .k-grid-content .k-button {
+        width: 12px;
+        height: 12px;
+        border: none;
+        min-width: 0 !important;
+        border-radius: 0;
+        display: inline-block;
+        font: normal normal normal 10px/1 FontAwesome;
+        font-size: inherit;
+        text-rendering: auto;
+        -webkit-font-smoothing: antialiased;
+        position: relative;
+    }
+
+        .k-grid-content .k-button::before {
+            text-indent: 0;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%,-50%);
+        }
+
+    .k-header k-grid-toolbar k-grid-top {
+        height: 25px !important;
+    }
+
+    .dot {
+        height: 15px;
+        width: 15px;
+        border-radius: 50%;
+        display: inline-block;
+    }
+</style>
+
+<script type="text/javascript">
+    function GetBWUserID() {
+        //var id = 0;
+        //if ($("#UserID").val() !== undefined)
+        //    id = $("#UserID").val();
+        //else
+        //    id = $("#hdUserID").val();
+        return { UserID: $("#UserID").val(), days: $("#ViewDays").data("kendoDropDownList").value() };
+    }
+    function OnDayChange(e) {
+        var grid = $("#gridMonthlyWHS").data("kendoGrid");
+        grid.dataSource.read({ userID: $("#UserID").val(), days: $("#ViewDays").data("kendoDropDownList").value() })
+        grid.refresh();
+    }
+    function onDataBound() {
+        var grid = $("#gridMonthlyWHS").data("kendoGrid");
+        grid.thead.find('th').each(function () {
+            $(this).prop('title', $(this).data('title'));
+        });
+}
+</script>
+<div style="padding:5px;">
+    @(Html.Kendo().Grid<BassWebV3.ViewModels.UserWorkStatus>()
+      .Name("gridMonthlyWHS").Excel(excl=>excl.FileName("BenefitWorkerStatus.xlsx"))
+      .Sortable(sortable => sortable.AllowUnsort(true))
+      .Filterable(filterable => filterable
+        .Extra(false)
+        .Operators(operators =>
+        {
+            operators
+           .ForString(str => str.Clear()
+           .StartsWith("Starts with")
+           .IsEqualTo("Is equal to")
+           );
+        })
+       ).ToolBar(toolbar => {
+        toolbar.Template(@<text>
+                <div style="padding:2px;"><span style="font-weight:bold;">Select Days for reviewing:</span>
+               @( Html.Kendo().DropDownList()
+.Name("ViewDays").Value("10").Events(e => e.Change("OnDayChange"))
+.HtmlAttributes(new { style = "padding:1px;font-weight:bold;" })
+.BindTo(new[] { 1, 2, 3, 4, 5, 10, 15, 20, 25, 30 }))
+    <button class="k-button k-grid-excel btn btn-danger"><span style="font-weight: bold;">Export to Excel</span></button>
+                </div></text>); })
+      .Columns(columns =>
+      {
+          columns.Bound(f => f.StatusID).Hidden();
+          columns.Bound(f => f.UserName).Title("Benifit worker Name").Width(80).HeaderHtmlAttributes(new { style = "font-weight:bold; color:darkblue;text-align:center;" });
+          columns.Bound(f => f.Facility).Title("Facility").Width(30).HeaderHtmlAttributes(new { style = "font-weight:bold; color:darkblue;text-align:center;" });
+          columns.Bound(f => f.LocationNote).Title("Location").Width(80).HeaderHtmlAttributes(new { style = "font-weight:bold; color:darkblue;text-align:center;" });
+          columns.Bound(f => f.Traveling).Title("Traveling").ClientTemplate("<input type='checkbox' #= Traveling ? 'checked' : '' # disabled ='disabled' />")
+             .Width(20).HeaderHtmlAttributes(new { style = "font-weight:bold; color:darkblue;text-align:center;tooltip" });
+          columns.Bound(f => f.CheckInDateTime).Title("Check In").Width(80)
+             .HeaderHtmlAttributes(new { style = "font-weight:bold; color:darkblue;text-align:center;" })
+             .HtmlAttributes(new { style = "line-height:14px!important;padding:0px;" });
+          columns.Bound(f => f.CheckOutDateTime).Title("Check Out").Width(80).ClientTemplate("#= (CheckOutDateTime == null) ? '' : CheckOutDateTime #")
+             .HeaderHtmlAttributes(new { style = "font-weight:bold; color:darkblue;text-align:center;" })
+             .HtmlAttributes(new { style = "line-height:14px!important;padding:0px;" });
+      })
+       .Sortable(sortable => sortable.AllowUnsort(true))
+       .Scrollable(a => a.Height(300))
+       .Resizable(resizable => resizable.Columns(true))
+       .DataSource(dataSource => dataSource
+          .Ajax()
+          //.PageSize(20)
+          .Model(m => { m.Id(f => f.UserID); })
+          .Read(read => read.Action("UserWorkStatusHisRead", "EditOffender").Data("GetBWUserID"))
+      ).Events(e=>e.DataBound("onDataBound"))
+)
+</div>

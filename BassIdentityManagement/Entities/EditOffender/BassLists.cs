@@ -119,5 +119,14 @@ namespace BassIdentityManagement.Entities
         public int SupervisorID { get; set; }
         public string SupervisorName { get; set; }
     }
+
+    public class UserStatus
+    {
+        public int UserID { get; set; }
+        public int SupervisorID { get; set; }
+        public int FacilityID { get; set; }
+        public string UserName { get; set; }
+        public string LocationNote { get; set; }
+    }
 }
 

@@ -1,0 +1,131 @@
+﻿@using Kendo.Mvc.UI
+@model BassWebV3.ViewModels.UserWorkStatus
+@*@using (Html.BeginForm())
+    {*@
+@Html.HiddenFor(m => m.StatusID, new { @id = "hdStatusID" })
+@Html.HiddenFor(m => m.UserID, new { @id = "hdUserID" })
+<p>
+    <h3>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        Complete this form when you arrive or depart from your
+        workstation.
+    </h3>
+</p>
+<table>
+    <tbody>
+        <tr>
+            <td style="text-align:right;width:50%;"><label>Employee Name:&nbsp;&nbsp;</label></td>
+            <td>@Html.Kendo().TextBoxFor(m => m.UserName).HtmlAttributes(new { @style = "width:80%;", @class = "k-textbox", @readOnly = true })</td>
+        </tr>
+        <tr style="height:60px;">
+            <td style="text-align: right; width: 50%;">
+                <label>What is your current travel status?&nbsp;&nbsp;</label>
+            </td>
+            <td>
+                @Html.Kendo().RadioButtonFor(m => m.Traveling).Name("rdStatus1").Checked(Model.Traveling == true).Label("Yes, I am traveling").HtmlAttributes(new { @name = "rdStatus" })&nbsp;&nbsp;
+                @Html.Kendo().RadioButtonFor(m => m.Traveling).Name("rdStatus2").Checked(Model.Traveling == false).Label("No, I am not traveling").HtmlAttributes(new { @name = "rdStatus" })
+                @*<input id="rdStatus1" class="rdStatus" type="radio" title="Yes, I am traveling" valua="1" />
+        <input id="rdStatus2" class="rdStatus" type="radio" title="No, I am not traveling" valua="0" />*@
+            </td>
+        </tr>
+        <tr><td style="height:20px;"></td><td></td></tr>
+        <tr>
+            <td style="text-align: right; width: 50%;">
+                <label>What is your current Travel location?&nbsp;&nbsp;</label>
+            </td>
+            <td>
+                @(Html.Kendo().DropDownListFor(m=>m.FacilityID)
+            .Name("Facility")
+            .DataValueField("FacilityID")
+            .DataTextField("FacilityName")
+            .OptionLabel("Select Facility ...")
+            .HtmlAttributes(new { style = "width:80%;" })
+            .Height(290)
+            .DataSource(source =>
+            {
+                source.Read(read => { read.Action("GetFacilityList", "EditOffender"); });
+            }))
+
+            </td>
+        </tr>
+        <tr style="height:60px;">
+            <td style="text-align: right; width: 50%;">
+                <label>Location Note:&nbsp;&nbsp;</label>
+            </td>
+            <td>
+                @Html.TextAreaFor(m => m.LocationNote, new { @class = "textareaforcasemanngement", @style = "width:80%;height:50px;" })
+            </td>
+        </tr>
+        <tr><td style="height:20px;"></td><td></td></tr>
+        <tr>
+            <td style="text-align: right; width: 50%;">
+                <label>Select your supervisor's email address&nbsp;&nbsp;</label>
+            </td>
+            <td>
+                @(Html.Kendo().DropDownListFor(m=>m.SupervisorID)
+        .Name("Supervisor")
+        .DataValueField("SupervisorID")
+        .DataTextField("SupervisorName")
+        .OptionLabel("Select Email Address ...")
+        .HtmlAttributes(new { style = "width:80%" })
+        .Filter(FilterType.Contains)
+        .Value(Model.SupervisorID.ToString())
+        .Height(290)
+        .DataSource(source =>
+        {
+            source.Read(read =>read.Action("GetSupervisorList", "EditOffender"));
+        }))
+        </tr>
+        <tr><td style="height:10px;"></td><td></td></tr>
+        <tr>
+            <td colspan="2">
+                <center>
+                    <script>
+                            function SaveCheckInOrOut(e) {
+                                var traveling = false;
+                                if ($("[id='rdStatus1_']").is(":checked"))
+                                    traveling = true;
+                                
+                                var selectedFC = $("#Facility").data("kendoDropDownList").dataItem();
+                                if ($("#Facility").val() == "") {
+                                    selectedFC.FacilityID = -1;
+                                    selectedFC.FacilityName = "";
+                                }
+                                var selectedSV = $("#Supervisor").data("kendoDropDownList").dataItem();
+                                if (traveling && selectedFC.FacilityID == -1) {
+                                    alert("Must select a Location and enter location note.");
+                                    return;
+                                }
+                                if (selectedFC.FacilityID > 0 && $("#LocationNote").val() == "") {
+                                    alert("Must enter location note.");
+                                    return;
+                                }
+                                
+                             $.ajax({
+                                url: "@Url.Action("SaveUserWorkstation", "EditOffender")",
+                                 data: {
+                                     StatusID: $("#hdStatusID").val(), UserID: $("#hdUserID").val(), FacilityID: selectedFC.FacilityID,
+                                     LocationNote: $("#LocationNote").val(), Traveling: traveling, Email: selectedSV.SupervisorName, Facility: selectedFC.FacilityName },
+                                type: "POST",
+                                 success: function (data, textStatus, XMLHttpRequest) {
+                                    $("#wndLocation").data("kendoWindow").close();
+
+                                    if ($("#hdEpisodeID").val() != "0") {
+                                        $("#divWindow").show();
+                                        if ($("#hdCanAccessReports").val() == "False" && $("#hdIsLoginUserBFW").val() == "True")
+                                            $("#Assignmentwindow").data("kendoWindow").open();
+                                    }
+                                }
+                            });
+                        };
+                    </script>
+                    <div class="dialog_buttons" style="height:30px!important;bottom:2px;padding:5px;border-top:1px lightgray solid;align-content:center">
+                        @Html.Kendo().Button().Content("Check In").Name("CheckIn").Enable(Model.StatusID == 0).Events(e => e.Click("SaveCheckInOrOut")).HtmlAttributes(new { type = "button" })&nbsp;&nbsp;
+                        @Html.Kendo().Button().Content("Check Out").Name("CheckOut").Enable(Model.StatusID > 0).Events(e => e.Click("SaveCheckInOrOut")).HtmlAttributes(new { type = "button" })
+                    </div>
+                </center>
+            </td>
+        </tr>
+
+    </tbody>
+</table>

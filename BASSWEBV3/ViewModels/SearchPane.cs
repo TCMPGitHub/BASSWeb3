@@ -47,4 +47,18 @@ namespace BassWebV3.ViewModels
         //    IncludeActiveOnly = false;
         //}
     }
+
+    public class UserWorkStatus
+    {
+        public int StatusID { get; set; }
+        public int UserID { get; set; }
+        public int? FacilityID { get; set; }
+        public int SupervisorID { get; set; }
+        public string UserName { get; set; }
+        public string Facility { get; set; }
+        public string LocationNote { get; set; }
+        public bool Traveling { get; set; }
+        public string CheckInDateTime { get; set; }
+        public string CheckOutDateTime { get; set; }
+    }
 }

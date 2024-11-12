@@ -4,10 +4,13 @@ using BassIdentityManagement.Entities;
 using BassWebV3.ViewModels;
 using Kendo.Mvc.Extensions;
 using Kendo.Mvc.UI;
+using NPOI.SS.Formula.Functions;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Text;
@@ -15,7 +18,9 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
+using Telerik.Windows.Documents.Fixed.Model.Objects;
 using static BassWebV3.DataAccess.BassConstants;
+using static NPOI.HSSF.Util.HSSFColor;
 
 namespace BassWebV3.Controllers
 {
@@ -141,6 +146,7 @@ namespace BassWebV3.Controllers
                 IsBenifitWorker = user.IsBenefitWorker
             });
         }
+       
         public ActionResult GetOffenderDetails(int EpisodeID)
         {
             //get latest soms data
@@ -885,6 +891,7 @@ namespace BassWebV3.Controllers
                 NeedPI = needPI
             });
         }
+        
         public ActionResult GetArchivedApplications([DataSourceRequest]DataSourceRequest request, int EpisodeID)
         {
             List<ParameterInfo> parameters = new List<ParameterInfo>();
@@ -991,14 +998,15 @@ namespace BassWebV3.Controllers
                      EventDate,CaseNoteTypeID, CaseNoteTypeReasonID, Text, ActionBy, CreatedDateTime)
                       VALUES ({0},{1},{2}, {3},{4}, {5}, {6}, {7}, {8}, GetDate())
                       IF {2} = 1 UPDATE dbo.[CASENOTE] SET CaseNoteTraceID = @@IDENTITY WHERE CaseNoteTraceID = 0 AND EpisodeID = {0}",
-                      EpisodeID, CaseNote.UserID > 0 ? CaseNote.UserID : CurrentUser.UserID, actionStatus, CaseNote.CaseNoteTraceID, 
+                      EpisodeID, CaseNote.UserID > 0 ? CaseNote.UserID : CurrentUser.UserID, actionStatus, CaseNote.CaseNoteTraceID,
                       CaseNote.EventDate.HasValue ? "'" + CaseNote.EventDate + "'" : "null", CaseNote.CaseNoteTypeID,
-                      CaseNote.CaseNoteTypeReasonID.HasValue ? "'" + CaseNote.CaseNoteTypeReasonID.ToString() + "'" : "null", 
+                      CaseNote.CaseNoteTypeReasonID.HasValue ? "'" + CaseNote.CaseNoteTypeReasonID.ToString() + "'" : "null",
                       "'" + RemoveUnprintableChars(CaseNote.Text) + "'", CurrentUser.UserID);
                 return SqlHelper.ExecuteCommands<CaseNoteData>(query, 1);
             }
             return null;
         }
+        
         public ActionResult FilesRead([DataSourceRequest] DataSourceRequest request, int EpisodeId)
         {
             List<ParameterInfo> parameters = new List<ParameterInfo>();
@@ -1276,7 +1284,113 @@ namespace BassWebV3.Controllers
                 CanEditNote = true
             });
         }
-        public JsonResult GetCaseNoteTypeList(int EpisodeID)
+        
+        public ActionResult GetUserWorkStatus(int userID)
+        {
+            var query = string.Format(@"
+DECLARE @count int=( select COUNT(*) FROM UserWorkStatus Where UserID = {0}
+   AND CheckOutDateTime is null)
+IF @count =0
+BEGIN
+SELECT 0 as StatusID, 0 as UserID, 0 as FacilityID, SupervisorID, 
+     (FirstName + ' ' + LastName)UserName,'' AS Facility,
+     '' as LocationNote,0 as Traveling, null as CheckInDateTime, null as CheckOutDateTime  
+  From  [User] Where UserID = {0}
+END
+ELSE
+BEGIN
+  SELECT t1.StatusID, t1.UserID, t1.FacilityID, t2.SupervisorID, 
+   (t2.FirstName + ' ' + t2.LastName)UserName, t3.Abbr AS Facility,
+   t1.LocationNote,t1.Traveling, t1.CheckInDateTime, t1.CheckOutDateTime  
+From UserWorkStatus t1 right Join [User] t2 ON t1.UserID  = t2.UserID 
+   LEFT OUTER JOIN dbo.[Facility] t3 ON t1.FacilityID = t3.FacilityID
+Where t2.UserID = {0}
+  AND t1.CheckOutDateTime is null
+END
+", userID);
+            var result = SqlHelper.ExecuteCommands<UserWorkStatus>(query, 1).FirstOrDefault();
+            return PartialView("_Status", result);
+        }
+        public ActionResult GetUserWorkStatusHis(int? UserID)
+        {
+            ApplicationUser user = CurrentUser;
+            if (UserID == null)
+            {
+                UserID = CurrentUser.UserID;
+            }
+            else
+            {
+                if (UserID != user.UserID)
+                {
+                    var query = string.Format("SELECT * FROM dbo.[User] WHERE UserID ={0}", UserID);
+                    user = SqlHelper.ExecuteCommands<ApplicationUser>(query, 1).FirstOrDefault();
+                }
+            }
+
+            return PartialView("_StatusHis", new UserWorkLocation
+            {
+                UserId = user.UserID,
+                IsBenifitWorker = user.IsBenefitWorker
+            });
+        }
+        public ActionResult UserWorkStatusHisRead([DataSourceRequest] DataSourceRequest request, int userID, int days)
+        {
+            var query = string.Format(@"
+SELECT t1.UserID,t1.FacilityID,t2.SupervisorID, (t2.FirstName + ' ' + t2.LastName)UserName,
+   t3.Abbr AS Facility,t1.LocationNote,t1.Traveling, 
+   FORMAT(t1.CheckInDateTime,'MM/dd/yyyy hh:mm tt')CheckInDateTime, 
+   FORMAT(t1.CheckOutDateTime,'MM/dd/yyyy hh:mm tt')CheckOutDateTime  
+  From UserWorkStatus t1 INNER JOIN [User] t2 ON t1.UserID  = t2.UserID
+  LEFT OUTER JOIN Facility t3 On t1.FacilityID= t3.FacilityID 
+  Where t2.UserID = {0} AND t1.CheckInDateTime >= dateAdd(day, {1}, GetDate())
+  ORDER BY t1.StatusID Desc", userID, days * (-1));
+
+            var result = SqlHelper.ExecuteCommands<UserWorkStatus>(query, 1).ToList();
+
+            return Json(result.ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult GetFacilityList()
+        {
+            var query = @"SELECT FacilityID, ('(' + Abbr + ') ' + Name) AS FacilityName From Facility Where Disabled<> 1";
+            var result = SqlHelper.ExecuteCommands<FacilityList>(query, 1);
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult GetSupervisorList()
+        {
+            var query = @"SELECT SupervisorID, Email AS SupervisorName From [User] Where UserID =  SupervisorID and IsActive = 1";
+            var result = SqlHelper.ExecuteCommands<SupervisorList>(query, 1);
+            return Json(result, JsonRequestBehavior.AllowGet);
+        }
+        public ActionResult SaveUserWorkstation(int StatusID, int UserID, int FacilityID, 
+            string LocationNote, bool Traveling, string Email, string Facility)
+        {
+            var query = string.Empty;
+            if (StatusID == 0)
+            {
+                query = string.Format(@"INSERT INTO [dbo].[UserWorkStatus]([UserID],[FacilityID],[LocationNote]
+           ,[CheckInDateTime],[Traveling]) VALUES ({0},{1},'{2}', GetDate(), {3})",
+              UserID, (FacilityID == -1 ? "NULL"  : FacilityID.ToString()), LocationNote,(Traveling == true ? "1" : "0"));
+            } 
+            else
+            {
+                query = string.Format(@"Update [dbo].[UserWorkStatus] SET CheckOutDateTime = GetDate() Where StatusID ={0}", StatusID);
+                
+            }
+            var result = SqlHelper.ExecuteCommand(query, 1);
+
+            //send email
+            SmtpClient client = new SmtpClient("smtp.cdcr.ca.gov");
+            MailMessage mailMessage = new MailMessage();
+            mailMessage.From = new MailAddress("FDCDBA3_TCMP@cdcr.ca.gov", "Benefit Worker Status", System.Text.Encoding.UTF8);
+            mailMessage.To.Add(Email);
+            string str = CurrentUser.UserLFM() + (StatusID == 0 ? " checked in" : " checked out") + ( string.IsNullOrEmpty(Facility) ? "." : " at " + Facility + ".");
+            mailMessage.Subject = str;
+            mailMessage.Body = str + " " + LocationNote;
+            client.Send(mailMessage);
+            
+            return null;
+        }
+       public JsonResult GetCaseNoteTypeList(int EpisodeID)
         {
             var query = string.Format(@"DECLARE @IsHIVPos bit =
   (SELECT HIVPos FROM Episode e INNER JOIN Offender o On e.offenderID  = o.OffenderID WHERE EpisodeID = {0})

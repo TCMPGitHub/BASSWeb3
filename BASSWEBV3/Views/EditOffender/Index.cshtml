@@ -186,7 +186,7 @@
             var searchString = lastorcdcr.toUpperCase() + "|" + facility + "|" + bf.toUpperCase() + "|" + pgChecked;
             $("#AllSearchResults").data("kendoDropDownList").dataSource.read({ text: searchString });
         }
-        
+
         function SearchDataBound(e) {
             var dropdown = $("#AllSearchResults").data("kendoDropDownList");
             if (dropdown.dataSource._data.length == 0) {
@@ -229,7 +229,7 @@
             //    $("#divImg").hide();
             //}
         }
-
+      
     </script>
     <div class="bass-searchheader">
         <div class="bass-searchheadersub1">
@@ -263,13 +263,22 @@
                         .Filter(FilterType.Contains)
                         .Value(Model.LoginUser.IsBenefitWorker ? Model.LoginUser.UserID.ToString() : "")
                         .Height(290)
-                        .BindTo(Model.AllSearchUsers))
+                        .BindTo(Model.AllSearchUsers))                     
                     </div>
                     <div id="divImg">
                         @if (!(Model.LoginUser.CanEditAllCases && !Model.LoginUser.IsBenefitWorker))
                         {
                             <a id="getAssignedCase" href="#" title="Show Assigned Cases">
                                 <img src="~/Content/themes/base/Images/FolderOpen1.png" style="width:25px;height:22px;" />
+                            </a>
+                        }
+                    </div>
+                    <div id="divImg">
+                        &nbsp;
+                        @if (Model.LoginUser.CanAccessReports && Model.LoginUser.IsBenefitWorker)
+                        {
+                            <a id="getMonthlyWHS" href="#" title="Workstations">
+                                <img src="~/Content/themes/base/Images/location16.png" style="width:25px;height:22px;" />
                             </a>
                         }
                     </div>
@@ -281,7 +290,7 @@
                 <div class="bass-searchheadersub21">
                     <div><b>Last&nbsp;Name/CDCR#:&nbsp;</b></div>
                     <div>
-                        @(Html.Kendo().TextBoxFor(model => model.SearchString).HtmlAttributes(new { @id = "SearchString", @placeholder = "Enter search criteria...", @onkeypress = "onClick", @style= "width:calc(100vw/6)!important;height:22px!important;" }))
+                        @(Html.Kendo().TextBoxFor(model => model.SearchString).HtmlAttributes(new { @id = "SearchString", @placeholder = "Enter search criteria...", @onkeypress = "onClick", @style= "width:calc(100vw/7)!important;height:22px!important;" }))
                         @(Html.Kendo().Button().Name("searchButton").Content("Search").Icon("search").HtmlAttributes(new { @style = "height:22px;width:75px;display:inline-block;padding:0;" })
                                   .Events(e => { e.Click("onClick"); }))
                     </div>
@@ -333,13 +342,41 @@
                 .Title("My Assigned Cases")
                 .Actions(actions => actions.Custom("pdf").Custom("excel").Refresh().Minimize().Maximize().Close())
                 .LoadContentFrom("GetBWAssignment", "EditOffender", new { BenefitWorkerID = Model.LoginUser.IsBenefitWorker ? Model.LoginUser.UserID : (int?)null })
-            .Draggable()
+            .Draggable().Modal(true)
             .Visible(false)
             .Events(events =>
             {
                 events.Open("onOpenWin");
             })
     )
+    <script>
+        function OpenStatuswndLocation() {
+            $.ajax({
+                 url: "@Url.Action("GetUserWorkStatus", "EditOffender")",
+                data: { userID: $("#hdLoginUserID").val() },
+                type: "POST",
+                success: function (data, textStatus, XMLHttpRequest) {
+                    $("#wndLocation").html(data);
+                    $("#wndLocation").data("kendoWindow").open();
+                }
+          });
+    }
+    </script>
+    @(Html.Kendo().Window().Name("wndLocation").Title("Check In or Check Out")
+          .Animation(false)  @* SET ANIMATION TO FALSE //*@
+          .LoadContentFrom("GetUserWorkStatus", "EditOffender", new { userID = Model.LoginUser.UserID})
+          .Visible(Model.LoginUser.CanAccessReports == false && Model.LoginUser.IsBenefitWorker == true)
+          .Position(builder => builder.Top(120).Left(300)).Width(650).Height(390)
+          .Draggable().Modal(true).Events(e=>e.Refresh("OpenStatuswndLocation")))
+   
+
+    @(Html.Kendo().Window().Name("MonthlyWndLocation").Title("Benefit Worker Status")
+      .Animation(false)  @* SET ANIMATION TO FALSE //*@
+      .LoadContentFrom("GetUserWorkStatusHis", "EditOffender", new { userID = Model.LoginUser.UserID})
+      .Visible(false)
+      .Position(builder => builder.Top(120).Left(300)).Width(700).Height(390)
+      .Draggable().Modal(true))
+
 </div>
 
 <script type="text/javascript">
@@ -431,14 +468,15 @@
             fileName: "MyAssignment.xlsx"
         });
     }
+    
     $(function () {
        $("#Assignmentwindow").keydown(function (e) { if (e.keyCode == 8) e.preventDefault(); });
         if ($("#hdCanAccessReports").val() == "False" && $("#hdIsLoginUserBFW").val() == "True") {
-            $("#divImg").show();
-            if ($("#hdEpisodeID").val() != "0") {
-                $("#divWindow").show();
-                $("#Assignmentwindow").data("kendoWindow").open();
-            }
+            //$("#divImg").show();
+            //if ($("#hdEpisodeID").val() != "0") {
+            //    $("#divWindow").show();
+            //    $("#Assignmentwindow").data("kendoWindow").open();
+            //}
         }
         else
         {
@@ -446,6 +484,7 @@
             $("#divWindow").hide();
             $("#Assignmentwindow").data("kendoWindow").close();
         }
+
         $(".k-tabstrip.k-content.k-state-active").css("background-color", "transparent");
         $("#Assignmentwindow").data("kendoWindow").wrapper.find(".k-i-pdf").parent().click(function (e) {
              $("#gridMyAssignments").getKendoGrid().saveAsPDF();
@@ -477,6 +516,18 @@
             }
         });
 
+        $("#getMonthlyWHS").click(function (e) {
+            if ($("#UserID").val().length > 0) {
+                $("#gridMonthlyWHS").data('kendoGrid').dataSource.read({ UserId: $("#UserID").val() });
+                $("#MonthlyWndLocation").data("kendoWindow").open();
+                $("#MonthlyWndLocation").data("kendoWindow").refresh();
+            }
+            else {
+                //$("#divImg").hide();
+                $("#MonthlyWndLocation").data("kendoWindow").close();
+            }
+        });
+
         var tempDL = $("#UserID").data("kendoDropDownList");
         if( $("#hdIsLoginUserBFW").val() == "True" && $("#hdCanAccessReports").val() == "False"  )
         {
@@ -504,6 +555,9 @@
             $("#SearchString").val(cdcr);
             $("#searchButton").trigger("click");
         }
+
+        /*accessWindow.center().open();*/
+        //accessWindow.open();
     });
 
     //$("#searchButton").kendoTooltip({

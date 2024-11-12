@@ -109,6 +109,14 @@ span#Assignmentwindow_wnd_title.k-window-title{
     background-color: cornflowerblue!important;
     height:25px!important;
 }
+#wndLocation {
+    overflow-y: hidden !important;
+}
+
+span#wndLocation_wnd_title.k-window-title {
+    background-color: cornflowerblue !important;
+    height: 25px !important;
+}
 .parent-flex {
   display: flex;
   flex-flow: row nowrap;
@@ -306,7 +314,7 @@ span#Assignmentwindow_wnd_title.k-window-title{
     padding:1px;
     border-radius: 4px;
     font-size:12px;
-    border: 0.5px solid Darkgrey; 
+    border: 0.5px solid lightgray; 
     background-color:white;
     width:99.8%;
 }

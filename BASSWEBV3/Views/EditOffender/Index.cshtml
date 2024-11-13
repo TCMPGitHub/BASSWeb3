@@ -357,7 +357,8 @@
                 type: "POST",
                 success: function (data, textStatus, XMLHttpRequest) {
                     $("#wndLocation").html(data);
-                    $("#wndLocation").data("kendoWindow").open();
+                    var dialog = $("#wndLocation").data("kendoWindow");
+                    dialog.center().open()
                 }
           });
     }
@@ -366,7 +367,7 @@
           .Animation(false)  @* SET ANIMATION TO FALSE //*@
           .LoadContentFrom("GetUserWorkStatus", "EditOffender", new { userID = Model.LoginUser.UserID})
           .Visible(Model.LoginUser.CanAccessReports == false && Model.LoginUser.IsBenefitWorker == true)
-          .Position(builder => builder.Top(120).Left(300)).Width(650).Height(390)
+          .Width(650).Height(390)
           .Draggable().Modal(true).Events(e=>e.Refresh("OpenStatuswndLocation")))
    
 
@@ -519,8 +520,8 @@
         $("#getMonthlyWHS").click(function (e) {
             if ($("#UserID").val().length > 0) {
                 $("#gridMonthlyWHS").data('kendoGrid').dataSource.read({ UserId: $("#UserID").val() });
-                $("#MonthlyWndLocation").data("kendoWindow").open();
-                $("#MonthlyWndLocation").data("kendoWindow").refresh();
+                var dialog = $("#MonthlyWndLocation").data("kendoWindow");
+                dialog.center().open().refresh();
             }
             else {
                 //$("#divImg").hide();

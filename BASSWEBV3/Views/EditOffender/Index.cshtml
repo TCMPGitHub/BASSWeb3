@@ -357,8 +357,10 @@
                 type: "POST",
                 success: function (data, textStatus, XMLHttpRequest) {
                     $("#wndLocation").html(data);
-                    var dialog = $("#wndLocation").data("kendoWindow");
-                    dialog.center().open()
+                    if ($("#hdCanAccessReports").val() == "False" && $("#hdIsLoginUserBFW").val() == "True") {
+                        var dialog = $("#wndLocation").data("kendoWindow");
+                        dialog.center().open();
+                    }
                 }
           });
     }
@@ -366,7 +368,7 @@
     @(Html.Kendo().Window().Name("wndLocation").Title("Check In or Check Out")
           .Animation(false)  @* SET ANIMATION TO FALSE //*@
           .LoadContentFrom("GetUserWorkStatus", "EditOffender", new { userID = Model.LoginUser.UserID})
-          .Visible(Model.LoginUser.CanAccessReports == false && Model.LoginUser.IsBenefitWorker == true)
+          .Visible(false)
           .Width(650).Height(390)
           .Draggable().Modal(true).Events(e=>e.Refresh("OpenStatuswndLocation")))
    
@@ -471,19 +473,28 @@
     }
     
     $(function () {
-       $("#Assignmentwindow").keydown(function (e) { if (e.keyCode == 8) e.preventDefault(); });
+        $("#Assignmentwindow").keydown(function (e) { if (e.keyCode == 8) e.preventDefault(); });
         if ($("#hdCanAccessReports").val() == "False" && $("#hdIsLoginUserBFW").val() == "True") {
+            
             //$("#divImg").show();
             //if ($("#hdEpisodeID").val() != "0") {
             //    $("#divWindow").show();
             //    $("#Assignmentwindow").data("kendoWindow").open();
             //}
+            var dialog = $("#wndLocation").data("kendoWindow");
+            dialog.center().open()
         }
         else
         {
-            //$("#divImg").hide();
+             //$("#divImg").hide();
             $("#divWindow").hide();
             $("#Assignmentwindow").data("kendoWindow").close();
+            $("#wndLocation").data("kendoWindow").close();
+            var wnd = $("#wntLocation").data("kendoWindow");
+            if (wnd) {
+                wnd.close();
+            }
+            //$("#wntLocation").data("kendoWindow").close();
         }
 
         $(".k-tabstrip.k-content.k-state-active").css("background-color", "transparent");
@@ -525,7 +536,7 @@
             }
             else {
                 //$("#divImg").hide();
-                $("#MonthlyWndLocation").data("kendoWindow").close();
+                //$("#MonthlyWndLocation").data("kendoWindow").close();
             }
         });
 

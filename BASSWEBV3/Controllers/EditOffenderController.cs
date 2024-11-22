@@ -1383,11 +1383,11 @@ SELECT t1.UserID,t1.FacilityID,t2.SupervisorID, (t2.FirstName + ' ' + t2.LastNam
             MailMessage mailMessage = new MailMessage();
             mailMessage.From = new MailAddress("FDCDBA3_TCMP@cdcr.ca.gov", "Benefit Worker Status", System.Text.Encoding.UTF8);
             mailMessage.To.Add(Email);
+            //mailMessage.To.Add("carol.xu@cdcr.ca.gov");
             string str = CurrentUser.UserLFM() + (StatusID == 0 ? " checked in" : " checked out") + ( string.IsNullOrEmpty(Facility) ? "." : " at " + Facility + ".");
             mailMessage.Subject = str;
             mailMessage.Body = str + " " + LocationNote;
-            client.Send(mailMessage);
-            
+            client.Send(mailMessage);           
             return null;
         }
        public JsonResult GetCaseNoteTypeList(int EpisodeID)

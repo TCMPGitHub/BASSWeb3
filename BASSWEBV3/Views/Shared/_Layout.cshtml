@@ -92,7 +92,7 @@
                             @if (ViewBag.IsAppViewOnly == false)
                         {
                             <span class="@(ViewBag.ControllerID == @BassConstants.ControllerID.EditOffender ? "highlight" : "")">
-                                @Html.ActionLink("Edit Offender", "Index", "EditOffender")
+                                @Html.ActionLink("Edit IP", "Index", "EditOffender")
                             </span>
                             if (!(ViewBag.CurrentUser.CanEditAllCases && !ViewBag.CurrentUser.IsBenefitWorker))
                             {

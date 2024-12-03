@@ -720,7 +720,7 @@ toolbar.Template(@<text>
                 new { HighestCasePriority = 8 },
                 new { HighestCasePriority = 9 }}));
     column.Bound(m => m.CDCRNum).Width(60).Title("CDCR#").ClientTemplate("#=CDCRNum#<span id='temp' style='float: right;' onclick='test()'></span>").Filterable(false);
-    column.Bound(m => m.OffenderName).Width(120).Title("Offender Name");
+    column.Bound(m => m.OffenderName).Width(120).Title("IP Name");
     column.Bound(m => m.FacilityName).Width(40).Title("Facility Name").Filterable(f => f.Multi(true).DataSource(ds => ds.Read(r => r.Action("FilterInmatesDetailsFa_read", "Reports"))));
     column.Bound(m => m.ReleaseDate).Format("{0:MM/dd/yyyy}").Width(60).Title("Release Date");
     column.Bound(m => m.Housing).Width(120).Title("Housing");

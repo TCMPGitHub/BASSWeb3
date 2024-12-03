@@ -352,25 +352,33 @@
     <script>
         function OpenStatuswndLocation() {
             $.ajax({
-                 url: "@Url.Action("GetUserWorkStatus", "EditOffender")",
+                url: "@Url.Action("GetUserWorkStatus", "EditOffender")",
                 data: { userID: $("#hdLoginUserID").val() },
                 type: "POST",
                 success: function (data, textStatus, XMLHttpRequest) {
                     $("#wndLocation").html(data);
                     if ($("#hdCanAccessReports").val() == "False" && $("#hdIsLoginUserBFW").val() == "True") {
-                        var dialog = $("#wndLocation").data("kendoWindow");
-                        dialog.center().open();
+                        if ($("#hdStatusID").val() == "0") {
+                            var dialog = $("#wndLocation").data("kendoWindow");
+                            dialog.center().open();
+                        }
                     }
                 }
-          });
-    }
+            });
+        }
+        function onLocationClose() {
+            if ($("#hdCanAccessReports").val() == "False" && $("#hdIsLoginUserBFW").val() == "True") {
+                var dialog1 = $("#Assignmentwindow").data("kendoWindow");
+                dialog1.center().open();
+            }
+        }
     </script>
     @(Html.Kendo().Window().Name("wndLocation").Title("Check In or Check Out")
           .Animation(false)  @* SET ANIMATION TO FALSE //*@
           .LoadContentFrom("GetUserWorkStatus", "EditOffender", new { userID = Model.LoginUser.UserID})
           .Visible(false)
           .Width(650).Height(390)
-          .Draggable().Modal(true).Events(e=>e.Refresh("OpenStatuswndLocation")))
+          .Draggable().Modal(true).Events(e=> { e.Refresh("OpenStatuswndLocation"); e.Close("onLocationClose"); }))
    
 
     @(Html.Kendo().Window().Name("MonthlyWndLocation").Title("Benefit Worker Status")
@@ -481,8 +489,11 @@
             //    $("#divWindow").show();
             //    $("#Assignmentwindow").data("kendoWindow").open();
             //}
-            var dialog = $("#wndLocation").data("kendoWindow");
-            dialog.center().open()
+            //alert($("#hdStatusID").val());
+            if ($("#hdStatusID").val() == "0") {
+                var dialog = $("#wndLocation").data("kendoWindow");
+                dialog.center().open()
+            }         
         }
         else
         {

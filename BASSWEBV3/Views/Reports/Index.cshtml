@@ -179,9 +179,9 @@
       {
           tabstrip.Add().Text("Facility Outlook Report").Selected(true).Content(
           @Html.Partial("_FacilityOutlookReport").ToHtmlString()).HtmlAttributes(new { style = "padding:0px!important;" });
-          tabstrip.Add().Text("Inmates Released Summary Report").Content(
+          tabstrip.Add().Text("IP Released Summary Report").Content(
          @Html.Partial("_InmatesReleasedReport").ToHtmlString()).HtmlAttributes(new { style = "padding:0px;!important" });
-          tabstrip.Add().Text("Inmates Released Details Report").Content(
+          tabstrip.Add().Text("IP Released Details Report").Content(
           @Html.Partial("_InmatesReleasedDetailsReport").ToHtmlString()).HtmlAttributes(new { style = "padding:0px!important;" });
           tabstrip.Add().Text("Productivity Report").Content(
          @Html.Partial("_InmatesProductivityReport", Model).ToHtmlString()).HtmlAttributes(new { style = "padding:0px!important;overflow:hidden;" });

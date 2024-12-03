@@ -166,7 +166,7 @@
         }];
         rows.push({
             cells: [
-                { color: "#0d3c6b", value: "Offender Info", bold: true, vAlign: "center", hAlign: "center", colSpan: 9 },
+                { color: "#0d3c6b", value: "IP Info", bold: true, vAlign: "center", hAlign: "center", colSpan: 9 },
                 { color: "#0d3c6b", value: "Notes In Timeframe", bold: true, vAlign: "center", hAlign: "center", colSpan: 28 },
             ]
         });
@@ -444,7 +444,7 @@
         column.Group(g => g.HeaderTemplate(@<text><span id="rptprodspan" class="greentext"></span></text>)
 .Columns(info =>
 {
-    info.Group(g1 => g1.Title("Offender Info").Width(300)
+    info.Group(g1 => g1.Title("IP Info").Width(300)
         .Columns(subinfo =>
         {
             subinfo.Bound(sb => sb.CDCRNum).Title("CDCR#").ClientFooterTemplate("Total: ").Filterable(false).IncludeInMenu(false);

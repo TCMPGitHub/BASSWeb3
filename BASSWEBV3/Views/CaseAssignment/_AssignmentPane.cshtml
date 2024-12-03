@@ -20,7 +20,7 @@
     {
     column.Bound(m => m.EpisodeID).Hidden(true);
     column.Bound(m => m.CDCRNum).Width(60).Title("CDCR#");
-    column.Bound(m => m.OffenderName).Width(120).Title("Offender Name");
+    column.Bound(m => m.OffenderName).Width(120).Title("IP Name");
     column.Bound(m => m.ReleaseDate).Format("{0:MM/dd/YYYY}").Width(70).Title("Release Date");
     column.Bound(m => m.Housing).Width(120).Title("Housing");
     column.Bound(m => m.HIVPos).Title("HIV/AIDS").Template(@<input type="checkbox" />);

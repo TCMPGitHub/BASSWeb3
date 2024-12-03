@@ -179,7 +179,7 @@
       {
           columns.Bound(f => f.EpisodeID).Hidden();
           columns.Bound(f => f.CDCRNum).Title("CDCR#").Width(60).HeaderHtmlAttributes(new { style = "font-weight:bold; color:darkblue;text-align:center;" }).ClientTemplate("#= BuildNavClientLink(CDCRNum)#");
-          columns.Bound(f => f.ClientName).Title("Offender Name").Width(160).HeaderHtmlAttributes(new { style = "font-weight:bold; color:darkblue;text-align:center;" });
+          columns.Bound(f => f.ClientName).Title("IP Name").Width(160).HeaderHtmlAttributes(new { style = "font-weight:bold; color:darkblue;text-align:center;" });
           columns.Bound(f => f.Housing).Title("Housing").Width(120).HeaderHtmlAttributes(new { style = "font-weight:bold; color:darkblue;text-align:center;" });
           columns.Bound(f => f.MHClass).Title("MHClass/SOMS Codes").Width(100).HeaderHtmlAttributes(new { style = "font-weight:bold; color:darkblue;text-align:center;" });
           columns.Group(group => group.Title("Custody Facility").HeaderHtmlAttributes(new { style = "font-weight:bold; color:darkblue;text-align:center;" })
@@ -215,9 +215,9 @@
         <td style="height:8px!important;border-style:none;"><span class="dot greencolor"></span></td>
         <td style="height:8px!important;border-style:none;width:220px!important;"><span style="color:white;">Data in BASS is different than in SOMs.</span></td>
         <td style="height:8px!important;border-style:none;"><span class="dot warncolor"></span></td>
-        <td style="height:8px!important;border-style:none;width:160px!important;"><span style="color:white;">Inmate has no application.</span></td>
+        <td style="height:8px!important;border-style:none;width:160px!important;"><span style="color:white;">IP has no application.</span></td>
         <td style="height:8px!important;border-style:none;"><span class="dot yellowcolor"></span></td>
-        <td style="height:8px!important;border-style:none;width:220px!important;"><span style="color:white;">Inmate has application older than 120 days.</span></td>
+        <td style="height:8px!important;border-style:none;width:220px!important;"><span style="color:white;">IP has application older than 120 days.</span></td>
     </tr>
 </table>
 

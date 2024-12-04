@@ -106,6 +106,7 @@ namespace BassIdentityManagement.Entities
         public DateTime FileDate { get; set; }
         public bool? CalFreshRef { get; set; }
         public bool? CalWorksRef { get; set; }
+        public bool? FosterYouth { get; set; }
         public bool? DHCSEligibility { get; set; }
         public DateTime? DHCSEligibilityDate { get; set; }
         public string BenefitWorkerName { get; set; }

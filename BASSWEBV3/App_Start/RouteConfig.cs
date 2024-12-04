@@ -27,7 +27,7 @@ namespace BASSWEBV3
             );
 
             routes.MapRoute(
-                name: "EditOffender",
+                name: "EditIP",
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "EditOffender", action = "Index", id = UrlParameter.Optional }
             );

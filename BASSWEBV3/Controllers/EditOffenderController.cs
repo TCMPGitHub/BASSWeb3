@@ -24,7 +24,7 @@ using static NPOI.HSSF.Util.HSSFColor;
 
 namespace BassWebV3.Controllers
 {
-    [RoutePrefix("EditOffender")]
+    [RoutePrefix("EditIP")]
     public class EditOffenderController : AbstractBassController
     {
         [DataContract]
@@ -770,19 +770,19 @@ namespace BassWebV3.Controllers
                 if (submitModel.Inmate.ScreeningDate.HasValue)
                     submitModel.Inmate.ScreeningDateSetByUserID = CurrentUser.UserID;
                 var query = string.Format(@"DECLARE @ScreeningDate DateTime ={4} DECLARE @AuthToRepresent bit = {5} DECLARE @ReleaseOfInfoSigned bit = {6}
-              Update dbo.Episode SET ReleaseDate ={1}, CustodyFacilityID={2}, Housing={3}, ScreeningDate={4}, AuthToRepresent ={5}, ReleaseOfInfoSigned={6}, CalFreshRef ={7}, CalWorksRef = {8}, CIDServiceRefusalDate = {9}, ReleasedToPRCS ={10}, Lifer = {11},ReleaseCountyID ={12}, DestinationID ={13}, ScreeningDateSetByUserID ={34} WHERE EpisodeID = {0}
+              Update dbo.Episode SET ReleaseDate ={1}, CustodyFacilityID={2}, Housing={3}, ScreeningDate={4}, AuthToRepresent ={5}, ReleaseOfInfoSigned={6}, CalFreshRef ={7}, CalWorksRef = {8}, FosterYouth={35}, CIDServiceRefusalDate = {9}, ReleasedToPRCS ={10}, Lifer = {11},ReleaseCountyID ={12}, DestinationID ={13}, ScreeningDateSetByUserID ={34} WHERE EpisodeID = {0}
                   IF @ScreeningDate IS NULL AND @AuthToRepresent= 0 AND @ReleaseOfInfoSigned = 0 BEGIN 
                         Update dbo.Episode SET ApplyForMediCal = 0, ApplyForSSI = 0, ApplyForVA = 0 WHERE EpisodeID = {0}
                      END
                UPDATE dbo.Offender SET DOB ={15}, GenderID ={16}, MiddleName ={17}, LongTermMedCare ={18}, PC290 ={19}, PC457 ={20}, Hospice ={21}, AssistedLiving ={22}, ChronicIllness ={23}, EOP ={24}, CCCMS ={25}, DSH ={26}, PhysDisabled ={27}, DevDisabled = {28},HIVPos ={29}, USVet ={30}, ReviewStatus={31}, Elderly ={32}, SSN ={33} WHERE OffenderID = {14}
               INSERT INTO [dbo].[EpisodeOffender](EpisodeID, MiddleName, PC290, PC457,USVet, SSN,DOB, GenderID, LongTermMedCare, Hospice,AssistedLiving, HIVPos, ChronicIllness, EOP, 
                PhysDisabled, DevDisabled, CCCMS, Elderly,DSH,ReleaseCountyID,ScreeningDate,AuthToRepresent, ReleaseOfInfoSigned,ReleasedToPRCS,        
-               CIDServiceRefusalDate,ReleaseDate,Housing,CustodyFacilityID, Lifer, ScreeningDateSetByUserID, DestinationID, CalFreshRef, CalWorksRef,   
+               CIDServiceRefusalDate,ReleaseDate,Housing,CustodyFacilityID, Lifer, ScreeningDateSetByUserID, DestinationID, CalFreshRef, CalWorksRef,FosterYouth,   
 			   ActionBy, DateAction)
              VALUES ({0},{17},{19},{20},{30},{33},{15},{16},{18},{21},{22},{29},{23},{24},
-	           {27},{28},{25},{32},{26},{12},{4},{5},{6},{10},{9},{1},{3},{2},{11},{34},{13},{7},{8},			   
-			   {35}, GetDate())
-              EXEC [dbo].[spGetInmateProfile] {0}, {35}, 0",
+	           {27},{28},{25},{32},{26},{12},{4},{5},{6},{10},{9},{1},{3},{2},{11},{34},{13},{7},{8},{35},			   
+			   {36}, GetDate())
+              EXEC [dbo].[spGetInmateProfile] {0}, {36}, 0",
                   submitModel.Inmate.EpisodeID,
                   submitModel.Inmate.ReleaseDate.HasValue ? "'" + submitModel.Inmate.ReleaseDate + "'" : "null",
                   submitModel.Inmate.CustodyFacilityID.HasValue ? submitModel.Inmate.CustodyFacilityID.Value.ToString() : "null",
@@ -807,7 +807,8 @@ namespace BassWebV3.Controllers
                   submitModel.Inmate.DevDisabled ? "1" : "0", submitModel.Inmate.HIVPos ? "1" : "0",
                   submitModel.Inmate.USVet ? "1" : "0", submitModel.Inmate.ReviewStatus, submitModel.Inmate.Elderly ? "1" : "0",
                   string.IsNullOrEmpty(submitModel.Inmate.SSN) ? "999-99-9999" : "'" + submitModel.Inmate.SSN + "'",
-                  submitModel.Inmate.ScreeningDateSetByUserID.HasValue ? submitModel.Inmate.ScreeningDateSetByUserID.Value.ToString() : "null", CurrentUser.UserID
+                  submitModel.Inmate.ScreeningDateSetByUserID.HasValue ? submitModel.Inmate.ScreeningDateSetByUserID.Value.ToString() : "null",
+                  ((!submitModel.Inmate.FosterYouth.HasValue) ? "null" : (submitModel.Inmate.FosterYouth.Value == true ? "1" : "0")),CurrentUser.UserID
                   );
 
                 var results = SqlHelper.ExecuteCommandsWithReturnList<object>(query).ToList();

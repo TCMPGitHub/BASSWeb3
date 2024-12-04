@@ -52,7 +52,6 @@ namespace BassWebV3.Controllers
         public ActionResult DefaultAssignmentPane()
         {
             return Content("");
-            //return PartialView("_AssignmentPane", new AssignmentPaneViewModel(db.Users));
         }
 
         public ActionResult CaseAssignmentForAllRead([DataSourceRequest] DataSourceRequest request, DateTime? FromDate, DateTime? ToDate, 

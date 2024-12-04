@@ -576,12 +576,12 @@
                 </RELAESE>
                 <CTRL class="divOffenderPart1tbs" style="width:100%;">
                     <span span id="wscan1" style="width:10px;"></span>
-                    <div class="divOffenderPart1tr" style="width:100%;">
+                    <div class="divOffenderPart1tr" style="width: 100%; height: 140px;">
                         <div class="divOffenderPart1tb" style="width:100%;">
                             @(Html.Kendo().Grid(Model.SomsReleaseDates)
                           .Name("SomsReleaseDates").ToolBar(t => t.Template(@<text><span style="font-size:14px; font-weight:bold;">SOMS Release Date Changes</span></text>))
-                          .HtmlAttributes(new { style = "max-height:120px;max-width:200px;width:100%!important;float:left;" })
-                          .Selectable(s => s.Enabled(true)).Scrollable(s => s.Height(70))
+                          .HtmlAttributes(new { style = "max-height:140px;max-width:200px;width:100%!important;float:left;" })
+                          .Selectable(s => s.Enabled(true)).Scrollable(s => s.Height(90))
                           .Columns(columns =>
                           {
                               columns.Bound(o => o.FileDate).Title("Date Changed").Format("{0:MM/dd/yyyy}").Width(80)
@@ -622,6 +622,20 @@
                 <div class="divOffenderPart1tb">
                     @(Html.Kendo().CheckBox().Label("NO").Name("CalWorksRefN").HtmlAttributes(new { @class = "CalWorksRef" })
                           .Enable(Model.EditingEnabled).Checked(Model.Inmate.CalWorksRef.HasValue && Model.Inmate.CalWorksRef.Value == false))
+                </div>
+            </div>
+            <div class="divOffenderPart1tr">
+                <div class="divOffenderPart1tb" style="width:185px;"><span style="width:150px;"></span><b>Foster&nbsp;Youth&nbsp;</b></div>
+                <div class="divOffenderPart1tb">
+                    @Html.HiddenFor(m => m.Inmate.FosterYouth, new { @id = "hdFosterYouth" })
+                    @(Html.Kendo().CheckBox().Name("FosterYouthY").Label("YES")
+          .HtmlAttributes(new { @class = "FosterYouth" }).Enable(Model.EditingEnabled)
+          .Checked(Model.Inmate.FosterYouth.HasValue && Model.Inmate.FosterYouth.Value == true))&nbsp;&nbsp;&nbsp;&nbsp;
+                </div>
+                <div class="divOffenderPart1tb">
+                    @(Html.Kendo().CheckBox().Name("FosterYouthN").Label("NO")
+          .HtmlAttributes(new { @class = "FosterYouth" }).Enable(Model.EditingEnabled)
+          .Checked(Model.Inmate.FosterYouth.HasValue && Model.Inmate.FosterYouth.Value == false))
                 </div>
             </div>
             <div class="divOffenderPart1tr">
@@ -765,6 +779,25 @@
                 });
             }
             else $("#hdCalWorksRef").val("");
+        });
+        $("#offenderDataForm .FosterYouth").click(function (e) {
+            if ($(this).prop('checked')) {
+                var obj = $(this);
+                if (this.id == "FosterYouthY") {
+                    $("#hdFosterYouth").val("True");
+                }
+                else if (this.id == "FosterYouthN") {
+                    $("#hdFosterYouth").val("False");
+                } 
+                $(".FosterYouth").each(function () {
+                    if (this.id != obj[0].id)
+                        $(this).prop('checked', false);
+                });
+            }
+            else
+            {
+                $("#hdFosterYouth").val("");
+            }
         });
         //accessWindow.center().open();
     </script>

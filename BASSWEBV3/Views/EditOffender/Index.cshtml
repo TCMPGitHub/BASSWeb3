@@ -342,7 +342,7 @@
                 .Title("My Assigned Cases")
                 .Actions(actions => actions.Custom("pdf").Custom("excel").Refresh().Minimize().Maximize().Close())
                 .LoadContentFrom("GetBWAssignment", "EditOffender", new { BenefitWorkerID = Model.LoginUser.IsBenefitWorker ? Model.LoginUser.UserID : (int?)null })
-            .Draggable().Modal(false)
+            .Draggable()
             .Visible(false)
             .Events(events =>
             {

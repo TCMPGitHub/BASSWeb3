@@ -17,7 +17,7 @@ using System.Web.Services;
 
 namespace BASSWEBV3.Controllers
 {
-
+    [RoutePrefix("")]
     public class BASSAccountController : Controller
     {
         private ApplicationSignInManager _signInManager;
@@ -52,7 +52,7 @@ namespace BASSWEBV3.Controllers
         public ActionResult Login(string returnUrl)
         {
             ViewBag.ReturnUrl = returnUrl;
-            return View();
+            return View(new LoginInfo { UserName = "", Password ="" });
         }
         [HttpPost]
         [AllowAnonymous]

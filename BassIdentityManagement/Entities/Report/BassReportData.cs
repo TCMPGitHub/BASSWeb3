@@ -72,6 +72,8 @@ namespace BassIdentityManagement.Entities
         public DateTime EPRD { get; set; }
         public string Housing { get; set; }
         public string StatusDesc { get; set; }
+        public string BICNum { get; set; }
+        public string CINNum { get; set; }
         public int TotalApps { get; set; }
         public int MediCalApps { get; set; }
         public int SsiApps { get; set; }

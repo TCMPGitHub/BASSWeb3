@@ -139,6 +139,8 @@
                    column.Bound(m => m.Housing).Width(130).Title("Housing").Filterable(false);
                    column.Bound(m => m.BenefitWorkerName).Width(150).Title("Benefit Worker").Filterable(false);
                    column.Bound(m => m.StatusDesc).Width(400).Title("Disposition").Filterable(false);
+                   column.Bound(m => m.BICNum).Width(400).Title("BIC Number").Filterable(false);
+                   column.Bound(m => m.CINNum).Width(400).Title("CIN Number").Filterable(false);
                    column.Bound(m => m.TotalApps).Width(50).Title("Total Submitted").ClientFooterTemplate("#=sum#").Filterable(false);
                    column.Bound(m => m.MediCalApps).Width(50).Title("MediCal Submitted").ClientFooterTemplate("#=sum#").Filterable(false);
                    column.Bound(m => m.VaApps).Width(50).Title("VA Submitted").ClientFooterTemplate("#=sum#").Filterable(false);

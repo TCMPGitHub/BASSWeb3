@@ -29,6 +29,7 @@ namespace BassIdentityManagement.Entities
         public DateTime? ArchivedOnDate { get; set; }
         public int CreatedByUserID { get; set; }
         public int? CustodyFacilityId { get; set; }
+        public int? SubmitCountyID { get; set; }
         public DateTime DateAction { get; set; }
         public DateTime? DHCSDate { get; set; }
         public bool IsEditable { get; set; }
@@ -60,5 +61,6 @@ namespace BassIdentityManagement.Entities
         public string Outcome { get; set; }
         public string BICNum { get; set; }
         public string CINNum { get; set; }
+        public string SubmitCounty { get; set; }
     }
 }

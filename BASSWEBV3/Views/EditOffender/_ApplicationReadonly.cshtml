@@ -63,6 +63,13 @@
                 <td class="padded agreed">@Html.TextBoxFor(m => m.CINNum, new { @disabled = "disabled" })</td>
             </tr>
         }
+        @if (!string.IsNullOrEmpty(Model.SubmitCounty))
+        {
+            <tr>
+                <td class="padded agreed alignright">County Of Submit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                <td class="padded agreed">@Html.TextBoxFor(m => m.SubmitCounty, new { @disabled = "disabled" })</td>
+            </tr>
+        }
         @if (Model.IssuedOnDate.HasValue)
         {
             <tr>

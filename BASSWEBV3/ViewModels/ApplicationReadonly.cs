@@ -23,6 +23,7 @@ namespace BassWebV3.ViewModels
         public bool HasBIC { get; set; }
         public string BICNum { get; set; }
         public string CINNum { get; set; }
+        public string SubmitCounty { get; set; }
         public string IssuedOnDate { get; set; }
         public bool RestoreEnabled { get; set; }
     }

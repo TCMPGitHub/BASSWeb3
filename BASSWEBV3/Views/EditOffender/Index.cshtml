@@ -395,7 +395,9 @@
                { value: "MHClass/SOMS Codes", bold: true, background: "#dcdcdc",rowSpan: 2, vAlign: "center", hAlign: "center" },
                { value: "Custody Facility", bold: true, background: "#dcdcdc",colSpan : 2,  vAlign: "center", hAlign: "center" },
                { value: "Release Date", bold: true, background: "#dcdcdc",colSpan : 2, vAlign: "center", hAlign: "center"},
-               { value: "Application", bold: true, background: "#dcdcdc",rowSpan: 2, vAlign: "center", hAlign: "center" },
+               { value: "Application", bold: true, background: "#dcdcdc", rowSpan: 2, vAlign: "center", hAlign: "center" },
+               { value: "BIC Number", bold: true, background: "#dcdcdc", rowSpan: 2, vAlign: "center", hAlign: "center" },
+               { value: "CIN Number", bold: true, background: "#dcdcdc", rowSpan: 2, vAlign: "center", hAlign: "center" },
                { value: "Disposition", bold: true, background: "#dcdcdc",rowSpan: 2, vAlign: "center", hAlign: "center" }
             ]
         }];
@@ -451,6 +453,8 @@
                   {background:releaseColor,value: data[i].SomsReleaseDate },
                   {background:releaseColor,value: data[i].ReleaseDate },
                   {background:bgcolor, value: data[i].Apps },
+                  {background:bgcolor, value: data[i].BICNum },
+                  {background:bgcolor, value: data[i].CINNUM },
                   {background:bgcolor, value: data[i].AppStatus },
                 ]
             });
@@ -461,7 +465,8 @@
             sheets: [
               {
                   columns: [ { width: 60 }, { width: 160 }, { width: 120 }, { width: 150 }, { width: 50 },
-                             { width: 50 }, { width: 75 }, { width: 75 },{ width: 75 }, { width: 160 } ],
+                             { width: 50 }, { width: 75 },  { width: 75 },  { width: 75 },  { width: 75 },
+                             { width: 75 }, { width: 160 }],
                   title: "MyAssignment",
                   rows: rows
               }

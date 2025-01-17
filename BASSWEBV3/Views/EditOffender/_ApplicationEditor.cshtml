@@ -209,7 +209,6 @@
                 <div class="divOffenderPart2tbs" style="width:50%;float:left;">
                     <script>
                         function CountyChange(e) {
-                            debugger
                             e.sender.element[0].form['App.SubmitCountyID'].value = kendo.toString(this.value());
                         }
                     </script>
@@ -292,8 +291,16 @@
                   if(appID > 0 && e.target['App.ApplicationID' + appname].value == 0) {
                         e.target['App.ApplicationID' + appname].value = appID;
                     }
-                  if(appname === "MediCal")
-                        $("#hdIssuedOnDate").val(e.target['App.IssuedOnDate' + appname].value);
+                  if(appname === "MediCal"){
+                      $("#hdIssuedOnDate").val(e.target['App.IssuedOnDate' + appname].value);                      
+                      if (e.target['App.IsEditable'].value == "False") { 
+                            var bicnum = e.target['App.BICNum'].value;
+                            var cinnum = e.target['App.CINNum'].value;
+                          SaveBICORCIN(appID, bicnum, cinnum);
+                          EnableButtons(false, appname, appID);
+                            return;
+                       }
+                   }
                     $("#hdOutcomeDate").val(e.target['App.OutcomeDate' + appname].value);
                     if(appname === "SSI")
                         $("#hdPhoneInterviewDate").val(e.target['App.PhoneInterviewDate' + appname].value);
@@ -463,5 +470,12 @@
                     $("#App_CINNum")[0].disabled = false;
                 }
             }
+          function SaveBICORCIN(appID, BIC, CIN){
+              $.post('/EditOffender/SaveBICCIN', $.param({ "AppId": appID, "BIC": BIC, "CIN":CIN }, true), function (data) {
+              alert("BIC/CIN saved successfully!")
+              });
+
+             return true;
+         }
 </script>
 }                                            

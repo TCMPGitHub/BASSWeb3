@@ -21,6 +21,7 @@ using System.Web.Script.Serialization;
 using Telerik.Windows.Documents.Fixed.Model.Objects;
 using static BassWebV3.DataAccess.BassConstants;
 using static NPOI.HSSF.Util.HSSFColor;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace BassWebV3.Controllers
 {
@@ -234,7 +235,13 @@ namespace BassWebV3.Controllers
             var benefitList = SqlHelper.ExecuteCommands<ApplicationReadonly>(query, 1);
             return Json(benefitList.ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
         }
-
+        public ActionResult SaveBICCIN(int AppId, string BIC, string CIN )
+        {
+            var query = string.Format(@"UPDATE APPLICATION SET BICNum = '{0}', CINNum ='{1}' WHERE  [ApplicationID] = {2}",
+                BIC, CIN, AppId);
+            SqlHelper.ExecuteQueryWithReturnValue(query, 1);
+            return null;
+        }
         [HttpPost]
         public ActionResult SaveAssignCase(int EpisodeID, int BenefitWorkerID)
         {

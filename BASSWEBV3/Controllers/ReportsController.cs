@@ -954,7 +954,7 @@ namespace BassWebV3.Controllers
             List<ParameterInfo> paramList = new List<ParameterInfo> {
                     { new ParameterInfo { ParameterName="ReportDate", ParameterValue=FromDate } }
                 };
-            var results = SqlHelper.GetRecords<FacilityOutlookReportData>("spFacilityOutlookRpt", paramList).ToList();
+            var results = SqlHelper.GetRecords<FacilityOutlookReportData>("spRptFacilityOutlook", paramList).ToList();
             return results;
         }
 

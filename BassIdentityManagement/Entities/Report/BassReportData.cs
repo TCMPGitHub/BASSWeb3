@@ -173,15 +173,17 @@ namespace BassIdentityManagement.Entities
         public string FacilityName { get; set; }
         [Display(Name = "Total EPRD 0-30 days")]
         public int Total30EPRD { get; set; }
-        [Display(Name = "Total EPRD 30-60 days")]
-        public int Total30TO60EPRD { get; set; }
-        [Display(Name = "Total EPRD next 31-95 days")]
-        public int Total31TO95EPRD { get; set; }
-        [Display(Name = "Total EPRD next 96-135 days")]
-        public int Total96TO135EPRD { get; set; }
-        [Display(Name = "Total EPRD next 136-180 days")]
-        public int Total136TO180EPRD { get; set; }
-        [Display(Name = "Total EPRD Difference  31-60 days")]
+        [Display(Name = "Total EPRD Next 31-60 days")]
+        public int Total31TO60EPRD { get; set; }
+        [Display(Name = "Total EPRD next 61-90 days")]
+        public int Total61TO90EPRD { get; set; }
+        [Display(Name = "Total EPRD next 91-120 days")]
+        public int Total91TO120EPRD { get; set; }
+        [Display(Name = "Total EPRD next 121-150 days")]
+        public int Total121TO150EPRD { get; set; }
+        [Display(Name = "Total EPRD next 151-180 days")]
+        public int Total151TO180EPRD { get; set; }
+        [Display(Name = "Total EPRD Difference 31-60 days")]
         public int TotalDiffNext30EPRD { get; set; }
         [Display(Name = "Unknown Disposition (EPRD next 30 days)")]
         public int UnknownDispNext30EPRD { get; set; }

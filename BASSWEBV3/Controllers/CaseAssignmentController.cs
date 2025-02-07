@@ -39,8 +39,9 @@ namespace BassWebV3.Controllers
                 new ReleasePeriod {  PeriodID =3 , Abbr= "61,90", Period="61-90 days" },
                 new ReleasePeriod {  PeriodID =4 , Abbr= "91,120", Period="91-120 days" },
                 new ReleasePeriod {  PeriodID =5 , Abbr= "121,150", Period="121-150 days" },
-                new ReleasePeriod {  PeriodID =6 , Abbr= "0,182", Period="6 months" },
-                new ReleasePeriod {  PeriodID =7 , Abbr= "0,365", Period="1 year" }
+                new ReleasePeriod {  PeriodID =6 , Abbr= "151,180", Period="151-180 days" },
+                new ReleasePeriod {  PeriodID =7 , Abbr= "0,182", Period="6 months" },
+                new ReleasePeriod {  PeriodID =8 , Abbr= "0,365", Period="1 year" }
             };
             //RecordPageLoad(CurrentUser.UserID);
             return View(new SearchPane { FromDate = DateTime.Now, ToDate = DateTime.Now.AddDays(180),

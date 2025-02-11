@@ -26,6 +26,15 @@
         function disableDates(date) {
             return (date && date.getTime() > (new Date()).getTime());
         }
+        function ResetDate() {
+            var startdate = new Date($("#EventDate").val());
+            if (disableDates(startdate)) {
+                $("#EventDate").val("");
+                e.preventDefault();
+                return;
+            }
+            return;
+        }
     </script>
     <table style="height:300px;">
         <tr style="height:25px!important;">
@@ -35,6 +44,7 @@
             <td colspan="5">
                 @(Html.Kendo().DatePickerFor(m => m.EventDate).Format("MM/dd/yyyy")
                                     .Value(Model.EventDate).Name("EventDate").DateInput().DisableDates("disableDates")
+                                    .Events(e=>e.Change("ResetDate"))
                                     .HtmlAttributes(new { @style = "padding:0.5px;margin-top:0.5px;max-width:120px;" }))
             @*@(Html.Kendo().DatePickerFor(m => m.EventDate).HtmlAttributes(new { onkeydown = "javascript:return disableInput(event)" }))*@
             </td>

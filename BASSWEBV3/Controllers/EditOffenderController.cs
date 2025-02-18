@@ -1304,14 +1304,14 @@ IF @count =0
 BEGIN
 SELECT 0 as StatusID, 0 as UserID, 0 as FacilityID, SupervisorID, 
      (FirstName + ' ' + LastName)UserName,'' AS Facility,
-     '' as LocationNote,0 as Traveling, null as CheckInDateTime, null as CheckOutDateTime  
+     '' as LocationNote,'' as CheckedOutNote, 0 as Traveling, null as CheckInDateTime, null as CheckOutDateTime  
   From  [User] Where UserID = {0}
 END
 ELSE
 BEGIN
   SELECT t1.StatusID, t1.UserID, t1.FacilityID, t2.SupervisorID, 
    (t2.FirstName + ' ' + t2.LastName)UserName, t3.Abbr AS Facility,
-   t1.LocationNote,t1.Traveling, t1.CheckInDateTime, t1.CheckOutDateTime  
+   t1.LocationNote,t1.CheckedOutNote, t1.Traveling, t1.CheckInDateTime, t1.CheckOutDateTime  
 From UserWorkStatus t1 right Join [User] t2 ON t1.UserID  = t2.UserID 
    LEFT OUTER JOIN dbo.[Facility] t3 ON t1.FacilityID = t3.FacilityID
 Where t2.UserID = {0}
@@ -1347,7 +1347,7 @@ END
         {
             var query = string.Format(@"
 SELECT t1.UserID,t1.FacilityID,t2.SupervisorID, (t2.FirstName + ' ' + t2.LastName)UserName,
-   t3.Abbr AS Facility,t1.LocationNote,t1.Traveling, 
+   t3.Abbr AS Facility,t1.LocationNote,t1.CheckedOutNote, t1.Traveling, 
    FORMAT(t1.CheckInDateTime,'MM/dd/yyyy hh:mm tt')CheckInDateTime, 
    FORMAT(t1.CheckOutDateTime,'MM/dd/yyyy hh:mm tt')CheckOutDateTime  
   From UserWorkStatus t1 INNER JOIN [User] t2 ON t1.UserID  = t2.UserID
@@ -1372,7 +1372,7 @@ SELECT t1.UserID,t1.FacilityID,t2.SupervisorID, (t2.FirstName + ' ' + t2.LastNam
             return Json(result, JsonRequestBehavior.AllowGet);
         }
         public ActionResult SaveUserWorkstation(int StatusID, int UserID, int FacilityID, 
-            string LocationNote, bool Traveling, string Email, string Facility)
+            string LocationNote,string Note, bool Traveling, string Email, string Facility)
         {
             var query = string.Empty;
             if (StatusID == 0)
@@ -1383,7 +1383,7 @@ SELECT t1.UserID,t1.FacilityID,t2.SupervisorID, (t2.FirstName + ' ' + t2.LastNam
             } 
             else
             {
-                query = string.Format(@"Update [dbo].[UserWorkStatus] SET CheckOutDateTime = GetDate() Where StatusID ={0}", StatusID);
+                query = string.Format(@"Update [dbo].[UserWorkStatus] SET CheckOutDateTime = GetDate(), CheckedOutNote= '{1}' Where StatusID ={0}", StatusID, Note);
                 
             }
             var result = SqlHelper.ExecuteCommand(query, 1);
@@ -1396,7 +1396,7 @@ SELECT t1.UserID,t1.FacilityID,t2.SupervisorID, (t2.FirstName + ' ' + t2.LastNam
             //mailMessage.To.Add("carol.xu@cdcr.ca.gov");
             string str = CurrentUser.UserLFM() + (StatusID == 0 ? " checked in" : " checked out") + ( string.IsNullOrEmpty(Facility) ? "." : " at " + Facility + ".");
             mailMessage.Subject = str;
-            mailMessage.Body = str + " " + LocationNote;
+            mailMessage.Body = str + " " + LocationNote + System.Environment.NewLine + Note;
             client.Send(mailMessage);           
             return null;
         }

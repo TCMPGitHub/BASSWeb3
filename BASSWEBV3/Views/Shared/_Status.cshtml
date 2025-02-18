@@ -25,10 +25,10 @@
                 @Html.Kendo().RadioButtonFor(m => m.Traveling).Name("rdStatus1").Checked(Model.Traveling == true).Label("Yes, I am traveling").HtmlAttributes(new { @name = "rdStatus" })&nbsp;&nbsp;
                 @Html.Kendo().RadioButtonFor(m => m.Traveling).Name("rdStatus2").Checked(Model.Traveling == false).Label("No, I am not traveling").HtmlAttributes(new { @name = "rdStatus" })
                 @*<input id="rdStatus1" class="rdStatus" type="radio" title="Yes, I am traveling" valua="1" />
-        <input id="rdStatus2" class="rdStatus" type="radio" title="No, I am not traveling" valua="0" />*@
+                <input id="rdStatus2" class="rdStatus" type="radio" title="No, I am not traveling" valua="0" />*@
             </td>
         </tr>
-        <tr><td style="height:20px;"></td><td></td></tr>
+        <tr><td style="height:20px;">
         <tr>
             <td style="text-align: right; width: 50%;">
                 <label>What is your current Travel location?&nbsp;&nbsp;</label>
@@ -48,12 +48,18 @@
 
             </td>
         </tr>
-        <tr style="height:60px;">
+        <tr style="height:50px;">
             <td style="text-align: right; width: 50%;">
                 <label>Location Note:&nbsp;&nbsp;</label>
             </td>
             <td>
-                @Html.TextAreaFor(m => m.LocationNote, new { @class = "textareaforcasemanngement", @style = "width:80%;height:50px;resize: none;" })
+                @Html.TextAreaFor(m => m.LocationNote, new { id= "LocationNote", @class = "textareaforcasemanngement", @style = "width:80%;height:40px;resize:none;maxlength:100;"})
+        <tr style="height:50px;">
+            <td style="text-align: right; width: 50%;">
+                <label>Check Out Note:&nbsp;&nbsp;</label>
+            </td>
+            <td>
+                @Html.TextAreaFor(m => m.CheckedOutNote, new { @id = "CheckedOutNote", @class = "textareaforcasemanngement", @style = "width:80%;height:40px;resize: none;maxlength:100;" })
             </td>
         </tr>
         <tr><td style="height:20px;"></td><td></td></tr>
@@ -85,7 +91,7 @@
                                 var traveling = false;
                                 if ($("[id='rdStatus1_']").is(":checked"))
                                     traveling = true;
-                                
+
                                 var selectedFC = $("#Facility").data("kendoDropDownList").dataItem();
                                 if ($("#Facility").val() == "") {
                                     selectedFC.FacilityID = -1;
@@ -100,12 +106,14 @@
                                     alert("Must enter location note.");
                                     return;
                                 }
-                                
+
                              $.ajax({
                                 url: "@Url.Action("SaveUserWorkstation", "EditOffender")",
                                  data: {
                                      StatusID: $("#hdStatusID").val(), UserID: $("#hdUserID").val(), FacilityID: selectedFC.FacilityID,
-                                     LocationNote: $("#LocationNote").val(), Traveling: traveling, Email: selectedSV.SupervisorName, Facility: selectedFC.FacilityName },
+                                     LocationNote: $("#LocationNote").val(), Note: $("#CheckedOutNote").val(),
+                                     Traveling: traveling, Email: selectedSV.SupervisorName, Facility: selectedFC.FacilityName
+                                 },
                                 type: "POST",
                                  success: function (data, textStatus, XMLHttpRequest) {
                                     $("#wndLocation").data("kendoWindow").close();
@@ -129,3 +137,10 @@
 
     </tbody>
 </table>
+@*<script type="text/javascript">
+    debugger
+    if ($("#hdStatusID").val() == "0") {
+        $("#LocationNote").removeAttr("readonly");
+        $("#CheckedOutNote")Attr("readonly", "readonly");
+    }
+</script>*@

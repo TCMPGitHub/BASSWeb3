@@ -57,6 +57,7 @@ namespace BassWebV3.ViewModels
         public string UserName { get; set; }
         public string Facility { get; set; }
         public string LocationNote { get; set; }
+        public string CheckedOutNote { get; set; }
         public bool Traveling { get; set; }
         public string CheckInDateTime { get; set; }
         public string CheckOutDateTime { get; set; }

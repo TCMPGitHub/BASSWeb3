@@ -117,6 +117,7 @@
           columns.Bound(f => f.UserName).Title("Benefit worker Name").Width(80).HeaderHtmlAttributes(new { style = "font-weight:bold; color:darkblue;text-align:center;" });
           columns.Bound(f => f.Facility).Title("Facility").Width(30).HeaderHtmlAttributes(new { style = "font-weight:bold; color:darkblue;text-align:center;" });
           columns.Bound(f => f.LocationNote).Title("Location").Width(80).HeaderHtmlAttributes(new { style = "font-weight:bold; color:darkblue;text-align:center;" });
+          columns.Bound(f => f.CheckedOutNote).Title("Note").Width(80).HeaderHtmlAttributes(new { style = "font-weight:bold; color:darkblue;text-align:center;" });
           columns.Bound(f => f.Traveling).Title("Traveling").ClientTemplate("<input type='checkbox' #= Traveling ? 'checked' : '' # disabled ='disabled' />")
              .Width(20).HeaderHtmlAttributes(new { style = "font-weight:bold; color:darkblue;text-align:center;tooltip" });
           columns.Bound(f => f.CheckInDateTime).Title("Check In").Width(80)

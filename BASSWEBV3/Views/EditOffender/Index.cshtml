@@ -356,8 +356,16 @@
                     if ($("#hdCanAccessReports").val() == "False" && $("#hdIsLoginUserBFW").val() == "True") {
                         if ($("#hdStatusID").val() == "0") {
                             var dialog = $("#wndLocation").data("kendoWindow");
-                            dialog.center().open();
+                            dialog.center().open();                           
                         }
+                    }
+                    if ($("#hdStatusID").val() == "0") {
+                        $("#LocationNote").removeAttr("readonly");
+                        $("#CheckedOutNote").attr("readonly", true);
+                    }
+                    else {
+                        $("#CheckedOutNote").removeAttr("readonly");
+                        $("#LocationNote").attr("readonly", true);
                     }
                 }
             });
@@ -373,13 +381,13 @@
           .Animation(false)  @* SET ANIMATION TO FALSE //*@
           .LoadContentFrom("GetUserWorkStatus", "EditOffender", new { userID = Model.LoginUser.UserID})
           .Visible(false)
-          .Width(650).Height(390)
-          .Draggable().Modal(true).Events(e=> { e.Refresh("OpenStatuswndLocation"); e.Close("onLocationClose"); }))
+          .Width(650).Height(450)
+          .Draggable().Modal(true).Events(e=> { e.Open("OpenStatuswndLocation"); e.Refresh("OpenStatuswndLocation"); e.Close("onLocationClose"); }))
     @(Html.Kendo().Window().Name("MonthlyWndLocation").Title("Benefit Worker Status")
       .Animation(false)  @* SET ANIMATION TO FALSE //*@
       .LoadContentFrom("GetUserWorkStatusHis", "EditOffender", new { userID = Model.LoginUser.UserID})
       .Visible(false).Events(e=> e.Close("onLocationClose"))
-    .Position(builder => builder.Top(120).Left(300)).Width(700).Height(390)
+    .Position(builder => builder.Top(120).Left(300)).Width(750).Height(400)
     .Draggable().Modal(true))
 
 </div>

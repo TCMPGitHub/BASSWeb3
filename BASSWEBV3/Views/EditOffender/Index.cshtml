@@ -382,7 +382,7 @@
           .LoadContentFrom("GetUserWorkStatus", "EditOffender", new { userID = Model.LoginUser.UserID})
           .Visible(false)
           .Width(650).Height(450)
-          .Draggable().Modal(true).Events(e=> { e.Open("OpenStatuswndLocation"); e.Refresh("OpenStatuswndLocation"); e.Close("onLocationClose"); }))
+          .Draggable().Modal(true).Events(e=> { e.Refresh("OpenStatuswndLocation"); e.Close("onLocationClose"); }))
     @(Html.Kendo().Window().Name("MonthlyWndLocation").Title("Benefit Worker Status")
       .Animation(false)  @* SET ANIMATION TO FALSE //*@
       .LoadContentFrom("GetUserWorkStatusHis", "EditOffender", new { userID = Model.LoginUser.UserID})

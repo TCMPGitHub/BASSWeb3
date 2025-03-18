@@ -147,7 +147,7 @@ namespace BassWebV3.Controllers
                 IsBenifitWorker = user.IsBenefitWorker
             });
         }
-       
+
         public ActionResult GetOffenderDetails(int EpisodeID)
         {
             //get latest soms data
@@ -191,34 +191,34 @@ namespace BassWebV3.Controllers
             };
 
             return PartialView("_OffenderData", offender);
-        }
-        //public ActionResult GetPATSIRP(string CDCRNum, int IRPID)
-        //{
-        //    if (CDCRNum == "") return null;
-        //    var results = GetBHRIRPData(CDCRNum,0, IRPID);
-        //    //JavaScriptSerializer serializer = new JavaScriptSerializer();
-        //    ////==================================================================
-        //    //BHRIRPData irp = (BHRIRPData)results[0];
-        //    //irp.IRPList = serializer.Deserialize<List<BHRIRP>>(irp.BHRIRPJson);
+           }
+            //public ActionResult GetPATSIRP(string CDCRNum, int IRPID)
+            //{
+            //    if (CDCRNum == "") return null;
+            //    var results = GetBHRIRPData(CDCRNum,0, IRPID);
+            //    //JavaScriptSerializer serializer = new JavaScriptSerializer();
+            //    ////==================================================================
+            //    //BHRIRPData irp = (BHRIRPData)results[0];
+            //    //irp.IRPList = serializer.Deserialize<List<BHRIRP>>(irp.BHRIRPJson);
 
-        //    //var actuser = string.Empty;
-        //    //var objAdditionInfo = (BHRIRPAdditionInfo)results[3];
-        //    //if (objAdditionInfo.BASSUserID > 0)
-        //    //{
-        //    //    actuser = GetBassUserName(objAdditionInfo.BASSUserID);
-        //    //}
-        //    //else
-        //    //{
-        //    //    if (string.IsNullOrEmpty(objAdditionInfo.PATSUserName))
-        //    //    {
-        //    //        actuser = CurrentUser.UserLFI();
-        //    //    }
-        //    //    else
-        //    //        actuser = objAdditionInfo.PATSUserName;
-        //    //}
-        //    return PartialView("_BHRIRP", results);
-        //}
-        public ActionResult OffenderBenefitRead([DataSourceRequest] DataSourceRequest request, int EpisodeID, int ApplicationTypeID, int CountyID)
+            //    //var actuser = string.Empty;
+            //    //var objAdditionInfo = (BHRIRPAdditionInfo)results[3];
+            //    //if (objAdditionInfo.BASSUserID > 0)
+            //    //{
+            //    //    actuser = GetBassUserName(objAdditionInfo.BASSUserID);
+            //    //}
+            //    //else
+            //    //{
+            //    //    if (string.IsNullOrEmpty(objAdditionInfo.PATSUserName))
+            //    //    {
+            //    //        actuser = CurrentUser.UserLFI();
+            //    //    }
+            //    //    else
+            //    //        actuser = objAdditionInfo.PATSUserName;
+            //    //}
+            //    return PartialView("_BHRIRP", results);
+            //}
+            public ActionResult OffenderBenefitRead([DataSourceRequest] DataSourceRequest request, int EpisodeID, int ApplicationTypeID, int CountyID)
         {
             List<ApplicationReadonly> benefitapp = GetLatestBenefitApp(EpisodeID, ApplicationTypeID, CountyID);
             return Json(benefitapp.ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
@@ -705,7 +705,6 @@ namespace BassWebV3.Controllers
             objlist.Add("EpisodeMdoSvpTypes");
             objlist.Add("EpisodeMedReleaseTypes");
             objlist.Add("Destinations");
-            //objlist.Add("SomsReleaseDates");
             objlist.Add("ApplicationFlags");           
             var results = SqlHelper.GetInmateDetails<object>("spGetInmateProfile", parameters, objlist);
             var episodes = ((List<Episodes>)results[2]).ToList();
@@ -725,7 +724,7 @@ namespace BassWebV3.Controllers
                 AllAcpDshTypes = ((List<EpisodeAcpDshType>)results[6]).ToList(),
                 AllMdoSvpTypes = ((List<EpisodeMdoSvpType>)results[7]).ToList(),
                 AllMedReleaseTypes = ((List<EpisodeMedReleaseType>)results[8]).ToList(),
-                AllDestinationIDs = ((List<LookUpTable>)results[9]).ToList()                  
+                AllDestinationIDs = ((List<LookUpTable>)results[9]).ToList(),
                 //SomsReleaseDates = ((List<ReleaseDateChanged>)results[10]).ToList()
             };
 
@@ -790,6 +789,24 @@ namespace BassWebV3.Controllers
              VALUES ({0},{17},{19},{20},{30},{33},{15},{16},{18},{21},{22},{29},{23},{24},
 	           {27},{28},{25},{32},{26},{12},{4},{5},{6},{10},{9},{1},{3},{2},{11},{34},{13},{7},{8},{35},			   
 			   {36}, GetDate())
+               
+              DECLARE @address nvarchar(100) = {37}
+              IF ISNULl(@address, '') <> ''
+              BEGIN
+                IF EXISTS(SELECT 1 From ADDRESS WHERE EpisodeID = {0})
+                 BEGIN
+                   IF NOT EXISTS(SELECT * FROM ADDRESS WHERE Address = {37} AND City = {38} AND State = {39} AND Zip ={40} AND EpisodeID ={0})
+                   BEGIN
+                     UPDATE Address SET IsLastOne = null WHERE EpisodeID = {0}
+                     INSERT INTO dbo.[Address](EpisodeID, Address, City, State, Zip, IsLastOne, ActionStatus, DateAction, ActionBy) 
+                       VALUES({0},{37},{38},{39},{40},1,2, GetDate(), {36})
+                   END
+                 END
+             ELSE
+                INSERT INTO dbo.[Address](EpisodeID,Address, City, State, Zip, IsLastOne, ActionStatus, DateAction, ActionBy) 
+                VALUES({0},{37},{38},{39},{40},1,1, GetDate(), {36})
+             END
+
               EXEC [dbo].[spGetInmateProfile] {0}, {36}, 0",
                   submitModel.Inmate.EpisodeID,
                   submitModel.Inmate.ReleaseDate.HasValue ? "'" + submitModel.Inmate.ReleaseDate + "'" : "null",
@@ -816,7 +833,12 @@ namespace BassWebV3.Controllers
                   submitModel.Inmate.USVet ? "1" : "0", submitModel.Inmate.ReviewStatus, submitModel.Inmate.Elderly ? "1" : "0",
                   string.IsNullOrEmpty(submitModel.Inmate.SSN) ? "999-99-9999" : "'" + submitModel.Inmate.SSN + "'",
                   submitModel.Inmate.ScreeningDateSetByUserID.HasValue ? submitModel.Inmate.ScreeningDateSetByUserID.Value.ToString() : "null",
-                  ((!submitModel.Inmate.FosterYouth.HasValue) ? "null" : (submitModel.Inmate.FosterYouth.Value == true ? "1" : "0")),CurrentUser.UserID
+                  ((!submitModel.Inmate.FosterYouth.HasValue) ? "null" : (submitModel.Inmate.FosterYouth.Value == true ? "1" : "0")),CurrentUser.UserID,
+                  string.IsNullOrEmpty(submitModel.Inmate.EpisodeAddress) ? "null" : "'" + RemoveUnprintableChars(submitModel.Inmate.EpisodeAddress) + "'",
+                  string.IsNullOrEmpty(submitModel.Inmate.EpisodeAddressCity) ? "null" : "'" + RemoveUnprintableChars(submitModel.Inmate.EpisodeAddressCity) + "'",
+                  string.IsNullOrEmpty(submitModel.Inmate.EpisodeAddressState) ? "'CA'" : "'" + RemoveUnprintableChars(submitModel.Inmate.EpisodeAddressState) + "'",
+                  string.IsNullOrEmpty(submitModel.Inmate.EpisodeAddressZip) ? "null" : "'" + RemoveUnprintableChars(submitModel.Inmate.EpisodeAddressZip) + "'",
+                  ((!submitModel.Inmate.EpisodeAddressUpdated.HasValue) ? "null" : (submitModel.Inmate.EpisodeAddressUpdated.Value == true ? "1" : "0"))
                   );
 
                 var results = SqlHelper.ExecuteCommandsWithReturnList<object>(query).ToList();

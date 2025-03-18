@@ -84,7 +84,7 @@
         postFormAndReplaceDivHtml($(".flex-item-b"));
     }
     function AssignCase() {
-        if ($("#revertEpisodeButton").data("kendoButton").options.enable) {
+       if ($("#revertEpisodeButton").data("kendoButton").options.enable) {
             $.when(showConfirmationWindow('You have unsaved changes. Press Cancel to go back and save these changes, or OK to lose these changes.')).then(function (confirmed) {
                 if (confirmed) {
                     SaveAssignment($("#UserID").val());
@@ -133,7 +133,7 @@
 @using (Html.BeginForm("SaveOffenderData", "EditOffender", FormMethod.Post, new
 {
     @id = "offenderDataForm",
-    @style = "background-color:aliceblue;border:1px lightblue solid;padding:0px;min-height:630px;min-width:500px!important;width:99.5%;height:99.8%!important;"
+    @style = "background-color:aliceblue;border:1px lightblue solid;padding:0px;min-height:730px;min-width:500px!important;width:99.5%;height:99.8%!important;"
 }))
 {
     @Html.HiddenFor(m => m.Inmate.EpisodeID, new { id = "hdInmateEpisodeID" })
@@ -143,83 +143,83 @@
     @Html.HiddenFor(m => m.Inmate.ReviewStatus)
     @Html.Hidden("AppFlagChanged", "False", new { id = "hdAppFlagChanged" })
 
-    <div class="divOffenderMain">
-        @{
-            var colorDiff = "colorDiff";
-            var genderDiff = (Model.DerivedSomsData != null && Model.DerivedSomsData.GenderID != Model.Inmate.GenderID) ? colorDiff : "";
-            var genderTitle = (Model.DerivedSomsData != null && Model.DerivedSomsData.GenderID != Model.Inmate.GenderID) ? (Model.DerivedSomsData.GenderID.HasValue ? Model.AllGenders.Where(w => w.GenderID == Model.DerivedSomsData.GenderID.Value).FirstOrDefault().Code : "(No SOMS data)") : "";
-            var releaseDiff = (Model.DerivedSomsData != null && Model.DerivedSomsData.SomsReleaseDate != Model.Inmate.ReleaseDate) ? colorDiff : "";
-            var releaseTitle = (Model.DerivedSomsData != null && Model.DerivedSomsData.SomsReleaseDate != Model.Inmate.ReleaseDate) ? (Model.DerivedSomsData.SomsReleaseDate.HasValue ? Model.DerivedSomsData.SomsReleaseDate.Value.ToString() : "(No SOMS data)") : "";
-            var dobDiff = (Model.DerivedSomsData != null && Model.DerivedSomsData.DOB != Model.Inmate.DOB) ? colorDiff : "";
-            var dobTitle = (Model.DerivedSomsData != null && Model.DerivedSomsData.DOB != Model.Inmate.DOB) ? (Model.DerivedSomsData.DOB.HasValue ? Model.DerivedSomsData.DOB.ToString() : "(No SOMS data)") : "";
-            var ssnDiff = (Model.DerivedSomsData != null && Model.DerivedSomsData.SSN != Model.Inmate.SSN) ? colorDiff : "";
-            var ssnTitle = (Model.DerivedSomsData != null && Model.DerivedSomsData.SSN != Model.Inmate.SSN) ? (string.IsNullOrEmpty(Model.DerivedSomsData.SSN) ? "(No SOMS data)" : Model.DerivedSomsData.SSN) : "";
-            var countyDiff = (Model.DerivedSomsData != null && Model.DerivedSomsData.ReleaseCountyID != Model.Inmate.ReleaseCountyID) ? colorDiff : "";
-            var countyTitle = (Model.DerivedSomsData != null && Model.DerivedSomsData.ReleaseCountyID != Model.Inmate.ReleaseCountyID) ? (Model.DerivedSomsData.ReleaseCountyID.HasValue ? Model.AllCounties.Where(w => w.CountyID == Model.DerivedSomsData.ReleaseCountyID.Value).FirstOrDefault().Name : "(No SOMS data)") : "";
-            var facilityDiff = (Model.DerivedSomsData != null && Model.DerivedSomsData.CustodyFacilityID != Model.Inmate.CustodyFacilityID) ? colorDiff : "";
-            var facilityTitle = (Model.DerivedSomsData != null && Model.DerivedSomsData.CustodyFacilityID != Model.Inmate.CustodyFacilityID) ? (Model.DerivedSomsData.CustodyFacilityID.HasValue ? Model.AllFacilities.Where(w => w.FacilityID == Model.DerivedSomsData.CustodyFacilityID.Value).FirstOrDefault().Abbr : "(No SOMS data)") : "";
-            var housingDiff = (Model.DerivedSomsData != null && Model.DerivedSomsData.Housing != Model.Inmate.Housing) ? colorDiff : "";
-            var housingTitle = (Model.DerivedSomsData != null && Model.DerivedSomsData.Housing != Model.Inmate.Housing) ? (string.IsNullOrEmpty(Model.DerivedSomsData.Housing) ? "(No SOMS data)" : Model.DerivedSomsData.Housing) : "";
-            var eopDiff = (Model.DerivedSomsData != null && Model.DerivedSomsData.EOP != Model.Inmate.EOP) ? colorDiff : (Model.EditingEnabled ? "" : "dimgraytext");
-            var eopTitle = (Model.DerivedSomsData != null && Model.DerivedSomsData.EOP != Model.Inmate.EOP) ? ((Model.DerivedSomsData.EOP) ? "EOP" : "(No SOMS data)") : "";
-            var cccmsDiff = (Model.DerivedSomsData != null && Model.DerivedSomsData.CCCMS != Model.Inmate.CCCMS) ? colorDiff : (Model.EditingEnabled ? "" : "dimgraytext");
-            var cccmsTitle = (Model.DerivedSomsData != null && Model.DerivedSomsData.CCCMS != Model.Inmate.CCCMS) ? ((Model.DerivedSomsData.CCCMS) ? "CCCMS" : "(No SOMS data)") : "";
-            var devDiff = (Model.DerivedSomsData != null && Model.DerivedSomsData.DevDisabled != Model.Inmate.DevDisabled) ? colorDiff : (Model.EditingEnabled ? "" : "dimgraytext");
-            var devTitle = (Model.DerivedSomsData != null && Model.DerivedSomsData.DevDisabled != Model.Inmate.DevDisabled) ? ((Model.DerivedSomsData.DevDisabled) ? "Development Disabled" : "(No SOMS data)") : "";
-            var physDiff = (Model.DerivedSomsData != null && Model.DerivedSomsData.PhysDisabled != Model.Inmate.PhysDisabled) ? colorDiff : (Model.EditingEnabled ? "" : "dimgraytext");
-            var physTitle = (Model.DerivedSomsData != null && Model.DerivedSomsData.PhysDisabled != Model.Inmate.PhysDisabled) ? ((Model.DerivedSomsData.PhysDisabled) ? "Physical Disabled" : "(No SOMS data)") : "";
-            var ssiDiff = (Model.DerivedSomsData != null && Model.DerivedSomsData.SSI != Model.Inmate.SSI) ? colorDiff : "";
-            var ssiTitle = (Model.DerivedSomsData != null && Model.DerivedSomsData.SSI != Model.Inmate.SSI) ? ((Model.DerivedSomsData.SSI) ? "SSI" : "(No SOMS data)") : "";
-            var pc290Diff = (Model.DerivedSomsData != null && Model.DerivedSomsData.PC290 != Model.Inmate.PC290) ? colorDiff : "";
-            var pc290Title = (Model.DerivedSomsData != null && Model.DerivedSomsData.PC290 != Model.Inmate.PC290) ? ((Model.DerivedSomsData.PC290) ? "PC290" : "(No SOMS data)") : "";
-            var pc457Diff = (Model.DerivedSomsData != null && Model.DerivedSomsData.PC457 != Model.Inmate.PC457) ? colorDiff : "";
-            var pc457Title = (Model.DerivedSomsData != null && Model.DerivedSomsData.PC457 != Model.Inmate.PC457) ? ((Model.DerivedSomsData.PC457) ? "PC457" : "(No SOMS data)") : "";
-            var liferDiff = (Model.DerivedSomsData != null && Model.DerivedSomsData.Lifer != Model.Inmate.Lifer) ? colorDiff : (Model.EditingEnabled ? "" : "dimgraytext");
-            var liferTitle = (Model.DerivedSomsData != null && Model.DerivedSomsData.Lifer != Model.Inmate.Lifer) ? ((Model.DerivedSomsData.Lifer) ? "Lifer" : "(No SOMS data)") : "";
-            var unitDiff = (Model.DerivedSomsData != null && Model.DerivedSomsData.ParoleUnit != Model.Inmate.ParoleUnit) ? colorDiff : "";
-            var unitTitle = (Model.DerivedSomsData != null && Model.DerivedSomsData.ParoleUnit != Model.Inmate.ParoleUnit) ? (string.IsNullOrEmpty(Model.DerivedSomsData.ParoleUnit) ? "(No SOMS data)" : Model.DerivedSomsData.ParoleUnit) : "";
-            var agentDiff = (Model.DerivedSomsData != null && Model.DerivedSomsData.ParoleAgent != Model.Inmate.ParoleAgent) ? colorDiff : "";
-            var agentTitle = (Model.DerivedSomsData != null && Model.DerivedSomsData.ParoleAgent != Model.Inmate.ParoleAgent) ? (string.IsNullOrEmpty(Model.DerivedSomsData.ParoleAgent) ? "(No SOMS data)" : Model.DerivedSomsData.ParoleAgent) : "";
-            var medpDiff = (Model.DerivedSomsData != null && Model.DerivedSomsData.MedPlacement != Model.Inmate.MedPlacement) ? colorDiff : "";
-            var medpTitle = (Model.DerivedSomsData != null && Model.DerivedSomsData.MedPlacement != Model.Inmate.MedPlacement) ? ((Model.DerivedSomsData.MedPlacement) ? "Medical Placement" : "(No SOMS data)") : "";
-            var namepDiff = (Model.DerivedSomsData != null && (Model.DerivedSomsData.FirstName != Model.Inmate.FirstName || Model.DerivedSomsData.LastName != Model.Inmate.LastName)) ? colorDiff : "";
-            var nameTitle = "";
-            if (Model.DerivedSomsData == null)
-            {
-                nameTitle = (namepDiff != "" ? "" : "(No SOMS data)");
-            }
-            else
-            {
-                nameTitle = namepDiff != "" ? ((string.IsNullOrEmpty(Model.DerivedSomsData.FirstName) ? "" : Model.DerivedSomsData.FirstName) + " " +
-                            (string.IsNullOrEmpty(Model.DerivedSomsData.LastName) ? "" : Model.DerivedSomsData.LastName)) : "";
-            }
+<div class="divOffenderMain">
+    @{
+        var colorDiff = "colorDiff";
+        var genderDiff = (Model.DerivedSomsData != null && Model.DerivedSomsData.GenderID != Model.Inmate.GenderID) ? colorDiff : "";
+        var genderTitle = (Model.DerivedSomsData != null && Model.DerivedSomsData.GenderID != Model.Inmate.GenderID) ? (Model.DerivedSomsData.GenderID.HasValue ? Model.AllGenders.Where(w => w.GenderID == Model.DerivedSomsData.GenderID.Value).FirstOrDefault().Code : "(No SOMS data)") : "";
+        var releaseDiff = (Model.DerivedSomsData != null && Model.DerivedSomsData.SomsReleaseDate != Model.Inmate.ReleaseDate) ? colorDiff : "";
+        var releaseTitle = (Model.DerivedSomsData != null && Model.DerivedSomsData.SomsReleaseDate != Model.Inmate.ReleaseDate) ? (Model.DerivedSomsData.SomsReleaseDate.HasValue ? Model.DerivedSomsData.SomsReleaseDate.Value.ToString() : "(No SOMS data)") : "";
+        var dobDiff = (Model.DerivedSomsData != null && Model.DerivedSomsData.DOB != Model.Inmate.DOB) ? colorDiff : "";
+        var dobTitle = (Model.DerivedSomsData != null && Model.DerivedSomsData.DOB != Model.Inmate.DOB) ? (Model.DerivedSomsData.DOB.HasValue ? Model.DerivedSomsData.DOB.ToString() : "(No SOMS data)") : "";
+        var ssnDiff = (Model.DerivedSomsData != null && Model.DerivedSomsData.SSN != Model.Inmate.SSN) ? colorDiff : "";
+        var ssnTitle = (Model.DerivedSomsData != null && Model.DerivedSomsData.SSN != Model.Inmate.SSN) ? (string.IsNullOrEmpty(Model.DerivedSomsData.SSN) ? "(No SOMS data)" : Model.DerivedSomsData.SSN) : "";
+        var countyDiff = (Model.DerivedSomsData != null && Model.DerivedSomsData.ReleaseCountyID != Model.Inmate.ReleaseCountyID) ? colorDiff : "";
+        var countyTitle = (Model.DerivedSomsData != null && Model.DerivedSomsData.ReleaseCountyID != Model.Inmate.ReleaseCountyID) ? (Model.DerivedSomsData.ReleaseCountyID.HasValue ? Model.AllCounties.Where(w => w.CountyID == Model.DerivedSomsData.ReleaseCountyID.Value).FirstOrDefault().Name : "(No SOMS data)") : "";
+        var facilityDiff = (Model.DerivedSomsData != null && Model.DerivedSomsData.CustodyFacilityID != Model.Inmate.CustodyFacilityID) ? colorDiff : "";
+        var facilityTitle = (Model.DerivedSomsData != null && Model.DerivedSomsData.CustodyFacilityID != Model.Inmate.CustodyFacilityID) ? (Model.DerivedSomsData.CustodyFacilityID.HasValue ? Model.AllFacilities.Where(w => w.FacilityID == Model.DerivedSomsData.CustodyFacilityID.Value).FirstOrDefault().Abbr : "(No SOMS data)") : "";
+        var housingDiff = (Model.DerivedSomsData != null && Model.DerivedSomsData.Housing != Model.Inmate.Housing) ? colorDiff : "";
+        var housingTitle = (Model.DerivedSomsData != null && Model.DerivedSomsData.Housing != Model.Inmate.Housing) ? (string.IsNullOrEmpty(Model.DerivedSomsData.Housing) ? "(No SOMS data)" : Model.DerivedSomsData.Housing) : "";
+        var eopDiff = (Model.DerivedSomsData != null && Model.DerivedSomsData.EOP != Model.Inmate.EOP) ? colorDiff : (Model.EditingEnabled ? "" : "dimgraytext");
+        var eopTitle = (Model.DerivedSomsData != null && Model.DerivedSomsData.EOP != Model.Inmate.EOP) ? ((Model.DerivedSomsData.EOP) ? "EOP" : "(No SOMS data)") : "";
+        var cccmsDiff = (Model.DerivedSomsData != null && Model.DerivedSomsData.CCCMS != Model.Inmate.CCCMS) ? colorDiff : (Model.EditingEnabled ? "" : "dimgraytext");
+        var cccmsTitle = (Model.DerivedSomsData != null && Model.DerivedSomsData.CCCMS != Model.Inmate.CCCMS) ? ((Model.DerivedSomsData.CCCMS) ? "CCCMS" : "(No SOMS data)") : "";
+        var devDiff = (Model.DerivedSomsData != null && Model.DerivedSomsData.DevDisabled != Model.Inmate.DevDisabled) ? colorDiff : (Model.EditingEnabled ? "" : "dimgraytext");
+        var devTitle = (Model.DerivedSomsData != null && Model.DerivedSomsData.DevDisabled != Model.Inmate.DevDisabled) ? ((Model.DerivedSomsData.DevDisabled) ? "Development Disabled" : "(No SOMS data)") : "";
+        var physDiff = (Model.DerivedSomsData != null && Model.DerivedSomsData.PhysDisabled != Model.Inmate.PhysDisabled) ? colorDiff : (Model.EditingEnabled ? "" : "dimgraytext");
+        var physTitle = (Model.DerivedSomsData != null && Model.DerivedSomsData.PhysDisabled != Model.Inmate.PhysDisabled) ? ((Model.DerivedSomsData.PhysDisabled) ? "Physical Disabled" : "(No SOMS data)") : "";
+        var ssiDiff = (Model.DerivedSomsData != null && Model.DerivedSomsData.SSI != Model.Inmate.SSI) ? colorDiff : "";
+        var ssiTitle = (Model.DerivedSomsData != null && Model.DerivedSomsData.SSI != Model.Inmate.SSI) ? ((Model.DerivedSomsData.SSI) ? "SSI" : "(No SOMS data)") : "";
+        var pc290Diff = (Model.DerivedSomsData != null && Model.DerivedSomsData.PC290 != Model.Inmate.PC290) ? colorDiff : "";
+        var pc290Title = (Model.DerivedSomsData != null && Model.DerivedSomsData.PC290 != Model.Inmate.PC290) ? ((Model.DerivedSomsData.PC290) ? "PC290" : "(No SOMS data)") : "";
+        var pc457Diff = (Model.DerivedSomsData != null && Model.DerivedSomsData.PC457 != Model.Inmate.PC457) ? colorDiff : "";
+        var pc457Title = (Model.DerivedSomsData != null && Model.DerivedSomsData.PC457 != Model.Inmate.PC457) ? ((Model.DerivedSomsData.PC457) ? "PC457" : "(No SOMS data)") : "";
+        var liferDiff = (Model.DerivedSomsData != null && Model.DerivedSomsData.Lifer != Model.Inmate.Lifer) ? colorDiff : (Model.EditingEnabled ? "" : "dimgraytext");
+        var liferTitle = (Model.DerivedSomsData != null && Model.DerivedSomsData.Lifer != Model.Inmate.Lifer) ? ((Model.DerivedSomsData.Lifer) ? "Lifer" : "(No SOMS data)") : "";
+        var unitDiff = (Model.DerivedSomsData != null && Model.DerivedSomsData.ParoleUnit != Model.Inmate.ParoleUnit) ? colorDiff : "";
+        var unitTitle = (Model.DerivedSomsData != null && Model.DerivedSomsData.ParoleUnit != Model.Inmate.ParoleUnit) ? (string.IsNullOrEmpty(Model.DerivedSomsData.ParoleUnit) ? "(No SOMS data)" : Model.DerivedSomsData.ParoleUnit) : "";
+        var agentDiff = (Model.DerivedSomsData != null && Model.DerivedSomsData.ParoleAgent != Model.Inmate.ParoleAgent) ? colorDiff : "";
+        var agentTitle = (Model.DerivedSomsData != null && Model.DerivedSomsData.ParoleAgent != Model.Inmate.ParoleAgent) ? (string.IsNullOrEmpty(Model.DerivedSomsData.ParoleAgent) ? "(No SOMS data)" : Model.DerivedSomsData.ParoleAgent) : "";
+        var medpDiff = (Model.DerivedSomsData != null && Model.DerivedSomsData.MedPlacement != Model.Inmate.MedPlacement) ? colorDiff : "";
+        var medpTitle = (Model.DerivedSomsData != null && Model.DerivedSomsData.MedPlacement != Model.Inmate.MedPlacement) ? ((Model.DerivedSomsData.MedPlacement) ? "Medical Placement" : "(No SOMS data)") : "";
+        var namepDiff = (Model.DerivedSomsData != null && (Model.DerivedSomsData.FirstName != Model.Inmate.FirstName || Model.DerivedSomsData.LastName != Model.Inmate.LastName)) ? colorDiff : "";
+        var nameTitle = "";
+        if (Model.DerivedSomsData == null)
+        {
+            nameTitle = (namepDiff != "" ? "" : "(No SOMS data)");
         }
-        <div class="divOffenderPart1tab" style="border-bottom:1px lightgray solid">
-            <div class="divOffenderPart1tr">
-                <div class="divOffenderPart1tb" style="width:37%;color:#3465A4;"><b>IP/EPISODE&nbsp;DATA&nbsp;</b></div>
-                <div class="divOffenderPart1tb" style="width:30%;margin-top:-2px">
-                    <div class="divOffenderPart1tb" style="width:50px;height:22px;">
-                        @(Html.Kendo().Button().Name("addCaseButton").Content("Assign")
+        else
+        {
+            nameTitle = namepDiff != "" ? ((string.IsNullOrEmpty(Model.DerivedSomsData.FirstName) ? "" : Model.DerivedSomsData.FirstName) + " " +
+                        (string.IsNullOrEmpty(Model.DerivedSomsData.LastName) ? "" : Model.DerivedSomsData.LastName)) : "";
+        }
+    }
+    <div class="divOffenderPart1tab" style="border-bottom:1px lightgray solid">
+        <div class="divOffenderPart1tr">
+            <div class="divOffenderPart1tb" style="width:37%;color:#3465A4;"><b>IP/EPISODE&nbsp;DATA&nbsp;</b></div>
+            <div class="divOffenderPart1tb" style="width:30%;margin-top:-2px">
+                <div class="divOffenderPart1tb" style="width:50px;height:22px;">
+                    @(Html.Kendo().Button().Name("addCaseButton").Content("Assign")
 .Enable(Model.IsUnassignedCase).Events(e => e.Click("AssignCase"))
 .HtmlAttributes(new { type="button", @class = "buttonWidth" }))
-                    </div>
-                    <div class="divOffenderPart1tb" style="width:50px;height:22px;">
-                        @(Html.Kendo().Button().Name("revertEpisodeButton").Content("Revert").Enable(false).Events(e => e.Click("ResetData"))
+                </div>
+                <div class="divOffenderPart1tb" style="width:50px;height:22px;">
+                    @(Html.Kendo().Button().Name("revertEpisodeButton").Content("Revert").Enable(false).Events(e => e.Click("ResetData"))
 .HtmlAttributes(new { type = "reset", @class = "buttonWidth" }))
-                    </div>
-                    <div class="divOffenderPart1tb" style="width:50px;height:22px;">
-                        @(Html.Kendo().Button().Name("saveEpisodeButton").Content("Save").Enable(false)  //.Events(e => e.Click("SaveOffender"))
+                </div>
+                <div class="divOffenderPart1tb" style="width:50px;height:22px;">
+                    @(Html.Kendo().Button().Name("saveEpisodeButton").Content("Save").Enable(false)  //.Events(e => e.Click("SaveOffender"))
 .HtmlAttributes(new { @class = "k-st buttonWidth" }))
-                    </div>
                 </div>
-                <div class="divOffenderPart1tb" style="width:40px;height:22px;">
-                    @if (Model.Inmate.ReviewStatus == (int)BassIdentityManagement.Entities.ReviewStatusCode.ReviewComplete)
-                    {<span class="greentext">[Reviewed]</span>}
-                </div>
-                <div class="divOffenderPart1tb" style="width:37%;justify-content:flex-end;margin-top:-2px;">
-                    <div class="divOffenderPart1tb" style="width:60px;color:#3465A4;"><b>EPISODE:&nbsp;</b></div>
-                    <div class="divOffenderPart1tb" style="height:22px;">
-                        <script>
+            </div>
+            <div class="divOffenderPart1tb" style="width:40px;height:22px;">
+                @if (Model.Inmate.ReviewStatus == (int)BassIdentityManagement.Entities.ReviewStatusCode.ReviewComplete)
+                {<span class="greentext">[Reviewed]</span>}
+            </div>
+            <div class="divOffenderPart1tb" style="width:37%;justify-content:flex-end;margin-top:-2px;">
+                <div class="divOffenderPart1tb" style="width:60px;color:#3465A4;"><b>EPISODE:&nbsp;</b></div>
+                <div class="divOffenderPart1tb" style="height:22px;">
+                    <script>
                             function  ReloadOffenderData(){
                                 $.when(showLoadWindow("\r\nLoading page...", 0)).then(function () {
                                     kendo.ui.progress($('#loadWindow'), true);
@@ -241,76 +241,76 @@
                                 }
                             });
                          }
-                        </script>
-                        @(Html.Kendo().DropDownListFor(m => m.Inmate.EpisodeID).Name("RefEpisode").Events(e => e.Change("ReloadOffenderData"))
+                    </script>
+                    @(Html.Kendo().DropDownListFor(m => m.Inmate.EpisodeID).Name("RefEpisode").Events(e => e.Change("ReloadOffenderData"))
 .DataValueField("EpisodeID")
 .DataTextField("ReferralDate")
 .BindTo(Model.AllEpisodes)
 .HtmlAttributes(new { @style = "width:110px;margin-top:-2px;", @class = "keepEnabled", @title = "Select Episode by Referral Date" })  )
-                    </div>
                 </div>
             </div>
         </div>
-        @*=============================================================================================================================*@
-        @*Note: The hidden input for ReviewStatus ensures that the model binder receives the current value for ReviewStatus
-            when the "Review Complete" checkbox is not submitted. When the checkbox is displayed and the user checks the box, the
-            checkbox value ( ReviewStatusID.ReviewComplete) will override the hidden field and set the flag accordingly.*@
-        @*=============================================================================================================================*@
-        @{
-            //need to review?
-            var ReviewFlagged = (Model.Inmate.ReviewStatus == (int)BassIdentityManagement.Entities.ReviewStatusCode.Flagged) ? "" : "none";
-        }
-        <div class="divOffenderPart1tab" style="margin-top:5px;height:50px!important;background-color:yellow;padding:2px;font-size:smaller;display:@ReviewFlagged">
-            <div class="divOffenderPart1tr">
-                <span style="color:red;float:left">
-                    This offender is flagged for review due to a SOMS data change.<br />
-                    Check the "Review Complete" Checkbox to confirm the current data.
-                </span>
-            </div>
-            <div class="divOffenderPart1tr">
-                <span style="color:red;float:right;margin:-5px 0 0">
-                    <label for=@Html.IdFor(m => m.Inmate.ReviewStatus)>Review Complete</label><input type="checkbox" id=@Html.IdFor(m => m.Inmate.ReviewStatus) name=@Html.NameFor(m => m.Inmate.ReviewStatus) value="2" />
-                </span>
-            </div>
+    </div>
+    @*=============================================================================================================================*@
+    @*Note: The hidden input for ReviewStatus ensures that the model binder receives the current value for ReviewStatus
+        when the "Review Complete" checkbox is not submitted. When the checkbox is displayed and the user checks the box, the
+        checkbox value ( ReviewStatusID.ReviewComplete) will override the hidden field and set the flag accordingly.*@
+    @*=============================================================================================================================*@
+    @{
+        //need to review?
+        var ReviewFlagged = (Model.Inmate.ReviewStatus == (int)BassIdentityManagement.Entities.ReviewStatusCode.Flagged) ? "" : "none";
+    }
+    <div class="divOffenderPart1tab" style="margin-top:5px;height:50px!important;background-color:yellow;padding:2px;font-size:smaller;display:@ReviewFlagged">
+        <div class="divOffenderPart1tr">
+            <span style="color:red;float:left">
+                This offender is flagged for review due to a SOMS data change.<br />
+                Check the "Review Complete" Checkbox to confirm the current data.
+            </span>
         </div>
-        <div id="divwscrollbar" class="divOffenderPart1tab" style="height:22px!important;">
-            <div class="divOffenderPart1tr" style="overflow-x:auto;overflow-y:hidden;">
-                <div class="divOffenderPart1tbh">
-                    <CDCR class="divOffenderPart1tbs">
-                        <div style="height:22px!important;"><b>CDCR#&nbsp;</b></div>
-                        <div style="height:22px!important;margin-top:-2px;">
-                            @(Html.Kendo().TextBoxFor(m => m.Inmate.CDCRNum)
+        <div class="divOffenderPart1tr">
+            <span style="color:red;float:right;margin:-5px 0 0">
+                <label for=@Html.IdFor(m => m.Inmate.ReviewStatus)>Review Complete</label><input type="checkbox" id=@Html.IdFor(m => m.Inmate.ReviewStatus) name=@Html.NameFor(m => m.Inmate.ReviewStatus) value="2" />
+            </span>
+        </div>
+    </div>
+    <div id="divwscrollbar" class="divOffenderPart1tab" style="height:22px!important;">
+        <div class="divOffenderPart1tr" style="overflow-x:auto;overflow-y:hidden;">
+            <div class="divOffenderPart1tbh">
+                <CDCR class="divOffenderPart1tbs">
+                    <div style="height:22px!important;"><b>CDCR#&nbsp;</b></div>
+                    <div style="height:22px!important;margin-top:-2px;">
+                        @(Html.Kendo().TextBoxFor(m => m.Inmate.CDCRNum)
 .HtmlAttributes(new
 {
     @readonly = "readonly",
     @style = "padding:0;width:55px!important;font-weight:bold;color:saddlebrown!important;background-color:#f3f2f2;height:22px;",
 }))
-                        </div>
-                    </CDCR>
-                    <CTRL class="divOffenderPart1tbs">
-                        <div style="height:22px!important;"><b>CTRL&nbsp;</b></div>
-                        <div style="height:22px!important;margin-top:-2px;">
-                            @(Html.Kendo().TextBoxFor(m => m.DerivedSomsData.SomsReleaseDate).Format("{0:MM/dd/yyyy}")
-  .HtmlAttributes(new { @readonly = "readonly", @style = "padding:0;width:80px!important;background-color:#f3f2f2;height:22px;" }))
-                        </div>
-                    </CTRL>
-                    <CNDR class="divOffenderPart1tbs">
-                        <div style="height:22px!important;"><b><scan class=@genderDiff title="@genderTitle">GNDR&nbsp;</scan></b></div>
-                        <div style="height:22px!important;margin-top:-2px;">
-                            @(Html.Kendo().DropDownListFor(m => m.Inmate.GenderID).DataTextField("Code").DataValueField("GenderID")
-   .BindTo(Model.AllGenders).Name("Inmate.GenderID").OptionLabel("")
-   .Enable(Model.EditingEnabled)
-   .HtmlAttributes(new
-   {
-       @style = "padding:0; width:60px;text-align:top;",
-       @class = "overridable",
-   }))
-                        </div>
-                    </CNDR>
-                    <DOB class="divOffenderPart1tbs">
-                        <div style="height:22px!important;width:30px!important"><b><scan class=@dobDiff title="@dobTitle">DOB&nbsp;</scan></b>&nbsp;</div>
-                        <div style="width:100%!important;margin-top:-2px;">
-                            @(Html.Kendo().DatePickerFor(m => m.Inmate.DOB)
+                    </div>
+                </CDCR>
+                <CTRL class="divOffenderPart1tbs">
+                    <div style="height:22px!important;"><b>CTRL&nbsp;</b></div>
+                    <div style="height:22px!important;margin-top:-2px;">
+                        @(Html.Kendo().TextBoxFor(m => m.DerivedSomsData.SomsReleaseDate).Format("{0:MM/dd/yyyy}")
+.HtmlAttributes(new { @readonly = "readonly", @style = "padding:0;width:80px!important;background-color:#f3f2f2;height:22px;" }))
+                    </div>
+                </CTRL>
+                <CNDR class="divOffenderPart1tbs">
+                    <div style="height:22px!important;"><b><scan class=@genderDiff title="@genderTitle">GNDR&nbsp;</scan></b></div>
+                    <div style="height:22px!important;margin-top:-2px;">
+                        @(Html.Kendo().DropDownListFor(m => m.Inmate.GenderID).DataTextField("Code").DataValueField("GenderID")
+                .BindTo(Model.AllGenders).Name("Inmate.GenderID").OptionLabel("")
+                .Enable(Model.EditingEnabled)
+                .HtmlAttributes(new
+                {
+                    @style = "padding:0; width:60px;text-align:top;",
+                    @class = "overridable",
+                }))
+                    </div>
+                </CNDR>
+                <DOB class="divOffenderPart1tbs">
+                    <div style="height:22px!important;width:30px!important"><b><scan class=@dobDiff title="@dobTitle">DOB&nbsp;</scan></b>&nbsp;</div>
+                    <div style="width:100%!important;margin-top:-2px;">
+                        @(Html.Kendo().DatePickerFor(m => m.Inmate.DOB)
                              .Format("MM/dd/yyyy")
                              .Value(Model.Inmate.DOB.HasValue && Model.Inmate.DOB != DateTime.MinValue ? Model.Inmate.DOB.Value.ToShortDateString() : "").Name("Inmate.DOB").DateInput()
 .HtmlAttributes(new
@@ -318,56 +318,56 @@
     @style = "padding:0.5px;margin-top:0.5px;width:100px!important;",
     @class = "overridable",
 }))
-                        </div>
-                    </DOB>
-                    <SSN class="divOffenderPart1tbs">
-                        <div style="height:22px!important;"><b><scan class=@ssnDiff title="@ssnTitle">SSN&nbsp;</scan></b></div>
-                        <div style="margin-top:-2px;">
-                            @(Html.Kendo().MaskedTextBoxFor(m => m.Inmate.SSN).Mask("000-00-0000").Name("Inmate.SSN")
+                    </div>
+                </DOB>
+                <SSN class="divOffenderPart1tbs">
+                    <div style="height:22px!important;"><b><scan class=@ssnDiff title="@ssnTitle">SSN&nbsp;</scan></b></div>
+                    <div style="margin-top:-2px;">
+                        @(Html.Kendo().MaskedTextBoxFor(m => m.Inmate.SSN).Mask("000-00-0000").Name("Inmate.SSN")
       .HtmlAttributes(new
       {
           @style = "height:22px!important;width:90px!important;display:inline-block;padding:0;",
           @class = "dynamicdisable overridable"
       }).Value((string.IsNullOrEmpty(Model.Inmate.SSN) || Model.Inmate.SSN == "0") ? "" : Model.Inmate.SSN))
-                        </div>
-                    </SSN>
-                </div>
+                    </div>
+                </SSN>
             </div>
         </div>
-        <line style="height:1px!important;width:100%;border-bottom:1px lightgray solid;"></line>
-        <div id="divwscrollbar" class="divOffenderPart1tab" style="height:22px!important;">
-            <div class="divOffenderPart1tr">
-                <div class="divOffenderPart1tb" style="width:120px;text-align:right;"><b><scan class=@namepDiff title="@nameTitle">&nbsp;&nbsp;NAME&nbsp;(L,&nbsp;F,&nbsp;M)</scan></b></div>
-                <div class="divOffenderPart1tb" style="height:22px!important">
-                    @(Html.Kendo().TextBoxFor(m => m.Inmate.LastName).Enable(false)
+    </div>
+    <line style="height:1px!important;width:100%;border-bottom:1px lightgray solid;"></line>
+    <div id="divwscrollbar" class="divOffenderPart1tab" style="height:22px!important;">
+        <div class="divOffenderPart1tr">
+            <div class="divOffenderPart1tb" style="width:120px;text-align:right;"><b><scan class=@namepDiff title="@nameTitle">&nbsp;&nbsp;NAME&nbsp;(L,&nbsp;F,&nbsp;M)</scan></b></div>
+            <div class="divOffenderPart1tb" style="height:22px!important">
+                @(Html.Kendo().TextBoxFor(m => m.Inmate.LastName).Enable(false)
                                   .HtmlAttributes(new { @placeholder = "Last Name ...", style = "padding:0;width:100%!important;height:22px!important;" }))
-                </div>
-                <div class="divOffenderPart1tb" style="height:22px!important">
-                    @(Html.Kendo().TextBoxFor(m => m.Inmate.FirstName).Enable(false)
+            </div>
+            <div class="divOffenderPart1tb" style="height:22px!important">
+                @(Html.Kendo().TextBoxFor(m => m.Inmate.FirstName).Enable(false)
                           .HtmlAttributes(new { @placeholder = "First Name ...", style = "padding:0;width:100%!important;height:22px!important;" }))
-                </div>
-                <div class="divOffenderPart1tb" style="height:22px!important">
-                    @(Html.Kendo().TextBoxFor(m => m.Inmate.MiddleName).Name("Inmate.MiddleName")
+            </div>
+            <div class="divOffenderPart1tb" style="height:22px!important">
+                @(Html.Kendo().TextBoxFor(m => m.Inmate.MiddleName).Name("Inmate.MiddleName")
                           .HtmlAttributes(new { @MaxLength = "20", @placeholder = "Middle Name ...", @id = "middleNameTextBox", @class = "dynamicdisable", @style = "padding:0;width:100%!important;height:22px!important;" }))
-                </div>
             </div>
         </div>
-        <line style="height:1px!important;width:100%;border-bottom:1px lightgray solid;"></line>
-        <div class="divOffenderPart1tab" style="height:70px!important;">
-            <div class="divOffenderPart1tr">
-                <div class="divOffenderPart1tbh">
-                    <RELEASE class="divOffenderPart1tbs" style="width:50%!important">
-                        <div style="height:22px!important;text-align:right;float:right;width:130px!important;"><b><scan class=@releaseDiff title="@releaseTitle">Release&nbsp;Date&nbsp;</scan></b></div>
-                        <div style="height:22px!important;float:left;width:72%!important;">
-                            @(Html.Kendo().DatePickerFor(m => m.Inmate.ReleaseDate).Format("MM/dd/yyyy")
+    </div>
+    <line style="height:1px!important;width:100%;border-bottom:1px lightgray solid;"></line>
+    <div class="divOffenderPart1tab" style="height:70px!important;">
+        <div class="divOffenderPart1tr">
+            <div class="divOffenderPart1tbh">
+                <RELEASE class="divOffenderPart1tbs" style="width:50%!important">
+                    <div style="height:22px!important;text-align:right;float:right;width:130px!important;"><b><scan class=@releaseDiff title="@releaseTitle">Release&nbsp;Date&nbsp;</scan></b></div>
+                    <div style="height:22px!important;float:left;width:72%!important;">
+                        @(Html.Kendo().DatePickerFor(m => m.Inmate.ReleaseDate).Format("MM/dd/yyyy")
                               .Value(Model.Inmate.ReleaseDate).Name("Inmate.ReleaseDate").DateInput()
                               .HtmlAttributes( new { style = "width:120px!important;" }))
-                        </div>
-                    </RELEASE>
-                    <COUNTY class="divOffenderPart1tbs" style="width:50%!important">
-                        <div style="height:22px!important;text-align:right;float:left!important;width:150px!important;"><b><scan class=@countyDiff title="@countyTitle">County&nbsp;of&nbsp;Release&nbsp;</scan></b></div>
-                        <div style="height:22px!important;float:left;width:72%!important;">
-                            @(Html.Kendo().DropDownListFor(m => m.Inmate.ReleaseCountyID)
+                    </div>
+                </RELEASE>
+                <COUNTY class="divOffenderPart1tbs" style="width:50%!important">
+                    <div style="height:22px!important;text-align:right;float:left!important;width:150px!important;"><b><scan class=@countyDiff title="@countyTitle">County&nbsp;of&nbsp;Release&nbsp;</scan></b></div>
+                    <div style="height:22px!important;float:left;width:72%!important;">
+                        @(Html.Kendo().DropDownListFor(m => m.Inmate.ReleaseCountyID)
                         .Name("Inmate.ReleaseCountyID")
                         .DataValueField("CountyID")
                         .DataTextField("Name")
@@ -377,35 +377,35 @@
                             @style = "padding:0;width:135px!important;",
                             @class = "overridable",
                         }))
-                        </div>
-                    </COUNTY>
-                </div>
+                    </div>
+                </COUNTY>
             </div>
-            <div class="divOffenderPart1tr">
-                <div class="divOffenderPart1tbh">
-                    <RELEASE class="divOffenderPart1tbs" style="width:50%!important;">
-                        <div style="height:22px!important;text-align:right;float:right;width:130px!important;"><b><scan class=@unitDiff title="@unitTitle">Parole&nbsp;Unit&nbsp;</scan></b></div>
-                        <div style="height:22px!important;float:left;width:72%!important;">
-                            @(Html.Kendo().TextBoxFor(m => m.Inmate.ParoleUnit)
+        </div>
+        <div class="divOffenderPart1tr">
+            <div class="divOffenderPart1tbh">
+                <RELEASE class="divOffenderPart1tbs" style="width:50%!important;">
+                    <div style="height:22px!important;text-align:right;float:right;width:130px!important;"><b><scan class=@unitDiff title="@unitTitle">Parole&nbsp;Unit&nbsp;</scan></b></div>
+                    <div style="height:22px!important;float:left;width:72%!important;">
+                        @(Html.Kendo().TextBoxFor(m => m.Inmate.ParoleUnit)
                           .HtmlAttributes(new { @placeholder = "Parole Unit...", @readonly = "readonly", style = "padding:0;width:120px;background-color:#f3f2f2;height:22px!important;" }))
-                        </div>
-                    </RELEASE>
-                    @*<NONE class="divOffenderPart1tbs" style="height:22px!important;"><div></div><div></div></NONE>*@
-                    <COUNTY class="divOffenderPart1tbs" style="width:50%!important;">
-                        <div style="height:22px!important;width:150px;text-align:right;float:left!important;"><b><scan class=@agentDiff title="@agentTitle">Parole&nbsp;Agent&nbsp;</scan></b></div>
-                        <div style="height:22px!important;float:left;width:72%!important;">
-                            @(Html.Kendo().TextBoxFor(m => m.Inmate.ParoleAgent)
+                    </div>
+                </RELEASE>
+                @*<NONE class="divOffenderPart1tbs" style="height:22px!important;"><div></div><div></div></NONE>*@
+                <COUNTY class="divOffenderPart1tbs" style="width:50%!important;">
+                    <div style="height:22px!important;width:150px;text-align:right;float:left!important;"><b><scan class=@agentDiff title="@agentTitle">Parole&nbsp;Agent&nbsp;</scan></b></div>
+                    <div style="height:22px!important;float:left;width:72%!important;">
+                        @(Html.Kendo().TextBoxFor(m => m.Inmate.ParoleAgent)
                           .HtmlAttributes(new { @placeholder = "Parole Agent...", @readonly = "readonly", style = "width:170px;padding:0;background-color:#f3f2f2;height:22px!important;" }))
-                        </div>
-                    </COUNTY>
-                </div>
+                    </div>
+                </COUNTY>
             </div>
-            <div class="divOffenderPart1tr">
-                <div class="divOffenderPart1tbh">
-                    <RELEASE class="divOffenderPart1tbs" style="width:50%!important;">
-                        <div style="height:22px!important;text-align:right;float:right;width:130px!important;"><b><scan class=@facilityDiff ; title=@facilityTitle>Custody&nbsp;Facility&nbsp;</scan></b></div>
-                        <div style="height:22px!important;float:left;width:72%!important;">
-                            @(Html.Kendo().DropDownListFor(m => m.Inmate.CustodyFacilityID)
+        </div>
+        <div class="divOffenderPart1tr">
+            <div class="divOffenderPart1tbh">
+                <RELEASE class="divOffenderPart1tbs" style="width:50%!important;">
+                    <div style="height:22px!important;text-align:right;float:right;width:130px!important;"><b><scan class=@facilityDiff ; title=@facilityTitle>Custody&nbsp;Facility&nbsp;</scan></b></div>
+                    <div style="height:22px!important;float:left;width:72%!important;">
+                        @(Html.Kendo().DropDownListFor(m => m.Inmate.CustodyFacilityID)
                        .Name("Inmate.CustodyFacilityID")
                        .BindTo(Model.AllFacilities).OptionLabel("(Unknown)")
                        .DataValueField("FacilityID")
@@ -416,169 +416,171 @@
                            @style = "padding:0;width:120px;",
                            @class = "overridable",
                        }))
-                        </div>
-                    </RELEASE>
-                    <COUNTY class="divOffenderPart1tbs" style="width:50%!important;">
-                        <div style="height:22px!important;width:150px!important;text-align:right;float:left!important;"><b><scan class=@housingDiff title="@housingTitle">Housing&nbsp;</scan></b></div>
-                        <div style="height:22px!important;float:left;width:72%!important;">
-                            @(Html.Kendo().TextBoxFor(m => m.Inmate.Housing).Name("Inmate.Housing").HtmlAttributes(new
+                    </div>
+                </RELEASE>
+                <COUNTY class="divOffenderPart1tbs" style="width:50%!important;">
+                    <div style="height:22px!important;width:150px!important;text-align:right;float:left!important;"><b><scan class=@housingDiff title="@housingTitle">Housing&nbsp;</scan></b></div>
+                    <div style="height:22px!important;float:left;width:72%!important;">
+                        @(Html.Kendo().TextBoxFor(m => m.Inmate.Housing).Name("Inmate.Housing").HtmlAttributes(new
                         {
                             @style = "padding:0;width:170px;height:22px!important;",
                             @maxlength = "25",
                             @class = "dynamicdisable overridable",
                         }))
-                        </div>
-                    </COUNTY>
-                </div>
+                    </div>
+                </COUNTY>
             </div>
         </div>
-        <line style="height:1px!important;width:100%;border-bottom:1px lightgray solid;"></line>
-        <div class="divOffenderPart1tab" style="height:22px!important;">
-            <div class="divOffenderPart1tr">
-                <div class="divOffenderPart1tbh">
-                    <div class="divOffenderPart1tbs">
-                        <div style="height:22px!important;width:120px;text-align:right;float:right!important;"><b>Benefit&nbsp;Worker&nbsp;</b></div>
-                        <div style="height:22px!important;">
-                            @(Html.Kendo().TextBoxFor(m => m.Inmate.BenefitWorkerName).Name("benefitWorkerTextbox").Enable(false)
+    </div>
+    <line style="height:1px!important;width:100%;border-bottom:1px lightgray solid;"></line>
+    <div class="divOffenderPart1tab" style="height:22px!important;">
+        <div class="divOffenderPart1tr">
+            <div class="divOffenderPart1tbh">
+                <div class="divOffenderPart1tbs">
+                    <div style="height:22px!important;width:120px;text-align:right;float:right!important;"><b>Benefit&nbsp;Worker&nbsp;</b></div>
+                    <div style="height:22px!important;">
+                        @(Html.Kendo().TextBoxFor(m => m.Inmate.BenefitWorkerName).Name("benefitWorkerTextbox").Enable(false)
                     .HtmlAttributes(new
                     {
                         @placeholder = "Benefit worker ...",
                         @style = "padding:0;height:22px!important;width:200px;"
                     }))
-                        </div>
                     </div>
-                    <div class="divOffenderPart1tbs">
-                        <div style="height:22px!important;">
-                            @if (Model.EditingEnabled)
-                            {
-                                @(Html.Kendo().Button().Name("unassignButton").Content("Unassign").Events(e => e.Click("ChangeUI"))
+                </div>
+                <div class="divOffenderPart1tbs">
+                    <div style="height:22px!important;">
+                        @if (Model.EditingEnabled)
+                        {
+                            @(Html.Kendo().Button().Name("unassignButton").Content("Unassign").Events(e => e.Click("ChangeUI"))
                                 .HtmlAttributes(new { type = "button", style = "height:22px!important;" })
                                 .Enable(string.IsNullOrEmpty(Model.Inmate.BenefitWorkerName) ? false : true))
-                            }
-                        </div>
+                        }
                     </div>
                 </div>
             </div>
         </div>
-        <div class="divOffenderPart1tab" style="height:105px!important;">
-            <div id="ckgroup" class="divOffenderPart1tr">
-                <div class="divOffenderPart1tb" style="border: none;border-radius:4px;height:105px!important;">
-                    <div class="divOffenderPart1tbv">
-                        <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.LongTermMedCare).Name("Inmate.LongTermMedCare").Enable(Model.EditingEnabled).Label("LT Medi. Care")</div>
-                        <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.Hospice).Name("Inmate.Hospice").Enable(Model.EditingEnabled).Label("Hospice")</div>
-                        <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.AssistedLiving).Name("Inmate.AssistedLiving").Enable(Model.EditingEnabled).Label("Assisted Living")</div>
-                        <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.HIVPos).Name("Inmate.HIVPos").Enable(Model.EditingEnabled).Label("CID")</div>
-                        <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.VRSS).Name("Inmate.VRSS").Enable(false).Label("VRSS")</div>
-                    </div>
-                    <div class="divOffenderPart1tbv">
-                        <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.ChronicIllness).Name("Inmate.ChronicIllness").Enable(Model.EditingEnabled).Label("Chronic Illness")</div>
-                        <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.EOP).Name("Inmate.EOP").Enable(Model.EditingEnabled)<scan class="@eopDiff tooltiptext" title="@eopTitle" tooltip="Severely Mentally Ill">EOP (SMI)</scan></div>
-                        <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.PhysDisabled).Name("Inmate.PhysDisabled").Enable(Model.EditingEnabled)<scan class=@physDiff title="@physTitle">Physical Disabled</scan></div>
-                        <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.DevDisabled).Name("Inmate.DevDisabled").Enable(Model.EditingEnabled)<scan class=@devDiff title="@devTitle">Develop.&nbsp;Disabled</scan></div>
-                        <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.USVet).Name("Inmate.USVet").Enable(Model.EditingEnabled).Label("US Veteran")</div>
-                    </div>
-                    <div class="divOffenderPart1tbv">
-                        <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.CCCMS).Name("Inmate.CCCMS").Enable(Model.EditingEnabled).Label("CCCMS (Mentally Ill)")</div>
-                        <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.Elderly).Name("Inmate.Elderly").Enable(Model.EditingEnabled).Label("Elderly")</div>
-                        <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.DSH).Name("Inmate.DSH").Enable(Model.EditingEnabled).Label("DSH")</div>
-                        <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.SSI).Name("Inmate.SSI").Enable(false)<scan class=@ssiDiff title="@ssiTitle">SSI</scan></div>
-                        <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.Lifer).Name("Inmate.Lifer").Enable(Model.EditingEnabled && !Model.Inmate.Lifer)<scan class=@liferDiff title="@liferTitle">Lifer</scan></div>
-                    </div>
+    </div>
+    <div class="divOffenderPart1tab" style="height:105px!important;">
+        <div id="ckgroup" class="divOffenderPart1tr">
+            <div class="divOffenderPart1tb" style="border: none;border-radius:4px;height:105px!important;">
+                <div class="divOffenderPart1tbv">
+                    <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.LongTermMedCare).Name("Inmate.LongTermMedCare").Enable(Model.EditingEnabled).Label("LT Medi. Care")</div>
+                    <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.Hospice).Name("Inmate.Hospice").Enable(Model.EditingEnabled).Label("Hospice")</div>
+                    <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.AssistedLiving).Name("Inmate.AssistedLiving").Enable(Model.EditingEnabled).Label("Assisted Living")</div>
+                    <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.HIVPos).Name("Inmate.HIVPos").Enable(Model.EditingEnabled).Label("CID")</div>
+                    <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.VRSS).Name("Inmate.VRSS").Enable(false).Label("VRSS")</div>
+                </div>
+                <div class="divOffenderPart1tbv">
+                    <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.ChronicIllness).Name("Inmate.ChronicIllness").Enable(Model.EditingEnabled).Label("Chronic Illness")</div>
+                    <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.EOP).Name("Inmate.EOP").Enable(Model.EditingEnabled)<scan class="@eopDiff tooltiptext" title="@eopTitle" tooltip="Severely Mentally Ill">EOP (SMI)</scan></div>
+                    <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.PhysDisabled).Name("Inmate.PhysDisabled").Enable(Model.EditingEnabled)<scan class=@physDiff title="@physTitle">Physical Disabled</scan></div>
+                    <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.DevDisabled).Name("Inmate.DevDisabled").Enable(Model.EditingEnabled)<scan class=@devDiff title="@devTitle">Develop.&nbsp;Disabled</scan></div>
+                    <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.USVet).Name("Inmate.USVet").Enable(Model.EditingEnabled).Label("US Veteran")</div>
+                </div>
+                <div class="divOffenderPart1tbv">
+                    <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.CCCMS).Name("Inmate.CCCMS").Enable(Model.EditingEnabled).Label("CCCMS (Mentally Ill)")</div>
+                    <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.Elderly).Name("Inmate.Elderly").Enable(Model.EditingEnabled).Label("Elderly")</div>
+                    <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.DSH).Name("Inmate.DSH").Enable(Model.EditingEnabled).Label("DSH")</div>
+                    <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.SSI).Name("Inmate.SSI").Enable(false)<scan class=@ssiDiff title="@ssiTitle">SSI</scan></div>
+                    <div>@Html.Kendo().CheckBoxFor(m => m.Inmate.Lifer).Name("Inmate.Lifer").Enable(Model.EditingEnabled && !Model.Inmate.Lifer)<scan class=@liferDiff title="@liferTitle">Lifer</scan></div>
                 </div>
             </div>
         </div>
-        <line style="height:1px!important;width:100%;border-bottom:1px lightgray solid;"></line>
-        <div class="divOffenderPart1tab" style="height:22px!important;">
-            <div class="divOffenderPart1tr" style="width:100%;">
-                <div class="divOffenderPart1tbh">
-                    <RELEASE class="divOffenderPart1tbs">
-                        <div style="height:22px!important;width:105px;"><b>Registrations</b></div><div></div>
-                    </RELEASE>
-                    <CTRL class="divOffenderPart1tbs">
-                        <div></div>
-                        <div style="height:22px!important;width:calc((100vw/16));">
-                            @Html.Kendo().CheckBoxFor(m => m.Inmate.PC290).Name("Inmate.PC290").Enable(Model.EditingEnabled).Label("PC.290")
-                        </div>
-                    </CTRL>
-                    <COUNTY class="divOffenderPart1tbs">
-                        <div style="height:22px!important;width:calc((100vw/16));">
-                            @Html.Kendo().CheckBoxFor(m => m.Inmate.PC457).Name("Inmate.PC457").Enable(Model.EditingEnabled).Label("PC.457")
-                        </div>
-                        <div></div>
-                    </COUNTY>
-                </div>
+    </div>
+    <line style="height:1px!important;width:100%;border-bottom:1px lightgray solid;"></line>
+    <div class="divOffenderPart1tab" style="height:22px!important;">
+        <div class="divOffenderPart1tr" style="width:100%;">
+            <div class="divOffenderPart1tbh">
+                <RELEASE class="divOffenderPart1tbs">
+                    <div style="height:22px!important;width:105px;"><b>Registrations</b></div><div></div>
+                </RELEASE>
+                <CTRL class="divOffenderPart1tbs">
+                    <div></div>
+                    <div style="height:22px!important;width:calc((100vw/16));">
+                        @Html.Kendo().CheckBoxFor(m => m.Inmate.PC290).Name("Inmate.PC290").Enable(Model.EditingEnabled).Label("PC.290")
+                    </div>
+                </CTRL>
+                <COUNTY class="divOffenderPart1tbs">
+                    <div style="height:22px!important;width:calc((100vw/16));">
+                        @Html.Kendo().CheckBoxFor(m => m.Inmate.PC457).Name("Inmate.PC457").Enable(Model.EditingEnabled).Label("PC.457")
+                    </div>
+                    <div></div>
+                </COUNTY>
             </div>
         </div>
-        <line style="height:1px!important;width:100%;border-bottom:1px lightgray solid;"></line>
-        <div id="divwscrollbar" class="divOffenderPart1tab" style="height:23px;">
-            <div class="divOffenderPart1tr" style="overflow-x:auto;overflow-y:hidden;">
-                <div class="divOffenderPart1tbh">
-                    <RELAESE class="divOffenderPart1tbs">
-                        <div style="width:105px;height:22px!important;"><b>Screening Date&nbsp;</b></div>
-                        <div style="height:22px!important;margin-top:-2px;">
-                            @(Html.Kendo().DatePickerFor(m => m.Inmate.ScreeningDate).Format("MM/dd/yyyy")
+    </div>
+    <line style="height:1px!important;width:100%;border-bottom:1px lightgray solid;"></line>
+    <div id="divwscrollbar" class="divOffenderPart1tab" style="height:23px;">
+        <div class="divOffenderPart1tr" style="overflow-x:auto;overflow-y:hidden;">
+            <div class="divOffenderPart1tbh">
+                <RELAESE class="divOffenderPart1tbs">
+                    <div style="width:105px;height:22px!important;"><b>Screening Date&nbsp;</b></div>
+                    <div style="height:22px!important;margin-top:-2px;">
+                        @(Html.Kendo().DatePickerFor(m => m.Inmate.ScreeningDate).Format("MM/dd/yyyy")
                             .Value(Model.Inmate.ScreeningDate).Name("Inmate.ScreeningDate").DateInput()
                             .HtmlAttributes(new { style = "height:22px!important;width:120px!important;" }))
-                        </div>
-                    </RELAESE>
-                    <CTRL class="divOffenderPart1tbs">
-                        <div style="width:220px;height:22px!important;">
-                            &nbsp;&nbsp;&nbsp;&nbsp;
-                            @(Html.Kendo().CheckBoxFor(m => m.Inmate.AuthToRepresent).Name("Inmate.AuthToRepresent")
+                    </div>
+                </RELAESE>
+                <CTRL class="divOffenderPart1tbs">
+                    <div style="width:220px;height:22px!important;">
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        @(Html.Kendo().CheckBoxFor(m => m.Inmate.AuthToRepresent).Name("Inmate.AuthToRepresent")
                           .HtmlAttributes(new { @class = "dynamicdisable apptrigger" })
                           .Label("Authorized to Represent"))
-                        </div><div></div>
-                    </CTRL>
-                    <COUNTY class="divOffenderPart1tbs">
-                        <div style="width:180px;height:22px!important;">
-                            @(Html.Kendo().CheckBoxFor(m => m.Inmate.ReleaseOfInfoSigned).Name("Inmate.ReleaseOfInfoSigned")
+                    </div><div></div>
+                </CTRL>
+                <COUNTY class="divOffenderPart1tbs">
+                    <div style="width:180px;height:22px!important;">
+                        @(Html.Kendo().CheckBoxFor(m => m.Inmate.ReleaseOfInfoSigned).Name("Inmate.ReleaseOfInfoSigned")
                           .HtmlAttributes(new { @class = "dynamicdisable apptrigger" })
                           .Label("Release of Info Signed"))
-                        </div><div></div>
-                    </COUNTY>
-                </div>
+                    </div><div></div>
+                </COUNTY>
             </div>
         </div>
-        <line style="height:1px!important;width:100%;border-bottom: 1px solid lightgray;"></line>
-        <div class="divOffenderPart1tab" style="height:240px!important;">
-            <div class="divOffenderPart1tr"><strong><scan style="color:saddlebrown"> MISCELLANEOUS&nbsp;QUESTIONS</scan></strong></div>
-            <div class="divOffenderPart1tr">
-                <div class="divOffenderPart1tbh">
-                    <RELAESE class="divOffenderPart1tbs">
-                        <div style="width:190px;height:22px!important;"><b>&nbsp;&nbsp;&nbsp;&nbsp;CID&nbsp;Services&nbsp;Refusal&nbsp;Date&nbsp;</b></div>
-                        @*<div class="divOffenderPart1tb" style="width:100%;"><span style="width:20px;"></span><b>CID&nbsp;Services&nbsp;Refusal&nbsp;Date&nbsp;</b></div>*@
-                        <div class="divOffenderPart1tb" style="height:22px!important;">
-                            @(Html.Kendo().DatePickerFor(m => m.Inmate.CIDServiceRefusalDate).Format("MM/dd/yyyy").DateInput()
+    </div>
+    <line style="height:1px!important;width:100%;border-bottom: 1px solid lightgray;"></line>
+    <div class="divOffenderPart1tab" style="height:240px!important;">
+        <div class="divOffenderPart1tr"><strong><scan style="color:saddlebrown"> MISCELLANEOUS&nbsp;QUESTIONS</scan></strong></div>
+        <div class="divOffenderPart1tr">
+            <div class="divOffenderPart1tbh">
+                <RELAESE class="divOffenderPart1tbs">
+                    <div style="width:190px;height:22px!important;"><b>&nbsp;&nbsp;&nbsp;&nbsp;CID&nbsp;Services&nbsp;Refusal&nbsp;Date&nbsp;</b></div>
+                    @*<div class="divOffenderPart1tb" style="width:100%;"><span style="width:20px;"></span><b>CID&nbsp;Services&nbsp;Refusal&nbsp;Date&nbsp;</b></div>*@
+                    <div class="divOffenderPart1tb" style="height:22px!important;">
+                        @(Html.Kendo().DatePickerFor(m => m.Inmate.CIDServiceRefusalDate).Format("MM/dd/yyyy").DateInput()
                             .Value(Model.Inmate.CIDServiceRefusalDate).Name("Inmate.CIDServiceRefusalDate")
                             .HtmlAttributes(new { style = "height:22px!important;width:115px!important;" }))
-                        </div>
-                    </RELAESE>
-                    @*<div class="divOffenderPart1tr">*@
-                    <CTRL class="divOffenderPart1tbs">
-                        <div class="divOffenderPart1tb"><span id="wscan" style="width:10px;"></span><b>Released&nbsp;To&nbsp;</b></div>
-                        <div class="divOffenderPart1tb">
-                            @(Html.Kendo().DropDownListFor(m => m.Inmate.DestinationID).DataValueField("lkValue").DataTextField("lkdescr_short")
+                    </div>
+                </RELAESE>
+                @*<div class="divOffenderPart1tr">*@
+                <CTRL class="divOffenderPart1tbs">
+                    <div class="divOffenderPart1tb"><span id="wscan" style="width:10px;"></span><b>Released&nbsp;To&nbsp;</b></div>
+                    <div class="divOffenderPart1tb">
+                        @(Html.Kendo().DropDownListFor(m => m.Inmate.DestinationID).DataValueField("lkValue").DataTextField("lkdescr_short")
                                   .Name("Inmate.DestinationID").BindTo(Model.AllDestinationIDs).OptionLabel("Select a Destination")
                                   .Enable(Model.EditingEnabled)
                                   .HtmlAttributes(new { @style = "width:100px;", @data_orig = Model.Inmate.DestinationID }))
-                        </div>
-                    </CTRL>
-                </div>
+                    </div>
+                </CTRL>
             </div>
-            <div class="divOffenderPart1tr" style="height:130px!important;">
-                <RELAESE class="divOffenderPart1tbs">
+        </div>
+        <div class="divOffenderPart1tr" style="height:130px!important;">
+            <RELAESE class="divOffenderPart1tbs">
+                <div class="divOffenderPart1tr" style="width: 100%; height: 130px;">
                     <div class="divOffenderPart1tb" style="width:185px;"><span style="width:100px;"></span><b>Import&nbsp;Date&nbsp;</b></div>
                     <div class="divOffenderPart1tb" style="height:22px!important;">
                         @(Html.Kendo().DatePicker().Format("MM/dd/yyyy").DateInput().Enable(false)
                             .Value(Model.Inmate.ReferralDate).Name("ReferralDate")
                             .HtmlAttributes(new { style = "height:22px!important;width:115px!important;" }))
                     </div>
-                </RELAESE>
-                <CTRL class="divOffenderPart1tbs" style="width:100%;">
-                    <span span id="wscan1" style="width:10px;"></span>
-                    <div class="divOffenderPart1tr" style="width: 100%; height: 140px;">
-                        <div class="divOffenderPart1tb" style="width:100%;">
-                            @(Html.Kendo().Grid(Model.SomsReleaseDates)
+                </div>
+            </RELAESE>
+            <CTRL class="divOffenderPart1tbs" style="width:100%;">
+                <span span id="wscan1" style="width:10px;"></span>
+                <div class="divOffenderPart1tr" style="width: 100%; height: 140px;">
+                    <div class="divOffenderPart1tb" style="width:100%;">
+                        @(Html.Kendo().Grid(Model.SomsReleaseDates)
                           .Name("SomsReleaseDates").ToolBar(t => t.Template(@<text><span style="font-size:14px; font-weight:bold;">SOMS Release Date Changes</span></text>))
                           .HtmlAttributes(new { style = "max-height:140px;max-width:200px;width:100%!important;float:left;" })
                           .Selectable(s => s.Enabled(true)).Scrollable(s => s.Height(90))
@@ -594,211 +596,238 @@
                             .Ajax()
                             .Read(r => r.Action("GetReleaseDateChangs", "EditOffender", new { EpisodeID = Model.Inmate.EpisodeID }))
                             ))
-                        </div>
                     </div>
-                </CTRL>
-            </div>
-            <div class="divOffenderPart1tr">
-                <div class="divOffenderPart1tb" style="width:185px;"><span style="width:150px;"></span><b>CalFresh&nbsp;Referral&nbsp;</b></div>
-                <div class="divOffenderPart1tb">
-                    @Html.HiddenFor(m => m.Inmate.CalFreshRef, new { @id = "hdCalFreshRef" })
-                    @(Html.Kendo().CheckBox().Name("CalFreshRefY").Label("YES")
-                      .HtmlAttributes(new { @class = "CalFreshRef" }).Enable(Model.EditingEnabled)
-                      .Checked(Model.Inmate.CalFreshRef.HasValue && Model.Inmate.CalFreshRef.Value == true))&nbsp;&nbsp;&nbsp;&nbsp;
                 </div>
-                <div class="divOffenderPart1tb">
-                    @(Html.Kendo().CheckBox().Name("CalFreshRefN").Label("NO")
-                      .HtmlAttributes(new { @class = "CalFreshRef" }).Enable(Model.EditingEnabled)
-                      .Checked(Model.Inmate.CalFreshRef.HasValue && Model.Inmate.CalFreshRef.Value == false))
-                </div>
+            </CTRL>
+        </div>
+        <div class="divOffenderPart1tr">
+            <div class="divOffenderPart1tb" style="width:185px;"><span style="width:150px;"></span><b>CalFresh&nbsp;Referral&nbsp;</b></div>
+            <div class="divOffenderPart1tb">
+                @Html.HiddenFor(m => m.Inmate.CalFreshRef, new { @id = "hdCalFreshRef" })
+                @(Html.Kendo().CheckBox().Name("CalFreshRefY").Label("YES")
+          .HtmlAttributes(new { @class = "CalFreshRef" }).Enable(Model.EditingEnabled)
+          .Checked(Model.Inmate.CalFreshRef.HasValue && Model.Inmate.CalFreshRef.Value == true))&nbsp;&nbsp;&nbsp;&nbsp;
             </div>
-            <div class="divOffenderPart1tr">
-                <div class="divOffenderPart1tb" style="width:185px;"><span style="width:150px;"></span><b>CalWorks&nbsp;Referral&nbsp;</b></div>
-                <div class="divOffenderPart1tb">
-                    @Html.HiddenFor(m => m.Inmate.CalWorksRef, new { @id = "hdCalWorksRef" })
-                    @(Html.Kendo().CheckBox().Label("YES").Name("CalWorksRefY").HtmlAttributes(new { @class = "CalWorksRef" })
+            <div class="divOffenderPart1tb">
+                @(Html.Kendo().CheckBox().Name("CalFreshRefN").Label("NO")
+          .HtmlAttributes(new { @class = "CalFreshRef" }).Enable(Model.EditingEnabled)
+          .Checked(Model.Inmate.CalFreshRef.HasValue && Model.Inmate.CalFreshRef.Value == false))
+            </div>
+        </div>
+        <div class="divOffenderPart1tr">
+            <div class="divOffenderPart1tb" style="width:185px;"><span style="width:150px;"></span><b>CalWorks&nbsp;Referral&nbsp;</b></div>
+            <div class="divOffenderPart1tb">
+                @Html.HiddenFor(m => m.Inmate.CalWorksRef, new { @id = "hdCalWorksRef" })
+                @(Html.Kendo().CheckBox().Label("YES").Name("CalWorksRefY").HtmlAttributes(new { @class = "CalWorksRef" })
                           .Enable(Model.EditingEnabled).Checked(Model.Inmate.CalWorksRef.HasValue && Model.Inmate.CalWorksRef.Value == true))&nbsp;&nbsp;&nbsp;&nbsp;
-                </div>
-                <div class="divOffenderPart1tb">
-                    @(Html.Kendo().CheckBox().Label("NO").Name("CalWorksRefN").HtmlAttributes(new { @class = "CalWorksRef" })
-                          .Enable(Model.EditingEnabled).Checked(Model.Inmate.CalWorksRef.HasValue && Model.Inmate.CalWorksRef.Value == false))
-                </div>
             </div>
-            <div class="divOffenderPart1tr">
-                <div class="divOffenderPart1tb" style="width:185px;"><span style="width:20px;"></span><b>Foster&nbsp;Youth&nbsp;(18–26yrs)</b></div>
-                <div class="divOffenderPart1tb">
-                    @Html.HiddenFor(m => m.Inmate.FosterYouth, new { @id = "hdFosterYouth" })
-                    @(Html.Kendo().CheckBox().Name("FosterYouthY").Label("YES")
+            <div class="divOffenderPart1tb">
+                @(Html.Kendo().CheckBox().Label("NO").Name("CalWorksRefN").HtmlAttributes(new { @class = "CalWorksRef" })
+                          .Enable(Model.EditingEnabled).Checked(Model.Inmate.CalWorksRef.HasValue && Model.Inmate.CalWorksRef.Value == false))
+            </div>
+        </div>
+        <div class="divOffenderPart1tr">
+            <div class="divOffenderPart1tb" style="width:185px;"><span style="width:20px;"></span><b>Foster&nbsp;Youth&nbsp;(18–26yrs)</b></div>
+            <div class="divOffenderPart1tb">
+                @Html.HiddenFor(m => m.Inmate.FosterYouth, new { @id = "hdFosterYouth" })
+                @(Html.Kendo().CheckBox().Name("FosterYouthY").Label("YES")
           .HtmlAttributes(new { @class = "FosterYouth" }).Enable(Model.EditingEnabled)
           .Checked(Model.Inmate.FosterYouth.HasValue && Model.Inmate.FosterYouth.Value == true))&nbsp;&nbsp;&nbsp;&nbsp;
-                </div>
-                <div class="divOffenderPart1tb">
-                    @(Html.Kendo().CheckBox().Name("FosterYouthN").Label("NO")
+            </div>
+            <div class="divOffenderPart1tb">
+                @(Html.Kendo().CheckBox().Name("FosterYouthN").Label("NO")
           .HtmlAttributes(new { @class = "FosterYouth" }).Enable(Model.EditingEnabled)
           .Checked(Model.Inmate.FosterYouth.HasValue && Model.Inmate.FosterYouth.Value == false))
-                </div>
             </div>
-            <div class="divOffenderPart1tr">
-                <div class="divOffenderPart1tb" style="width:185px;"><span style="width:150px;"></span><b>DHCS&nbsp;Eligibility&nbsp;</b></div>
-                <div class="divOffenderPart1tb" style="margin-top:5px;">
-                    @(Html.Kendo().CheckBoxFor(m => m.Inmate.DHCSEligibility).Label("YES").HtmlAttributes(new { @class = "DHCSEligibility" })
-                          .Checked(Model.Inmate.DHCSEligibility.HasValue && Model.Inmate.DHCSEligibility.Value == true).Enable(false))&nbsp;&nbsp;&nbsp;&nbsp;
-                </div>
-                <div class="divOffenderPart1tb" style="margin-top:5px;">
-                    @(Html.Kendo().CheckBoxFor(m => m.Inmate.DHCSEligibility).Label("NO").HtmlAttributes(new { @class = "DHCSEligibility" })
-                          .Checked(Model.Inmate.DHCSEligibility.HasValue && Model.Inmate.DHCSEligibility.Value == false).Enable(false))
-                </div>
-                <scan id="wscan2" style="width:10px;"></scan>
-                <div class="divOffenderPart1tb" style="width:185px;">
-                    Date:&nbsp;@(Html.Kendo().TextBoxFor(m => m.Inmate.DHCSEligibilityDate).Enable(false).Format("MM/dd/yyyy")
-.HtmlAttributes(new { @style = "width:100px!important;height:22px!important;", @MaxLength = "10" }))
-                </div>
-            </div>
-            <line style="height:20px!important;width:100%;"></line>
         </div>
+        <div class="divOffenderPart1tr">
+            <div class="divOffenderPart1tb" style="width:185px;"><span style="width:150px;"></span><b>DHCS&nbsp;Eligibility&nbsp;</b></div>
+            <div class="divOffenderPart1tb" style="margin-top:5px;">
+                @(Html.Kendo().CheckBoxFor(m => m.Inmate.DHCSEligibility).Label("YES").HtmlAttributes(new { @class = "DHCSEligibility" })
+                          .Checked(Model.Inmate.DHCSEligibility.HasValue && Model.Inmate.DHCSEligibility.Value == true).Enable(false))&nbsp;&nbsp;&nbsp;&nbsp;
+            </div>
+            <div class="divOffenderPart1tb" style="margin-top:5px;">
+                @(Html.Kendo().CheckBoxFor(m => m.Inmate.DHCSEligibility).Label("NO").HtmlAttributes(new { @class = "DHCSEligibility" })
+                          .Checked(Model.Inmate.DHCSEligibility.HasValue && Model.Inmate.DHCSEligibility.Value == false).Enable(false))
+            </div>
+            <scan id="wscan2" style="width:10px;"></scan>
+            <div class="divOffenderPart1tb" style="width:185px;">
+                Date:&nbsp;@(Html.Kendo().TextBoxFor(m => m.Inmate.DHCSEligibilityDate).Enable(false).Format("MM/dd/yyyy")
+.HtmlAttributes(new { @style = "width:100px!important;height:22px!important;", @MaxLength = "10" }))
+            </div>
+        </div>
+        <line style="height:20px!important;width:100%;"></line>
     </div>
-    <script type="text/javascript">
-        function OFFENDERButtonDisable(disabled) {
-            var buttonR = $("#revertEpisodeButton").data("kendoButton");
-            buttonR.enable(disabled);
-            var buttonS = $("#saveEpisodeButton").data("kendoButton");
-            buttonS.enable(disabled);
-        };       
-        $(function () {
-            //var initdata = $('#offenderDataForm').serialize(); //($(".flex-item-b")); // serialiseForm($('#offenderDataForm')); // $('#offenderDataForm').serialize();
-            var initdata = serialize(document.getElementById('offenderDataForm'));
-            SetDatePickerPlaceHolder($("#Inmate_DOB"));
-            SetDatePickerPlaceHolder($("#Inmate_ScreeningDate"));
-            SetDatePickerPlaceHolder($("#Inmate_CIDServiceRefusalDate"));
-            SetDatePickerPlaceHolder($("#Inmate_ReleaseDate"));
-            var screendate = $("#Inmate_ScreeningDate").val();
-            var InfoSigned = $('#Inmate_ReleaseOfInfoSigned').prop('checked');
-            var authchecked = $("#Inmate_AuthToRepresent").prop('checked');
-            var enabled = $("#hdEditingEnabled").val() == "False" ? false : true;
-            var vrss = $("#Inmate_VRSS").prop('checked');
-            var vet = $("#Inmate_USVet").prop('checked');
-            $(".k-list-container").each(function () {
-                var elementId = this.id.substring(0, this.id.length - 5).replace('_', '.')
-                if (elementId != "FacilityID" && elementId != "AllSearchResults" && elementId != "RefEpisode" && elementId != "UserID") {
-                    var tempDL = $("#" + elementId).data("kendoDropDownList");
-                    if (tempDL != undefined) {
-                        if (elementId == "UserID" &&
-                            ($("#hdIsLoginUserBFW").val() == "False" || $("#hdCanEditAllCases").val() == "True"))
-                            tempDL.enable(false);
+      <div class="divOffenderPart1tab" style="height: 70px !important; width: 98%; border: darkgray solid thin; border-radius : 3px;">
+              <line style="height:10px!important;width:100%;"></line>
+              <RELAESE class="divOffenderPart1tbs">
+                  <div class="divOffenderPart1tr" style="width:98%;">
+                      <div class="divOffenderPart1tb" style="width:80px;"><b>&nbsp;&nbsp;Address&nbsp;&nbsp;</b></div>
+                      <div class="divOffenderPart1tb" style="height:22px!important;">
+                          @Html.Kendo().TextBoxFor(m => m.Inmate.EpisodeAddress).Name("Inmate.EpisodeAddress").Enable(Model.EditingEnabled).HtmlAttributes(new { @style = "width:400px;" })
+                          <div class="divOffenderPart1tb" style="width:5px;margin-top:5px;"></div>
+                          @(Html.Kendo().CheckBoxFor(m => m.Inmate.EpisodeAddressUpdated).Label("Updated")
+        .Checked(Model.Inmate.EpisodeAddressUpdated.HasValue && Model.Inmate.EpisodeAddressUpdated.Value == true).Enable(false))&nbsp;&nbsp;&nbsp;&nbsp;
+                      </div>
+                  </div>
+              </RELAESE>
+              <RELAESE class="divOffenderPart1tbs">
+                  <div class="divOffenderPart1tr" style="width:98%;">
+                      <div class="divOffenderPart1tb" style="width:65px;"></div>
+                      <div class="divOffenderPart1tb" style="height:22px!important;">
+                          @Html.Kendo().TextBoxFor(m => m.Inmate.EpisodeAddressCity).Name("Inmate.EpisodeAddressCity").Enable(Model.EditingEnabled).HtmlAttributes(new { @style = "width:200px;" })
+                          <div class="divOffenderPart1tb" style="width:10px;"></div>
+                          @Html.Kendo().TextBoxFor(m => m.Inmate.EpisodeAddressState).Name("Inmate.EpisodeAddressState").Enable(false).HtmlAttributes(new { @style = "width:40px;" })
+                          <div class="divOffenderPart1tb" style="width:5px;"></div>
+                          @Html.Kendo().TextBoxFor(m => m.Inmate.EpisodeAddressZip).Name("Inmate.EpisodeAddressZip").Enable(Model.EditingEnabled).HtmlAttributes(new {@style="width:90px;" })
+                          <div class="divOffenderPart1tb" style="width:5px;"></div>
+                          @*@(Html.Kendo().Button().Name("bntAddress").Content("Save").HtmlAttributes(new { @class = "k-st buttonWidth" }))*@
+                      </div>
+                  </div>
+              </RELAESE>
+              <line style="height:10px!important;width:100%;"></line>
+          </div> 
+    <line style="height:20px!important;width:100%;"></line>
+</div>
+            <script type="text/javascript">
+                function OFFENDERButtonDisable(disabled) {
+                    var buttonR = $("#revertEpisodeButton").data("kendoButton");
+                    buttonR.enable(disabled);
+                    var buttonS = $("#saveEpisodeButton").data("kendoButton");
+                    buttonS.enable(disabled);
+                };
+                $(function () {
+                    //var initdata = $('#offenderDataForm').serialize(); //($(".flex-item-b")); // serialiseForm($('#offenderDataForm')); // $('#offenderDataForm').serialize();
+                    var initdata = serialize(document.getElementById('offenderDataForm'));
+                    SetDatePickerPlaceHolder($("#Inmate_DOB"));
+                    SetDatePickerPlaceHolder($("#Inmate_ScreeningDate"));
+                    SetDatePickerPlaceHolder($("#Inmate_CIDServiceRefusalDate"));
+                    SetDatePickerPlaceHolder($("#Inmate_ReleaseDate"));
+                    var screendate = $("#Inmate_ScreeningDate").val();
+                    var InfoSigned = $('#Inmate_ReleaseOfInfoSigned').prop('checked');
+                    var authchecked = $("#Inmate_AuthToRepresent").prop('checked');
+                    var enabled = $("#hdEditingEnabled").val() == "False" ? false : true;
+                    var vrss = $("#Inmate_VRSS").prop('checked');
+                    var vet = $("#Inmate_USVet").prop('checked');
+                    $(".k-list-container").each(function () {
+                        var elementId = this.id.substring(0, this.id.length - 5).replace('_', '.')
+                        if (elementId != "FacilityID" && elementId != "AllSearchResults" && elementId != "RefEpisode" && elementId != "UserID") {
+                            var tempDL = $("#" + elementId).data("kendoDropDownList");
+                            if (tempDL != undefined) {
+                                if (elementId == "UserID" &&
+                                    ($("#hdIsLoginUserBFW").val() == "False" || $("#hdCanEditAllCases").val() == "True"))
+                                    tempDL.enable(false);
+                                else
+                                    tempDL.enable(enabled);
+                            }
+                        }
+                    });
+                    $('#offenderDataForm .dynamicdisable').each(function (e) {
+                        if (!enabled)
+                            $(this).prop('disabled', 'true');
                         else
-                            tempDL.enable(enabled);
-                    }
-                }
-            });
-            $('#offenderDataForm .dynamicdisable').each(function (e) {
-                if (!enabled)
-                    $(this).prop('disabled', 'true');
-                else
-                    $(this).removeAttr('disabled');
-            })
-            $(".k-calendar-container").each(function () {
-                var nameArray = this.id.split('_');
-                var elementId = nameArray[0] + "_" + nameArray[1];
-                var tempDP = $("#" + elementId).data("kendoDatePicker");
-                if (tempDP != undefined)
-                    tempDP.enable(enabled);
-            });
+                            $(this).removeAttr('disabled');
+                    })
+                    $(".k-calendar-container").each(function () {
+                        var nameArray = this.id.split('_');
+                        var elementId = nameArray[0] + "_" + nameArray[1];
+                        var tempDP = $("#" + elementId).data("kendoDatePicker");
+                        if (tempDP != undefined)
+                            tempDP.enable(enabled);
+                    });
 
-            $('#offenderDataForm').submit(function (e) {
-                e.preventDefault();
-                var screendate1 = $("#Inmate_ScreeningDate").val();
-                var InfoSigned1 = $('#Inmate_ReleaseOfInfoSigned').prop('checked');
-                var authchecked1 = $("#Inmate_AuthToRepresent").prop('checked');
-                var vrss1 = $("#Inmate_VRSS").prop('checked');
-                var vet1 = $("#Inmate_USVet").prop('checked');
-                var actionText = UnsavedChanges("offenderDataForm");
-                if (actionText.length > 0) {
-                    if (!confirm("WARNING: You have unsaved changes in " + actionText + " that will be lost if you save Offender changes.\n\nIf you'd like to discard your changes and continue, click \"OK\"; otherwise, click \"Cancel\".")) {
-                        e.stopPropagation();
-                        return false;
-                    }
+                    $('#offenderDataForm').submit(function (e) {
+                        e.preventDefault();
+                        var screendate1 = $("#Inmate_ScreeningDate").val();
+                        var InfoSigned1 = $('#Inmate_ReleaseOfInfoSigned').prop('checked');
+                        var authchecked1 = $("#Inmate_AuthToRepresent").prop('checked');
+                        var vrss1 = $("#Inmate_VRSS").prop('checked');
+                        var vet1 = $("#Inmate_USVet").prop('checked');
+                        var actionText = UnsavedChanges("offenderDataForm");
+                        if (actionText.length > 0) {
+                            if (!confirm("WARNING: You have unsaved changes in " + actionText + " that will be lost if you save Offender changes.\n\nIf you'd like to discard your changes and continue, click \"OK\"; otherwise, click \"Cancel\".")) {
+                                e.stopPropagation();
+                                return false;
+                            }
+                        }
+                        var nowdata = $('#offenderDataForm').serialize(); //serialize($(".flex-item-b"));  //serialiseForm($('#offenderDataForm'));
+                        if (initdata === nowdata) {
+                            e.stopPropagation();
+                            return false;
+                        }
+                        OFFENDERButtonDisable(false);
+                        initdata = nowdata;
+                        postFormAndReplaceDivHtml($(".flex-item-b"), function (e) {
+                            if (screendate != screendate1 || authchecked != authchecked1 || InfoSigned != InfoSigned1 || vrss != vrss1 || vet != vet1) {
+                                ReloadApplication();
+                            }
+                        });
+                    });
+                    $('#offenderDataForm :input').change(function (e) {
+                        var nowdata = serialize(document.getElementById('offenderDataForm'));
+                        if (initdata === nowdata) OFFENDERButtonDisable(false);
+                        else OFFENDERButtonDisable(true);
+                    });
+                });
+                if ($(".divOffenderMain").width() > 600) {
+                    $("#wscan").css("width", "60px");
+                    $("#wscan1").css("width", "60px");
+                    $("#wscan2").css("width", "70px");
                 }
-                var nowdata = $('#offenderDataForm').serialize(); //serialize($(".flex-item-b"));  //serialiseForm($('#offenderDataForm'));
-                if (initdata === nowdata) {
-                    e.stopPropagation();
-                    return false;
+                else {
+                    $("#wscan").css("width", "10px");
+                    $("#wscan1").css("width", "10px");
+                    $("#wscan2").css("width", "20px");
                 }
-                OFFENDERButtonDisable(false);
-                initdata = nowdata;
-                postFormAndReplaceDivHtml($(".flex-item-b"), function (e) {
-                    if (screendate != screendate1 || authchecked != authchecked1 || InfoSigned != InfoSigned1 || vrss != vrss1 || vet != vet1) {
-                        ReloadApplication();
+                $("#offenderDataForm .CalFreshRef").click(function (e) {
+                    if ($(this).prop('checked')) {
+                        var obj = $(this);
+                        if (this.id == "CalFreshRefY") {
+                            $("#hdCalFreshRef").val("True");
+                        }
+                        else if (this.id == "CalFreshRefN") {
+                            $("#hdCalFreshRef").val("False");
+                        }
+                        $(".CalFreshRef").each(function () {
+                            if (this.id != obj[0].id)
+                                $(this).prop('checked', false);
+                        });
                     }
                 });
-            });
-            $('#offenderDataForm :input').change(function (e) {
-                var nowdata = serialize(document.getElementById('offenderDataForm'));
-                if (initdata === nowdata) OFFENDERButtonDisable(false);
-                else OFFENDERButtonDisable(true);
-            });
-           
-        });
-        if ($(".divOffenderMain").width() > 600) {
-            $("#wscan").css("width", "60px");
-            $("#wscan1").css("width", "60px");
-            $("#wscan2").css("width", "70px");
-        }
-        else {
-            $("#wscan").css("width", "10px");
-            $("#wscan1").css("width", "10px");
-            $("#wscan2").css("width", "20px");
-        }
-        $("#offenderDataForm .CalFreshRef").click(function (e) {
-            if ($(this).prop('checked')) {
-                var obj = $(this);
-                if (this.id == "CalFreshRefY") {
-                    $("#hdCalFreshRef").val("True");
-                }
-                else if (this.id == "CalFreshRefN") {
-                    $("#hdCalFreshRef").val("False");
-                }
-                $(".CalFreshRef").each(function () {
-                    if (this.id != obj[0].id)
-                        $(this).prop('checked', false);
-                });
-            }
-        });
 
-        $("#offenderDataForm .CalWorksRef").click(function (e) {
-            if ($(this).prop('checked')) {
-                var obj = $(this);
-                if (this.id == "CalWorksRefY") {
-                    $("#hdCalWorksRef").val("True");
-                }
-                else if (this.id == "CalWorksRefN") {
-                    $("#hdCalWorksRef").val("False");
-                }
-                $(".CalWorksRef").each(function () {
-                    if (this.id != obj[0].id)
-                        $(this).prop('checked', false);
+                $("#offenderDataForm .CalWorksRef").click(function (e) {
+                    if ($(this).prop('checked')) {
+                        var obj = $(this);
+                        if (this.id == "CalWorksRefY") {
+                            $("#hdCalWorksRef").val("True");
+                        }
+                        else if (this.id == "CalWorksRefN") {
+                            $("#hdCalWorksRef").val("False");
+                        }
+                        $(".CalWorksRef").each(function () {
+                            if (this.id != obj[0].id)
+                                $(this).prop('checked', false);
+                        });
+                    }
+                    else $("#hdCalWorksRef").val("");
                 });
-            }
-            else $("#hdCalWorksRef").val("");
-        });
-        $("#offenderDataForm .FosterYouth").click(function (e) {
-            if ($(this).prop('checked')) {
-                var obj = $(this);
-                if (this.id == "FosterYouthY") {
-                    $("#hdFosterYouth").val("True");
-                }
-                else if (this.id == "FosterYouthN") {
-                    $("#hdFosterYouth").val("False");
-                } 
-                $(".FosterYouth").each(function () {
-                    if (this.id != obj[0].id)
-                        $(this).prop('checked', false);
+                $("#offenderDataForm .FosterYouth").click(function (e) {
+                    if ($(this).prop('checked')) {
+                        var obj = $(this);
+                        if (this.id == "FosterYouthY") {
+                            $("#hdFosterYouth").val("True");
+                        }
+                        else if (this.id == "FosterYouthN") {
+                            $("#hdFosterYouth").val("False");
+                        }
+                        $(".FosterYouth").each(function () {
+                            if (this.id != obj[0].id)
+                                $(this).prop('checked', false);
+                        });
+                    }
+                    else {
+                        $("#hdFosterYouth").val("");
+                    }
                 });
-            }
-            else
-            {
-                $("#hdFosterYouth").val("");
-            }
-        });
-        //accessWindow.center().open();
-    </script>
-}
+            </script>
+        }

@@ -110,8 +110,12 @@ namespace BassIdentityManagement.Entities
         public bool? DHCSEligibility { get; set; }
         public DateTime? DHCSEligibilityDate { get; set; }
         public string BenefitWorkerName { get; set; }
+        public string EpisodeAddress { get; set; }
+        public string EpisodeAddressCity { get; set; }
+        public string EpisodeAddressState { get; set; }
+        public string EpisodeAddressZip { get; set; }
+        public bool? EpisodeAddressUpdated { get; set; }
 
-        
         //public bool Unassign { get; set; }
         //public bool EditingEnabled { get; set; }
         //public bool EditingDisabledBeyondScreening { get; set; }

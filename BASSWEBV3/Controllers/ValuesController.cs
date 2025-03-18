@@ -1,10 +1,7 @@
 ﻿using System.Web.Http;
 using System.Configuration;
 using System.Collections.Generic;
-<<<<<<< HEAD
-=======
 using System.Web.Http;
->>>>>>> 108e65727d6ed079b44a7df7639105e481e2a6d9
 
 namespace BASSWEBV3.Controllers
 {

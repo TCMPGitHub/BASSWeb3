@@ -127,6 +127,8 @@
 /BASSWEBV3/bin/uk-UA/Kendo.Mvc.resources.dll
 /BASSWEBV3/bin/WebGrease.dll
 /BASSWEBV3/bin/zh-CN/Kendo.Mvc.resources.dll
+<<<<<<< HEAD
+=======
 /BassIdentityManagement/obj/Debug/.NETFramework,Version=v4.6.1.AssemblyAttributes.cs
 /BassIdentityManagement/obj/Debug/.NETFramework,Version=v4.8.AssemblyAttributes.cs
 /BassIdentityManagement/BassIdentityManagement.csproj
@@ -191,3 +193,4 @@
 /BASSWEBV3/BassWebV3.csproj.user
 /.gitignore
 /DatabaseFiles
+>>>>>>> 108e65727d6ed079b44a7df7639105e481e2a6d9

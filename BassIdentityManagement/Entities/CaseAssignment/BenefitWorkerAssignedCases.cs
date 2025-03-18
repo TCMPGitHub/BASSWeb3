@@ -36,7 +36,5 @@ namespace BassIdentityManagement.Entities
         [Display(Name = "App Status"), StringLength(200)]
         public string AppStatus { get; set; }
         public string RedFlag { get; set; }
-        public string BICNum { get; set; }
-        public string CINNum { get; set; }
     }
 }

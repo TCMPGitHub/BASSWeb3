@@ -1,6 +1,20 @@
 ﻿@using Kendo.Mvc.UI
 @using Kendo.Mvc.Extensions
 <style>
+<<<<<<< HEAD
+      /*  #gridBWProductivity>.k-grid-norecords{
+                height:calc(100vh - 220px)!important;
+            }
+        #gridBWProductivity>.k-grid-content-expander{
+            width:calc(100vh - 120px)!important;
+        }*/
+    .k-i-arrow-60-down, .k-i-calendar {
+        padding: 0;
+        margin-top: -10px !important;
+    }
+    
+    </style>
+=======
     /*#gridBWProductivity>.k-grid-norecords{
             height:calc(100vh - 220px)!important;
         }
@@ -12,9 +26,10 @@
         margin-top: -10px !important;
     }
 </style>
+>>>>>>> 108e65727d6ed079b44a7df7639105e481e2a6d9
 <script>
     function BWGridDataBound(e) {
-       var grid = $("#gridBWProductivity").data("kendoGrid");
+        var grid = $("#gridBWProductivity").data("kendoGrid");
         var dataSource = grid.dataSource
         grid.thead.find('th').each(function () {
             $(this).prop('title', $(this).data('title'));
@@ -43,7 +58,7 @@
         //==================================
         // Get the export link as jQuery object  page: grid.dataSource.page(),
         var requestObject = (new kendo.data.transports["aspnetmvc-server"]({ prefix: "" }))
-                .options.parameterMap({               
+            .options.parameterMap({
                 sort: grid.dataSource.sort(),
                 filter: grid.dataSource.filter()
             });
@@ -140,13 +155,13 @@
 
         var rows = [{
             cells: [{ value: "BenefitWorkerName" },
-              { value: "MCTotal" },
-              { value: "SSITotal" },
-              { value: "VATotal" },
-              { value: "SNPRTotal" },
-              { value: "MediCalBnp" },
-              { value: "SSIBnp" },
-              { value: "VABnp" }]
+            { value: "MCTotal" },
+            { value: "SSITotal" },
+            { value: "VATotal" },
+            { value: "SNPRTotal" },
+            { value: "MediCalBnp" },
+            { value: "SSIBnp" },
+            { value: "VABnp" }]
         }];
 
         //using fetch, so we can process the data when the request is successfully completed
@@ -156,32 +171,32 @@
                 //push single row for every record
                 rows.push({
                     cells: [
-                       { value: data[i].BenefitWorkerName },
-                       { value: data[i].MCTotal },
-                       { value: data[i].SSITotal },
-                       { value: data[i].VATotal },
-                       { value: data[i].SNPRTotal },
-                       { value: data[i].MediCalBnp },
-                       { value: data[i].SSIBnp },
-                       { value: data[i].VABnp }]
+                        { value: data[i].BenefitWorkerName },
+                        { value: data[i].MCTotal },
+                        { value: data[i].SSITotal },
+                        { value: data[i].VATotal },
+                        { value: data[i].SNPRTotal },
+                        { value: data[i].MediCalBnp },
+                        { value: data[i].SSIBnp },
+                        { value: data[i].VABnp }]
                 })
             }
             var workbook = new kendo.ooxml.Workbook({
                 sheets: [
-                  {
-                      columns: [
-                        // Column settings (width)
-                        { autoWidth: true },
-                        { autoWidth: true },
-                        { autoWidth: true },
-                        { autoWidth: true },
-                        { autoWidth: true }
-                      ],
-                      // Title of the sheet
-                      title: "Benefit Worker Productivity Report",
-                      // Rows of the sheet
-                      rows: rows
-                  }
+                    {
+                        columns: [
+                            // Column settings (width)
+                            { autoWidth: true },
+                            { autoWidth: true },
+                            { autoWidth: true },
+                            { autoWidth: true },
+                            { autoWidth: true }
+                        ],
+                        // Title of the sheet
+                        title: "Benefit Worker Productivity Report",
+                        // Rows of the sheet
+                        rows: rows
+                    }
                 ]
             });
             //save the file as Excel file with extension xlsx
@@ -230,6 +245,43 @@
         });
         
     }
+    function SelectFacility(e) {
+        var sel = $("#Facility").data("kendoDropDownList").value();
+        console.log("Facility Selected: " + sel);
+        $.ajax({
+            url: "@Url.Action("GetFacilityBWUsers", "Reports")",
+            data: { FacilityID: sel, StartDate: $("#FromDate").val(), EndDate: $("#ToDate").val() },
+            cache: false,
+            contentType: "application/json; charset=utf-8",
+            success: function (data, textStatus, XMLHttpRequest) {
+                var init = data.split(",");
+                var multiSelect = $("#RptBfUsers").data("kendoMultiSelect");
+                multiSelect.value(0);
+                var selectedValues = [];
+                if (init !== undefined && init.length > 0) {
+
+                    for (var i = 0; i < init.length; i++) {
+                        selectedValues.push(init[i]);
+                    }
+                    multiSelect.value(selectedValues);
+                }
+
+                var items = $("#RptBfUsers").data("kendoMultiSelect").ul.find("li");
+                for (var i = 0; i < items.length; i++) {
+                    if (selectedValues.length > 0 && selectedValues.indexOf(items[i].children.cb.value) > -1) {
+                        items[i].children.cb.checked = true;
+                    }
+                    else {
+                        items[i].children.cb.checked = false;
+                    }
+                }
+                multiSelect.trigger("change");
+                var grid = $("#gridInmatesProductivity").data("kendoGrid");
+                grid.dataSource.read({ FromDate: $("#FromDate").val(), ToDate: $("#ToDate").val(), BfWorkerIDs: data });
+                grid.refresh();
+            }
+        });
+    }
     function SetBWDefault() {
         var items = $("#RptBW").data("kendoMultiSelect").ul.find("li");
         checkInputs(items);
@@ -243,6 +295,14 @@
         e.preventDefault();
         if (e.sender.data().length === 0)
             return;
+<<<<<<< HEAD
+
+        //var selectItems = $("#RptBfUsers").data("kendoMultiSelect").dataItems();
+        //if(selectItems.length == 0)
+
+        //return false;
+=======
+>>>>>>> 108e65727d6ed079b44a7df7639105e481e2a6d9
     }
     
 </script>
@@ -271,7 +331,11 @@
                 .HtmlAttributes(new { style = "width:120px;margin-top:5px;" })
                 .DataTextField("FacilityName")
                 .DataValueField("FacilityID")
+<<<<<<< HEAD
+                .Events(e=>e.Change("SelectFacility"))
+=======
                 .Events(e => e.Change("SelectFacility"))
+>>>>>>> 108e65727d6ed079b44a7df7639105e481e2a6d9
                 .DataSource(source =>
                 {
                     source.Read(read =>
@@ -279,8 +343,14 @@
                         read.Action("FilterInmatesDetailsFa_read", "Reports");
                     });
                 })
+<<<<<<< HEAD
+            )
+            </div>
+
+=======
                 )
             </div>
+>>>>>>> 108e65727d6ed079b44a7df7639105e481e2a6d9
             <div class="col" style="float:left;margin-top:5px;margin-left:10px;"><label class="category-label" for="AllRptBfUsers" style="font-weight:bold;color:darkblue;">Benefit Worker:</label></div>
             <div class="col" style="float:left; margin-left:5px">
                 @(Html.Kendo().MultiSelect()
@@ -374,8 +444,3 @@
             //.Events(events=> { events.RequestStart("onRequestStart"); })
             .Group(g => g.Add(m => m.BenefitWorkerName))
             .Read(r => r.Action("BWProductivityData_Read", "Reports").Data("getbwprams"))))
-
-
-
-
-

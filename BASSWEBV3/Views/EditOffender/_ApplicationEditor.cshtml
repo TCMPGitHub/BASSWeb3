@@ -320,7 +320,8 @@
                     <scan style="width: 100%; text-align: right; margin-right: 5px;">BIC #</scan>
                 </div>
                 <div class="divOffenderPart2tbs" style="width:50%;">
-                    @(Html.Kendo().TextBoxFor(m => m.App.BICNum).Name("App.BICNum").HtmlAttributes(new { @maxlength = "14", style = "height:20px;width:80%" }).Enable(true))
+                    @(Html.Kendo().TextBoxFor(m => m.App.BICNum).Name("App.BICNum")
+                          .HtmlAttributes(new { @maxlength = "14", style = "height:20px;width:80%", @class = "textBICBox" }).Enable(true))
                 </div>
             </div>
             <div class="divOffenderPart1tr">
@@ -328,7 +329,9 @@
                     <scan style="width: 100%; text-align: right; margin-right: 5px;">CIN #</scan>
                 </div>
                 <div class="divOffenderPart2tbs" style="width:50%;">
-                    @(Html.Kendo().TextBoxFor(m => m.App.CINNum).Name("App.CINNum").HtmlAttributes(new { @maxlength = "10", style = "height:20px;width:80%" }).Enable(true))
+                    @(Html.Kendo().TextBoxFor(m => m.App.CINNum).Name("App.CINNum")
+                      .HtmlAttributes(new { @maxlength = "10", style = "height:20px;width:80%",@class="textCINBox" })
+                      .Enable(true))
                 </div>
             </div>
             <div class="divOffenderPart1tr">
@@ -492,6 +495,16 @@
                         content.style.display = "";
                         this.innerText = "Hide " + appname + " Application";
                     }
+                })
+                $('#appForm' + appname).on('keyup', '.textBICBox', function (e) {
+                    var bicnum = $("#App_BICNum").val();
+                    if (bicnum.length > 13)
+                        alert("BICNumber must be no more than 14 Characters.");
+                })
+                $('#appForm' + appname).on('keyup', '.textCINBox', function (e) {
+                    var cinnum = $("#App_CINNum").val();
+                    if (cinnum.length > 9)
+                        alert("CINNumber must be no more than 10 Characters.");
                 })
             });
 

@@ -38,5 +38,6 @@ namespace BassIdentityManagement.Entities
         public string RedFlag { get; set; }
         public string BICNum { get; set; }
         public string CINNum { get; set; }
+        public string Outcome { get; set; }
     }
 }

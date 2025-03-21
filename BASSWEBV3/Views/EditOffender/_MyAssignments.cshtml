@@ -197,6 +197,7 @@
           columns.Bound(f => f.Apps).Title("Application").Width(80).HeaderHtmlAttributes(new { style = "font-weight:bold; color:darkblue;text-align:center;" }).HtmlAttributes(new { style = "line-height:14px!important;padding:0px;" });
           columns.Bound(f=>f.BICNum).Title("BICNum").Width(60).HeaderHtmlAttributes(new { style = "font-weight:bold; color:darkblue;text-align:center;" }).HtmlAttributes(new { style = "line-height:14px!important;padding:0px;" });
           columns.Bound(f => f.CINNum).Title("CINNum").Width(60).HeaderHtmlAttributes(new { style = "font-weight:bold; color:darkblue;text-align:center;" }).HtmlAttributes(new { style = "line-height:14px!important;padding:0px;" });
+          columns.Bound(f => f.Outcome).Title("Outcome").Width(60).HeaderHtmlAttributes(new { style = "font-weight:bold; color:darkblue;text-align:center;" }).HtmlAttributes(new { style = "line-height:14px!important;padding:0px;" });
           columns.Bound(f => f.AppStatus).Title("Disposition").Width(160).HeaderHtmlAttributes(new { style = "font-weight:bold; color:darkblue;text-align:center;" }).HtmlAttributes(new { style = "line-height:14px!important;padding:0px;" });
       })
        .Sortable(sortable => sortable.AllowUnsort(true))

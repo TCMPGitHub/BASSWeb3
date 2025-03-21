@@ -74,6 +74,7 @@ namespace BassIdentityManagement.Entities
         public string StatusDesc { get; set; }
         public string BICNum { get; set; }
         public string CINNum { get; set; }
+        public string Outcome { get; set; }
         public int TotalApps { get; set; }
         public int MediCalApps { get; set; }
         public int SsiApps { get; set; }

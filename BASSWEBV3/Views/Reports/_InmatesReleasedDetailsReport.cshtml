@@ -115,7 +115,7 @@
 
 @(Html.Kendo().Grid<BassIdentityManagement.Entities.InmatesReleaseDetailsReportData>()
                .Name("gridInmatesDetails")
-               .Selectable(s => s.Enabled(true)).HtmlAttributes(new { @style = "height:calc(100vh - 110px);width:calc(100vw * 1.4);" })
+               .Selectable(s => s.Enabled(true)).HtmlAttributes(new { @style = "height:calc(100vh - 110px);width:calc(100vw * 1.51);" })
                 .Filterable(filterable => filterable
                  .Extra(false)
                  .Operators(operators => operators
@@ -138,9 +138,10 @@
                    column.Bound(m => m.EPRD).Width(80).Title("EPRD").Format("{0:MM/dd/yyyy}").Filterable(false);
                    column.Bound(m => m.Housing).Width(130).Title("Housing").Filterable(false);
                    column.Bound(m => m.BenefitWorkerName).Width(150).Title("Benefit Worker").Filterable(false);
-                   column.Bound(m => m.StatusDesc).Width(400).Title("Disposition").Filterable(false);
-                   column.Bound(m => m.BICNum).Width(400).Title("BIC Number").Filterable(false);
-                   column.Bound(m => m.CINNum).Width(400).Title("CIN Number").Filterable(false);
+                   column.Bound(m => m.StatusDesc).Width(200).Title("Disposition").Filterable(false);
+                   column.Bound(m => m.BICNum).Width(100).Title("BIC Number").Filterable(false);
+                   column.Bound(m => m.CINNum).Width(100).Title("CIN Number").Filterable(false);
+                   column.Bound(m => m.Outcome).Width(100).Title("Outcome").Filterable(false);
                    column.Bound(m => m.TotalApps).Width(50).Title("Total Submitted").ClientFooterTemplate("#=sum#").Filterable(false);
                    column.Bound(m => m.MediCalApps).Width(50).Title("MediCal Submitted").ClientFooterTemplate("#=sum#").Filterable(false);
                    column.Bound(m => m.VaApps).Width(50).Title("VA Submitted").ClientFooterTemplate("#=sum#").Filterable(false);

@@ -496,15 +496,15 @@
                         this.innerText = "Hide " + appname + " Application";
                     }
                 })
-                $('#appForm' + appname).on('keyup', '.textBICBox', function (e) {
+                $('#appForm' + appname).on('change', '.textBICBox', function (e) {
                     var bicnum = $("#App_BICNum").val();
-                    if (bicnum.length > 13)
-                        alert("BICNumber must be no more than 14 Characters.");
+                    if (bicnum.length != 14)
+                        alert("BICNumber must be exactly 14 characters in length.");
                 })
-                $('#appForm' + appname).on('keyup', '.textCINBox', function (e) {
+                $('#appForm' + appname).on('change', '.textCINBox', function (e) {
                     var cinnum = $("#App_CINNum").val();
-                    if (cinnum.length > 9)
-                        alert("CINNumber must be no more than 10 Characters.");
+                    if (cinnum.length != 9)
+                        alert("CINNumber must be exactly 9 characters in length.");
                 })
             });
 

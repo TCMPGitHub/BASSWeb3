@@ -884,6 +884,373 @@ namespace BassWebV3.Controllers
             return fileStreamResult;
         }
 
+        public FileResult ExportFOExcel([DataSourceRequest] DataSourceRequest request, string data)
+        {
+            dynamic options = JsonConvert.DeserializeObject(HttpUtility.UrlDecode(data));
+            var fromdate = Convert.ToDateTime(options.date.Value);
+            var facilityOutlooks = GetFacilityOutlookReport(fromdate) as IEnumerable<FacilityOutlookReportData>;
+            
+            //Create new Excel workbook
+            var workbook = new HSSFWorkbook();
+            IFont font1 = workbook.CreateFont();
+            font1.FontHeightInPoints = 10;
+            font1.IsBold = true;
+            font1.Color = HSSFColor.DarkBlue.Index;
+
+            IFont font2 = workbook.CreateFont();
+            font2.FontHeightInPoints = 11;
+            font2.IsBold = true;
+            font2.Color = HSSFColor.Green.Index;
+
+            IFont font3 = workbook.CreateFont();
+            font3.FontHeightInPoints = 12;
+            font3.IsBold = true;
+            font3.Color = HSSFColor.DarkBlue.Index;
+
+            HSSFCellStyle styleLightBlue = (HSSFCellStyle)workbook.CreateCellStyle();
+            HSSFPalette palette = workbook.GetCustomPalette();
+            HSSFColor color = palette.FindSimilarColor(147, 184, 232);
+            styleLightBlue.Alignment = NPOI.SS.UserModel.HorizontalAlignment.Center;
+            styleLightBlue.VerticalAlignment = NPOI.SS.UserModel.VerticalAlignment.Center;
+            styleLightBlue.WrapText = true;
+            styleLightBlue.SetFont(font1);
+            styleLightBlue.FillForegroundColor = (short)palette.GetColor(color.Indexed).Indexed;
+            styleLightBlue.FillPattern = FillPattern.SolidForeground;
+
+            HSSFCellStyle styleOrange = (HSSFCellStyle)workbook.CreateCellStyle();
+            HSSFPalette palette1 = workbook.GetCustomPalette();
+            color = palette1.FindSimilarColor(255, 192, 0);
+            styleOrange.Alignment = NPOI.SS.UserModel.HorizontalAlignment.Center;
+            styleOrange.VerticalAlignment = NPOI.SS.UserModel.VerticalAlignment.Center;
+            styleOrange.WrapText = true;
+            styleOrange.SetFont(font3);
+            styleOrange.FillForegroundColor = (short)palette1.GetColor(color.Indexed).Indexed;
+            styleOrange.FillPattern = FillPattern.SolidForeground;
+
+            HSSFCellStyle stylePink = (HSSFCellStyle)workbook.CreateCellStyle();
+            HSSFPalette palette2 = workbook.GetCustomPalette();
+            color = palette2.FindSimilarColor(234, 251, 225);
+            stylePink.Alignment = NPOI.SS.UserModel.HorizontalAlignment.Center;
+            stylePink.VerticalAlignment = NPOI.SS.UserModel.VerticalAlignment.Center;
+            stylePink.WrapText = true;
+            stylePink.SetFont(font1);
+            stylePink.FillForegroundColor = (short)palette2.GetColor(color.Indexed).Indexed;
+            stylePink.FillPattern = FillPattern.SolidForeground;
+
+            HSSFCellStyle styleLightGreen = (HSSFCellStyle)workbook.CreateCellStyle();
+            HSSFPalette palette3 = workbook.GetCustomPalette();
+            var colorIdx = HSSFColor.LightGreen.Index;
+            palette3.SetColorAtIndex(colorIdx, (byte)198, (byte)224, (byte)180);
+            styleLightGreen.Alignment = NPOI.SS.UserModel.HorizontalAlignment.Center;
+            styleLightGreen.VerticalAlignment = NPOI.SS.UserModel.VerticalAlignment.Center;
+            styleLightGreen.WrapText = true;
+            styleLightGreen.SetFont(font3);
+            styleLightGreen.FillForegroundColor = (short)palette3.GetColor(colorIdx).Indexed;
+            styleLightGreen.FillPattern = FillPattern.SolidForeground;
+
+            HSSFCellStyle styleAubOrange = (HSSFCellStyle)workbook.CreateCellStyle();
+            HSSFPalette palette4 = workbook.GetCustomPalette();
+            colorIdx = HSSFColor.LightOrange.Index;
+            palette4.SetColorAtIndex(colorIdx, (byte)224, (byte)176, (byte)149);
+            styleAubOrange.Alignment = NPOI.SS.UserModel.HorizontalAlignment.Center;
+            styleAubOrange.VerticalAlignment = NPOI.SS.UserModel.VerticalAlignment.Center;
+            styleAubOrange.WrapText = true;
+            styleAubOrange.SetFont(font3);
+            styleAubOrange.FillForegroundColor = (short)palette4.GetColor(colorIdx).Indexed;
+            styleAubOrange.FillPattern = FillPattern.SolidForeground;
+
+            HSSFCellStyle styleCream = (HSSFCellStyle)workbook.CreateCellStyle();
+            HSSFPalette palette5 = workbook.GetCustomPalette();
+            colorIdx = HSSFColor.Grey25Percent.Index;
+            palette5.SetColorAtIndex(colorIdx, (byte)248, (byte)229, (byte)187);
+            styleCream.Alignment = NPOI.SS.UserModel.HorizontalAlignment.Center;
+            styleCream.VerticalAlignment = NPOI.SS.UserModel.VerticalAlignment.Center;
+            styleCream.WrapText = true;
+            styleCream.SetFont(font1);
+            styleCream.FillForegroundColor = (short)palette5.GetColor(colorIdx).Indexed;
+            styleCream.FillPattern = FillPattern.SolidForeground;
+
+            HSSFCellStyle styleBlue2 = (HSSFCellStyle)workbook.CreateCellStyle();
+            HSSFPalette palette6 = workbook.GetCustomPalette();
+            HSSFColor color1 = palette6.FindSimilarColor(35, 104, 199);
+            styleBlue2.Alignment = NPOI.SS.UserModel.HorizontalAlignment.Center;
+            styleBlue2.VerticalAlignment = NPOI.SS.UserModel.VerticalAlignment.Center;
+            styleBlue2.WrapText = true;
+            styleBlue2.SetFont(font3);
+            styleBlue2.FillForegroundColor = (short)palette5.GetColor(color1.Indexed).Indexed;
+            styleBlue2.FillPattern = FillPattern.SolidForeground;
+
+            HSSFCellStyle style = (HSSFCellStyle)workbook.CreateCellStyle();
+            style.Alignment = NPOI.SS.UserModel.HorizontalAlignment.Center;
+            style.VerticalAlignment = NPOI.SS.UserModel.VerticalAlignment.Center;
+            style.WrapText = true;
+            style.SetFont(font2);
+            style.FillBackgroundColor = HSSFColor.Grey80Percent.Index;
+
+            //Create new Excel sheet
+            var sheet = workbook.CreateSheet("FacilityOutlookReport");
+            var title = "180 - Day Facility Outlook Report date start at " + fromdate.ToString("MM/dd/yyyy");
+            //create header rows
+            for (var i1 = 0; i1 < 2; i1++)
+            {
+                var headerRow = sheet.CreateRow(i1);
+                for (int i = 0; i < 18; i++) { headerRow.CreateCell(i); }
+            }
+
+            //first header row
+            var cra = new NPOI.SS.Util.CellRangeAddress(0, 1, 0, 17);
+            sheet.AddMergedRegion(cra);
+            var cell = sheet.GetRow(0).GetCell(0);
+            cell.SetCellType(CellType.String);
+            cell.SetCellValue(title);
+            cell.CellStyle = style;
+
+            //second header row
+            for (var i1 = 2; i1 < 5; i1++)
+            {
+                var secondRow = sheet.CreateRow(i1);
+                if (i1 == 2)
+                {
+                    secondRow.Height = 4 * 100;
+                }
+                else
+                {
+                    secondRow.Height = 3 * 100;
+                }
+                for (int i = 0; i < 18; i++) { secondRow.CreateCell(i); }
+            }
+
+            var cra1 = new NPOI.SS.Util.CellRangeAddress(2, 4, 0, 0);
+            sheet.AddMergedRegion(cra1);
+            var cell1 = sheet.GetRow(2).GetCell(0);
+            cell1.SetCellType(CellType.String);
+            cell1.SetCellValue("Facility Name");
+            cell1.CellStyle = styleBlue2;
+
+            cra1 = new NPOI.SS.Util.CellRangeAddress(2, 3, 1, 3);
+            sheet.AddMergedRegion(cra1);
+            cell1 = sheet.GetRow(2).GetCell(1);
+            cell1.SetCellType(CellType.String);
+            cell1.SetCellValue("Total EPRD");
+            cell1.CellStyle = styleOrange;
+
+            cra1 = new NPOI.SS.Util.CellRangeAddress(2, 2, 4, 15);
+            sheet.AddMergedRegion(cra1);
+            cell1 = sheet.GetRow(2).GetCell(4);
+            cell1.SetCellType(CellType.String);
+            cell1.SetCellValue("Unknown Disposition");
+            cell1.CellStyle = styleAubOrange;
+
+            cra1 = new NPOI.SS.Util.CellRangeAddress(2, 2, 16, 17);
+            sheet.AddMergedRegion(cra1);
+            cell1 = sheet.GetRow(2).GetCell(16);
+            cell1.SetCellType(CellType.String);
+            cell1.SetCellValue("Late Referrals");
+            cell1.CellStyle = styleLightGreen;
+
+            var cra2 = new NPOI.SS.Util.CellRangeAddress(3, 3, 4, 5);
+            sheet.AddMergedRegion(cra2);
+            var cell2 = sheet.GetRow(3).GetCell(4);
+            cell2.SetCellType(CellType.String);
+            cell2.SetCellValue("EPRD 0-30 days");
+            cell2.CellStyle = styleCream;
+
+            cra2 = new NPOI.SS.Util.CellRangeAddress(3, 3, 6, 7);
+            sheet.AddMergedRegion(cra2);
+            cell2 = sheet.GetRow(3).GetCell(6);
+            cell2.SetCellType(CellType.String);
+            cell2.SetCellValue("EPRD 31-60 days");
+            cell2.CellStyle = styleCream;
+
+            cra2 = new NPOI.SS.Util.CellRangeAddress(3, 3, 8, 9);
+            sheet.AddMergedRegion(cra2);
+            cell2 = sheet.GetRow(3).GetCell(8);
+            cell2.SetCellType(CellType.String);
+            cell2.SetCellValue("EPRD 61-90 days");
+            cell2.CellStyle = styleCream;
+
+            cra2 = new NPOI.SS.Util.CellRangeAddress(3, 3, 10, 11);
+            sheet.AddMergedRegion(cra2);
+            cell2 = sheet.GetRow(3).GetCell(10);
+            cell2.SetCellType(CellType.String);
+            cell2.SetCellValue("EPRD 91-120 days");
+            cell2.CellStyle = styleCream;
+
+            cra2 = new NPOI.SS.Util.CellRangeAddress(3, 3, 12, 13);
+            sheet.AddMergedRegion(cra2);
+            cell2 = sheet.GetRow(3).GetCell(12);
+            cell2.SetCellType(CellType.String);
+            cell2.SetCellValue("EPRD 121-150 days");
+            cell2.CellStyle = styleCream;
+
+            cra2 = new NPOI.SS.Util.CellRangeAddress(3, 3, 14, 15);
+            sheet.AddMergedRegion(cra2);
+            cell2 = sheet.GetRow(3).GetCell(14);
+            cell2.SetCellType(CellType.String);
+            cell2.SetCellValue("EPRD 151-180 days");
+            cell2.CellStyle = styleCream;
+
+            cra2 = new NPOI.SS.Util.CellRangeAddress(3, 3, 16, 17);
+            sheet.AddMergedRegion(cra2);
+            cell2 = sheet.GetRow(3).GetCell(16);
+            cell2.SetCellType(CellType.String);
+            cell2.SetCellValue("Less than 140 days");
+            cell2.CellStyle = stylePink;
+
+            cra1 = new NPOI.SS.Util.CellRangeAddress(4, 4, 1, 1);
+            cell1 = sheet.GetRow(4).GetCell(1);
+            cell1.SetCellType(CellType.String);
+            cell1.SetCellValue("0-30 days");
+            cell1.CellStyle = styleLightBlue;
+
+            cra1 = new NPOI.SS.Util.CellRangeAddress(4, 4, 2, 2);
+            cell1 = sheet.GetRow(4).GetCell(2);
+            cell1.SetCellType(CellType.String);
+            cell1.SetCellValue("31-90 days");
+            cell1.CellStyle = styleLightBlue;
+
+            cra1 = new NPOI.SS.Util.CellRangeAddress(4, 4, 3, 3);
+            cell1 = sheet.GetRow(4).GetCell(3);
+            cell1.SetCellType(CellType.String);
+            cell1.SetCellValue("91-180 days");
+            cell1.CellStyle = styleLightBlue;
+
+            int celcnt = 4;
+            for (int i = 4; i < 18; i++)
+            {
+                var cra3 = new NPOI.SS.Util.CellRangeAddress(4, 4, i, i);
+                var cell3 = sheet.GetRow(4).GetCell(celcnt);
+                cell3.SetCellType(CellType.String);
+                if ((i % 2) == 0)
+                {
+                    cell3.SetCellValue("Count");
+                }
+                else
+                {
+                    cell3.SetCellValue("%");
+                }
+                cell3.CellStyle = styleLightBlue;
+                celcnt++;
+            }
+            ////////////
+
+            sheet.SetAutoFilter(new CellRangeAddress(4, 4, 0, 17));
+            //set columns's width
+            sheet.SetColumnWidth(0, 30 * 256);
+            sheet.SetColumnWidth(1, 12 * 256);
+            sheet.SetColumnWidth(2, 12 * 256);
+            sheet.SetColumnWidth(3, 12 * 256);
+            sheet.SetColumnWidth(4, 10 * 256);
+            sheet.SetColumnWidth(5, 10 * 256);
+            sheet.SetColumnWidth(6, 10 * 256);
+            sheet.SetColumnWidth(7, 10 * 256);
+            sheet.SetColumnWidth(8, 10 * 256);
+            sheet.SetColumnWidth(9, 10 * 256);
+            sheet.SetColumnWidth(10, 10 * 256);
+            sheet.SetColumnWidth(11, 10 * 256);
+            sheet.SetColumnWidth(12, 10 * 256);
+            sheet.SetColumnWidth(13, 10 * 256);
+            sheet.SetColumnWidth(14, 10 * 256);
+            sheet.SetColumnWidth(15, 10 * 256);
+            sheet.SetColumnWidth(16, 10 * 256);
+            sheet.SetColumnWidth(17, 10 * 256);
+
+            //(Optional) freeze the header row so it is not scrolled
+            //sheet.CreateFreezePane(39, 4, 39, 4);
+            int rowNumber = 5;
+            //Populate the sheet with values from the grid data
+            foreach (var item in facilityOutlooks)
+            {
+                //Create a new row
+                var row = sheet.CreateRow(rowNumber++);
+                row.CreateCell(0, CellType.String).SetCellValue(item.FacilityName);
+                row.CreateCell(1, CellType.String).SetCellValue(item.Total0T30EPRD.ToString());
+                row.CreateCell(2, CellType.String).SetCellValue((item.Total31T60EPRD + item.Total61T90EPRD).ToString());
+                row.CreateCell(3, CellType.String).SetCellValue((item.Total91T120EPRD + item.Total121T150EPRD + item.Total151T180EPRD).ToString());
+                row.CreateCell(4, CellType.String).SetCellValue(item.UnknownDisp0T30EPRD.ToString());
+                row.CreateCell(5, CellType.String).SetCellValue(item.UnknownDisp0T30EPRDPct.ToString());
+                row.CreateCell(6, CellType.String).SetCellValue(item.UnknownDisp31T60EPRD.ToString());
+                row.CreateCell(7, CellType.String).SetCellValue(item.UnknownDisp31T60EPRDPct.ToString());
+                row.CreateCell(8, CellType.String).SetCellValue(item.UnknownDisp61T90EPRD.ToString());
+                row.CreateCell(9, CellType.String).SetCellValue(item.UnknownDisp61T90EPRDPct.ToString());
+                row.CreateCell(10, CellType.String).SetCellValue(item.UnknownDisp91T120EPRD.ToString());
+                row.CreateCell(11, CellType.String).SetCellValue(item.UnknownDisp91T120EPRDPct.ToString());
+                row.CreateCell(12, CellType.String).SetCellValue(item.UnknownDisp121T150EPRD.ToString());
+                row.CreateCell(13, CellType.String).SetCellValue(item.UnknownDisp121T150EPRDPct.ToString());
+                row.CreateCell(14, CellType.String).SetCellValue(item.UnknownDisp151T180EPRD.ToString());
+                row.CreateCell(15, CellType.String).SetCellValue(item.UnknownDisp151T180EPRDPct.ToString());
+                row.CreateCell(16, CellType.String).SetCellValue(item.TotalEPRDnext140days.ToString());
+                row.CreateCell(17, CellType.String).SetCellValue(item.TotalEPRDnext140daysPct.ToString());
+            }
+
+            //calculate totals
+            var tT30 = facilityOutlooks.Sum(s => s.Total0T30EPRD);
+            var tT60 = facilityOutlooks.Sum(s => s.Total31T60EPRD);
+            var tT90 = facilityOutlooks.Sum(s => s.Total61T90EPRD);
+            var tT120 = facilityOutlooks.Sum(s => s.Total91T120EPRD);
+            var tT150 = facilityOutlooks.Sum(s => s.Total121T150EPRD);
+            var tT180 = facilityOutlooks.Sum(s => s.Total151T180EPRD);
+            var tT140 = facilityOutlooks.Sum(s => s.Total140);
+            var tT31T90 = tT60 + tT90;
+            var tT91T180 = tT120 + tT150 + tT180;
+            var tTUnknownDisp0T30 = facilityOutlooks.Sum(s => s.UnknownDisp0T30EPRD);
+            var tTUnknownDisp31T60 = facilityOutlooks.Sum(s => s.UnknownDisp31T60EPRD);
+            var tTUnknownDisp61T90 = facilityOutlooks.Sum(s => s.UnknownDisp61T90EPRD);
+            var tTUnknownDisp91T120 = facilityOutlooks.Sum(s => s.UnknownDisp91T120EPRD);
+            var tTUnknownDisp121T150 = facilityOutlooks.Sum(s => s.UnknownDisp121T150EPRD);
+            var tTUnknownDisp151T180 = facilityOutlooks.Sum(s => s.UnknownDisp151T180EPRD);
+            var tTUnknownDisp0T30Pct = tT30 == 0 ? 0 : Math.Round(tTUnknownDisp0T30 * 100.0 / tT30);
+            var tTUnknownDisp31T60Pct = tT60 == 0 ? 0 : Math.Round(tTUnknownDisp31T60 * 100.0 / tT60);
+            var tTUnknownDisp61T90Pct = tT90 == 0 ? 0 : Math.Round(tTUnknownDisp61T90 * 100.0 / tT90);
+            var tTUnknownDisp91T120Pct = tT120 == 0 ? 0 : Math.Round(tTUnknownDisp91T120 * 100.0 / tT120);
+            var tTUnknownDisp121T150Pct = tT150 == 0 ? 0 : Math.Round(tTUnknownDisp121T150 * 100.0 / tT150);
+            var tTUnknownDisp151T180Pct = tT180 == 0 ? 0 : Math.Round(tTUnknownDisp151T180 * 100.0 / tT180);
+            var tTE140 = facilityOutlooks.Sum(s => s.TotalEPRDnext140days);
+            var tT140Pct = tT140 == 0 ? 0 : Math.Round(tTE140 * 100.0 / tT140);
+
+            var rowTotal = sheet.CreateRow(rowNumber);
+            for (int i = 0; i < 18; i++)
+            {
+                var celltotal = rowTotal.CreateCell(i);
+                celltotal.SetCellType(CellType.String);
+                celltotal.CellStyle = styleLightBlue;
+                if (i == 0)
+                {
+                    celltotal.SetCellValue("Total:");
+                }
+                else
+                {
+                    switch (i)
+                    {
+                        case 1: celltotal.SetCellValue(tT30.ToString()); break;
+                        case 2: celltotal.SetCellValue(tT31T90.ToString()); break;
+                        case 3: celltotal.SetCellValue(tT91T180.ToString()); break;
+                        case 4: celltotal.SetCellValue(tT30.ToString()); break;
+                        case 5: celltotal.SetCellValue(tTUnknownDisp0T30Pct.ToString()); break;
+                        case 6: celltotal.SetCellValue(tT60.ToString()); break;
+                        case 7: celltotal.SetCellValue(tTUnknownDisp31T60Pct.ToString()); break;
+                        case 8: celltotal.SetCellValue(tT90.ToString()); break;
+                        case 9: celltotal.SetCellValue(tTUnknownDisp61T90Pct.ToString()); break;
+                        case 10: celltotal.SetCellValue(tT120.ToString()); break;
+                        case 11: celltotal.SetCellValue(tTUnknownDisp91T120Pct.ToString()); break;
+                        case 12: celltotal.SetCellValue(tT150.ToString()); break;
+                        case 13: celltotal.SetCellValue(tTUnknownDisp121T150Pct.ToString()); break;
+                        case 14: celltotal.SetCellValue(tT180.ToString()); break;
+                        case 15: celltotal.SetCellValue(tTUnknownDisp151T180Pct.ToString()); break;
+                        case 16: celltotal.SetCellValue(tTE140.ToString()); break;
+                        case 17: celltotal.SetCellValue(tT140Pct.ToString()); break;
+                    }
+                }
+            }
+
+            MemoryStream output = new MemoryStream();
+            workbook.Write(output);
+            return File(output.ToArray(), "application/vnd.ms-excel", "FacilityOutlookRpt.xls");
+            //FileStream xfile = new FileStream(Path.Combine(@"C:\\TCMPExcel", "FacilityOutlookRpt.xls"), FileMode.Create, System.IO.FileAccess.Write);
+            //workbook.Write(xfile);
+            //xfile.Close();
+        }
+
         public ActionResult FilterBW_read(string BfWorkerIDs)
         {
             if (!string.IsNullOrEmpty(BfWorkerIDs))
@@ -954,7 +1321,7 @@ namespace BassWebV3.Controllers
             List<ParameterInfo> paramList = new List<ParameterInfo> {
                     { new ParameterInfo { ParameterName="ReportDate", ParameterValue=FromDate } }
                 };
-            var results = SqlHelper.GetRecords<FacilityOutlookReportData>("spRptFacilityOutlook", paramList).ToList();
+            var results = SqlHelper.GetRecords<FacilityOutlookReportData>("spRptFacilityOutlook1", paramList).ToList();
             return results;
         }
 

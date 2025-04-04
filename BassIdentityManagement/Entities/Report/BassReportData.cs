@@ -173,29 +173,46 @@ namespace BassIdentityManagement.Entities
         [Key]
         public string FacilityName { get; set; }
         [Display(Name = "Total EPRD 0-30 days")]
-        public int Total30EPRD { get; set; }
-        [Display(Name = "Total EPRD Next 31-60 days")]
-        public int Total31TO60EPRD { get; set; }
-        [Display(Name = "Total EPRD next 61-90 days")]
-        public int Total61TO90EPRD { get; set; }
-        [Display(Name = "Total EPRD next 91-120 days")]
-        public int Total91TO120EPRD { get; set; }
-        [Display(Name = "Total EPRD next 121-150 days")]
-        public int Total121TO150EPRD { get; set; }
-        [Display(Name = "Total EPRD next 151-180 days")]
-        public int Total151TO180EPRD { get; set; }
-        [Display(Name = "Total EPRD Difference 31-60 days")]
-        public int TotalDiffNext30EPRD { get; set; }
-        [Display(Name = "Unknown Disposition (EPRD next 30 days)")]
-        public int UnknownDispNext30EPRD { get; set; }
-
-        public decimal UnknownDispNext30EPRDPct { get; set; }
-        [Display(Name = "Unknown Disposition (EPRD next 31-60 days)")]
-        public int UnknownDispNextNext30EPRD { get; set; }
-        public decimal UnknownDispNextNext30EPRDPct { get; set; }
-        [Display(Name = "Referrals less than 60 days before EPRD (EPRD next 60 days)")]
-        public int TotalEPRDnext60days { get; set; }
-        public decimal TotalEPRDnext60daysPct { get; set; }
-
+        public int Total0T30EPRD { get; set; }
+        [Display(Name = "Total EPRD 31-60 days")]
+        public int Total31T60EPRD { get; set; }
+        [Display(Name = "Total EPRD 61-90 days")]
+        public int Total61T90EPRD { get; set; }
+        [Display(Name = "Total EPRD 91-120 days")]
+        public int Total91T120EPRD { get; set; }
+        [Display(Name = "Total EPRD 121-150 days")]
+        public int Total121T150EPRD { get; set; }
+        [Display(Name = "Total EPRD 151-180 days")]
+        public int Total151T180EPRD { get; set; }
+        [Display(Name = "Total EPRD 140 days")]
+        public int Total140 { get; set; }
+        [Display(Name = "Unknown Disposition (EPRD 0-30 days)")]
+        public int UnknownDisp0T30EPRD { get; set; }
+        [Display(Name = "Unknown Disposition (EPRD 0-30 days) / Total 30")]
+        public decimal UnknownDisp0T30EPRDPct { get; set; }
+        [Display(Name = "Unknown Disposition (EPRD 31-60 days)")]
+        public int UnknownDisp31T60EPRD { get; set; }
+        [Display(Name = "Unknown Disposition (EPRD 31-60 days) / Total 60")]
+        public decimal UnknownDisp31T60EPRDPct { get; set; }
+        [Display(Name = "Unknown Disposition (EPRD 61-90 days)")]
+        public int UnknownDisp61T90EPRD { get; set; }
+        [Display(Name = "Unknown Disposition (EPRD 61-90 days) / Total 90")]
+        public decimal UnknownDisp61T90EPRDPct { get; set; }
+        [Display(Name = "Unknown Disposition (EPRD 61-90 days)")]
+        public int UnknownDisp91T120EPRD { get; set; }
+        [Display(Name = "Unknown Disposition (EPRD 91-120 days) / Total 120")]
+        public decimal UnknownDisp91T120EPRDPct { get; set; }
+        [Display(Name = "Unknown Disposition (EPRD 121-150 days)")]
+        public int UnknownDisp121T150EPRD { get; set; }
+        [Display(Name = "Unknown Disposition (EPRD 121-150 days) / Total 150")]
+        public decimal UnknownDisp121T150EPRDPct { get; set; }
+        [Display(Name = "Unknown Disposition (EPRD 151-180 days)")]
+        public int UnknownDisp151T180EPRD { get; set; }
+        [Display(Name = "Unknown Disposition (EPRD 151-180 days) / Total 180")]
+        public decimal UnknownDisp151T180EPRDPct { get; set; }
+        [Display(Name = "Total EPRD 140 days")]
+        public int TotalEPRDnext140days { get; set; }
+        [Display(Name = "Total EPRD 140 days pct")]
+        public decimal TotalEPRDnext140daysPct { get; set; }
     }
 }

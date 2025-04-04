@@ -1,4 +1,5 @@
 ﻿@using Kendo.Mvc.UI
+@using Kendo.Mvc.Extensions
 <style>
     .k-grid-header th.k-header {
         white-space: pre-wrap;
@@ -8,6 +9,7 @@
 
     .k-grid-footer td {
         background-color: lightblue;
+        color:darkblue;
     }
 </style>
 
@@ -21,8 +23,24 @@
         grid.thead.find('th').each(function () {
             $(this).prop('title', $(this).data('title'));
         })
-        var datestring = "180-Day Facility Outlook Report date start at " + $("#FromDate").val(); // + " - " + $("#ToDate").val();
+        var datestring = "180-Day Facility Outlook Report date start on " + $("#FromDate").val(); // + " - " + $("#ToDate").val();
         $("#reportfospan").html(datestring);
+
+        var requestObject = (new kendo.data.transports["aspnetmvc-server"]({ prefix: "" }))
+            .options.parameterMap({
+                sort: grid.dataSource.sort(),
+                filter: grid.dataSource.filter()
+            });
+
+        var val1 = { date: $("#FromDate").val() };
+        var thedata = encodeURIComponent(JSON.stringify(val1));
+        // Get the export link as jQuery object
+        var $exportLink = grid.element.find('.export');
+        // Get its 'href' attribute - the URL where it would navigate to
+        var href = "/Reports/ExportFOExcel?data=~";
+        href = href.replace(/data=([^&]*)/, 'data=' + thedata);
+        // Update the 'href' attribute
+        $exportLink.attr('href', href);
     }
     function getTotalEPRDnext60daysPct() {
         var gridData = $("#gridFAOutLook").data("kendoGrid").dataSource.view();
@@ -31,16 +49,123 @@
         var total60 = 0;
         var result = 0;
         for (var i = 0; i < gridData.length; i++) {
-            total30 += gridData[i].Total30EPRD;
+            total30 += gridData[i].Total0T30EPRD;
             total3060 += gridData[i].Total31TO60EPRD;
-            total60 += gridData[i].TotalEPRDnext60days;
+            total90 += gridData[i].Total61T90EPRD;
         }
         if ((total30 + total3060) > 0)
             result = total60 * 100.0 / (total30 + total3060);
 
         return Math.round(result).toFixed(1);
     }
+    function GetTotal31T90(val1, val2) { return val1 + val2; }
+    function GetTotal91T180(val1, val2, val3) { return val1 + val2 + val3; }
+    function GetreportFromDate() { return $("#FromDate").val(); }
+    function GetTotal31T90EPRD() {
+        var gridData = $("#gridFAOutLook").data("kendoGrid").dataSource.view();
+        var total31T60 = 0;
+        var total61T90 = 0;
+        for (var i = 0; i < gridData.length; i++) {
+            total31T60 += gridData[i].Total31T60EPRD;
+            total61T90 += gridData[i].Total61T90EPRD;
+        }
+        return total31T60 + total61T90;
+    }
+    function GetTotal91T180EPRD() {
+        var gridData = $("#gridFAOutLook").data("kendoGrid").dataSource.view();
+        var total91T120 = 0;
+        var total121T150 = 0;
+        var total151T180 = 0;
+        for (var i = 0; i < gridData.length; i++) {
+            total91T120 += gridData[i].Total91T120EPRD;
+            total121T150 += gridData[i].Total121T150EPRD;
+            total151T180 += gridData[i].Total151T180EPRD;
+        }
+        return total91T120 + total121T150 + total151T180;
+    }
+    function GetTotal31T60EPRDPct() {
+        var gridData = $("#gridFAOutLook").data("kendoGrid").dataSource.view();
+        var totalUnknownDis31T60 = 0;
+        var total31T60 = 0;
+        for (var i = 0; i < gridData.length; i++) {
+            totalUnknownDis31T60 += gridData[i].UnknownDisp31T60EPRD;
+            total31T60 += gridData[i].Total31T60EPRD;
+           
+        }
+        if (total31T60 > 0)
+            result = totalUnknownDis31T60 * 100.0 / total31T60;
 
+        return Math.round(result).toFixed(1);
+    }
+    function GetTotal61T90EPRDPct() {
+        var gridData = $("#gridFAOutLook").data("kendoGrid").dataSource.view();
+        var totalUnknownDis61T90 = 0;
+        var total61T90 = 0;
+        for (var i = 0; i < gridData.length; i++) {
+            totalUnknownDis61T90 += gridData[i].UnknownDisp61T90EPRD;
+            total61T90 += gridData[i].Total61T90EPRD;
+
+        }
+        if (total61T90 > 0)
+            result = totalUnknownDis61T90 * 100.0 / total61T90;
+
+        return Math.round(result).toFixed(1);
+    }
+    function GetTotal91T120EPRDPct() {
+        var gridData = $("#gridFAOutLook").data("kendoGrid").dataSource.view();
+        var totalUnknownDis91T120 = 0;
+        var total91T120 = 0;
+        for (var i = 0; i < gridData.length; i++) {
+            totalUnknownDis91T120 += gridData[i].UnknownDisp91T120EPRD;
+            total91T120 += gridData[i].Total91T120EPRD;
+
+        }
+        if (total91T120 > 0)
+            result = totalUnknownDis91T120 * 100.0 / total91T120;
+
+        return Math.round(result).toFixed(1);
+    }
+    function GetTotal121T150EPRDPct() {
+        var gridData = $("#gridFAOutLook").data("kendoGrid").dataSource.view();
+        var totalUnknownDis121T150 = 0;
+        var total121T150 = 0;
+        for (var i = 0; i < gridData.length; i++) {
+            totalUnknownDis121T150 += gridData[i].UnknownDisp121T150EPRD;
+            total121T150 += gridData[i].Total121T150EPRD;
+        }
+        if (total121T150 > 0)
+            result = totalUnknownDis121T150 * 100.0 / total121T150;
+
+        return Math.round(result).toFixed(1);
+    }
+    function GetTotal151T180EPRDPct() {
+        var gridData = $("#gridFAOutLook").data("kendoGrid").dataSource.view();
+        var totalUnknownDis151T180 = 0;
+        var total151T180 = 0;
+        for (var i = 0; i < gridData.length; i++) {
+            totalUnknownDis151T180 += gridData[i].UnknownDisp151T180EPRD;
+            total151T180 += gridData[i].Total151T180EPRD;
+        }
+        if (total151T180 > 0)
+            result = totalUnknownDis151T180 * 100.0 / total151T180;
+        else
+            result = 0.0;
+
+        return Math.round(result).toFixed(1);
+    }
+    function GetTotal140EPRDPct() {
+        var gridData = $("#gridFAOutLook").data("kendoGrid").dataSource.view();
+        var totalUnknownDis140 = 0;
+        var total140 = 0;
+        for (var i = 0; i < gridData.length; i++) {
+            totalUnknownDis140 += gridData[i].TotalEPRDnext140days;
+            total140 += gridData[i].Total140;
+        }
+        if (total140 > 0)
+            result = totalUnknownDis140 * 100.0 / total140;
+
+        return Math.round(result).toFixed(1);
+    }
 </script>
 
 <script>
@@ -101,13 +226,13 @@
             rows.push({
                 cells: [
                     { value: data[i].FacilityName },
-                    { value: data[i].Total30EPRD },
-                    { value: data[i].Total31TO60EPRD },
-                    { value: data[i].Total61TO90EPRD },
-                    { value: data[i].Total91TO120EPRD },
-                    { value: data[i].Total121TO150EPRD },
-                    { value: data[i].Total151TO180EPRD },
-                    { value: data[i].TotalDiffNext30EPRD },
+                    { value: data[i].Total0T30EPRD },
+                    { value: data[i].Total31T60EPRD },
+                    { value: data[i].Total61T90EPRD },
+                    { value: data[i].Total91T120EPRD },
+                    { value: data[i].Total121T150EPRD },
+                    { value: data[i].Total151T180EPRD },
+                    { value: data[i].UnknownDisp0T30EPRD },
                     { value: data[i].UnknownDispNext30EPRD },
                     { value: data[i].UnknownDispNext30EPRDPct },
                     { value: data[i].UnknownDispNextNext30EPRD },
@@ -116,12 +241,12 @@
                     { value: data[i].TotalEPRDnext60daysPct },
                 ]
             });
-            TTotal30EPRD += data[i].Total30EPRD;
-            TTotal31TO60EPRD += data[i].Total31TO60EPRD;
-            TTotal61TO90EPRD += data[i].Total61TO90EPRD;
-            TTotal91TO120EPRD += data[i].Total91TO120EPRD;
-            TTotal121TO150EPRD += data[i].Total121TO150EPRD;
-            TTotal151TO180EPRD += data[i].Total151TO180EPRD;
+            TTotal30EPRD += data[i].Total0T30EPRD;
+            TTotal31TO60EPRD += data[i].Total31T60EPRD;
+            TTotal61TO90EPRD += data[i].Total61T90EPRD;
+            TTotal91TO120EPRD += data[i].Total91T120EPRD;
+            TTotal121TO150EPRD += data[i].Total121T150EPRD;
+            TTotal151TO180EPRD += data[i].Total151T180EPRD;
             TUnknownDispNext30EPRD += data[i].UnknownDispNext30EPRD;
             TUnknownDispNextNext30EPRD += data[i].UnknownDispNextNext30EPRD;
             TTotalEPRDnext60days += data[i].TotalEPRDnext60days;
@@ -129,18 +254,25 @@
         rows.push({
             cells: [
                 { background: "#ADD8E6", value: "Total:" },
-                { background: "#ADD8E6", value: TTotal30EPRD },
-                { background: "#ADD8E6", value: TTotal31TO60EPRD },
-                { background: "#ADD8E6", value: TTotal61TO90EPRD },
-                { background: "#ADD8E6", value: TTotal91TO120EPRD },
-                { background: "#ADD8E6", value: TTotal121TO150EPRD },
-                { background: "#ADD8E6", value: TTotal151TO180EPRD },
-                { background: "#ADD8E6", value: TTotal31TO60EPRD - TTotal30EPRD },
-                { background: "#ADD8E6", value: TUnknownDispNext30EPRD },
-                { background: "#ADD8E6", value: TTotal30EPRD === 0 ? 0 : Math.round(TUnknownDispNext30EPRD * 100.0 / TTotal30EPRD) },
-                { background: "#ADD8E6", value: TUnknownDispNextNext30EPRD },
-                { background: "#ADD8E6", value: TTotal31TO60EPRD === 0 ? 0 : Math.round(TUnknownDispNextNext30EPRD * 100.0 / TTotal31TO60EPRD) },
-                { background: "#ADD8E6", value: TTotalEPRDnext60days },
+                { background: "#ADD8E6", value: TTotal0T30EPRD },
+                { background: "#ADD8E6", value: TTotal31T60EPRD },
+                { background: "#ADD8E6", value: TTotal61T90EPRD },
+                { background: "#ADD8E6", value: TTotal91T120EPRD },
+                { background: "#ADD8E6", value: TTotal121T150EPRD },
+                { background: "#ADD8E6", value: TTotal151T180EPRD },
+                { background: "#ADD8E6", value: TTotal31T60EPRD - TTotal0T30EPRD },
+                { background: "#ADD8E6", value: TUnknownDisp0T30EPRD },
+                { background: "#ADD8E6", value: TUnknownDisp0T30EPRDPct === 0 ? 0 : Math.round(TUnknownDisp0T30EPRD * 100.0 / TTotal0T30EPRD) },
+                { background: "#ADD8E6", value: UnknownDisp31T60EPRD },
+                { background: "#ADD8E6", value: UnknownDisp31T60EPRDPct === 0 ? 0 : Math.round(UnknownDisp31T60EPRD * 100.0 / TTotal31T60EPRD) },
+                { background: "#ADD8E6", value: UnknownDisp61T90EPRD },
+                { background: "#ADD8E6", value: UnknownDisp61T90EPRDPct === 0 ? 0 : Math.round(UnknownDisp61T90EPRD * 100.0 / TTotal61T90EPRD) },
+                { background: "#ADD8E6", value: UnknownDisp91T120EPRD },
+                { background: "#ADD8E6", value: UnknownDisp91T120EPRDPct === 0 ? 0 : Math.round(UnknownDisp91T120EPRD * 100.0 / TTotal91T120EPRD) },
+                { background: "#ADD8E6", value: UnknownDisp121T150EPRD },
+                { background: "#ADD8E6", value: UnknownDisp121T150EPRDPct === 0 ? 0 : Math.round(UnknownDisp121T150EPRD * 100.0 / TTotal121T150EPRD) },
+                { background: "#ADD8E6", value: UnknownDisp151T180EPRD },
+                { background: "#ADD8E6", value: UnknownDisp151T180EPRDPct === 0 ? 0 : Math.round(UnknownDisp151T180EPRD * 100.0 / TTotal121T150EPRD) },
                 { background: "#ADD8E6", value: getTotalEPRDnext60daysPct(), vAlign: "right" }
             ]
         });
@@ -149,9 +281,9 @@
             sheets: [
                 {
                     columns: [{ width: 250 }, { width: 160 }, { width: 160 }, { width: 160 },
-                              { width: 160 }, { width: 160 }, { width: 160 }, { width: 150 },
-                              { width: 50 }, { width: 50 }, { width: 50 }, { width: 50 }, 
-                              { width: 50 }, { width: 50 }],
+                    { width: 160 }, { width: 160 }, { width: 160 }, { width: 150 },
+                    { width: 50 }, { width: 50 }, { width: 50 }, { width: 50 },
+                    { width: 50 }, { width: 50 }],
                     title: "Facility Outlook Report",
                     rows: rows
                 }
@@ -171,65 +303,112 @@
         .Events(e => e.DataBound("GridFADataBound"))
         .ToolBar(toolbar =>
         {
-        toolbar.Template(@<text><a class='k-button k-grid-export' title='Export to excel' href="javascript:exportFOToExcel()" style="height:25px;"><span class="k-icon k-i-excel"></span>Export to excel</a></text>);
+        toolbar.Template(@<text><div class="col" style="float:left"><a style = "height:25px;" class="k-button export" href='@Url.Action("ExportFOExcel", "Reports", new { page = 1, pageSize = 0, filter = "", sort = "", data = "~" } )'><span class="k-icon k-i-excel"></span>Export To Excel</a></div></text>);      
         })
         .Columns(column =>
         {
-            column.Group(g => g.HeaderTemplate(@<text><span class="greentext" id="reportfospan" style="font-weight:bold;height:25px;"></span></text>)
-.Columns(info =>
-{
-info.Bound(m => m.FacilityName).Width(250).HeaderHtmlAttributes(new { @class = "lightblue" }).HeaderTemplate(@<text>Facility Name</text>).ClientFooterTemplate("Total : ");
-info.Bound(m => m.Total30EPRD).Width(80).HeaderHtmlAttributes(new { style = "background-color: #FFC000;" }).HeaderTemplate(@<text>Total next EPRD 0-30 days</text>).ClientFooterTemplate("#=sum#");
-info.Bound(m => m.Total31TO60EPRD).Width(80).HeaderHtmlAttributes(new { style = "background-color: #FFC000;" }).HeaderTemplate(@<text>Total next EPRD 31-60 days</text>).ClientFooterTemplate("#=sum#");
-info.Bound(m => m.Total61TO90EPRD).Width(80).HeaderHtmlAttributes(new { style = "background-color: #FFC000;" }).HeaderTemplate(@<text>Total EPRD next 61-90 days</text>).ClientFooterTemplate("#=sum#");
-info.Bound(m => m.Total91TO120EPRD).Width(80).HeaderHtmlAttributes(new { style = "background-color: #FFC000;" }).HeaderTemplate(@<text>Total EPRD next 91-120 days</text>).ClientFooterTemplate("#=sum#");
-info.Bound(m => m.Total121TO150EPRD).Width(80).HeaderHtmlAttributes(new { style = "background-color: #FFC000;" }).HeaderTemplate(@<text>Total EPRD next 121-150 days</text>).ClientFooterTemplate("#=sum#");
-info.Bound(m => m.Total151TO180EPRD).Width(80).HeaderHtmlAttributes(new { style = "background-color: #FFC000;" }).HeaderTemplate(@<text>Total EPRD next 151-180 days</text>).ClientFooterTemplate("#=sum#");
-info.Bound(m => m.TotalDiffNext30EPRD).Width(150).HeaderHtmlAttributes(new { style = "background-color: #FFC000;" }).HeaderTemplate(@<text>Total EPRD Difference  31-60 days</text>).ClientFooterTemplate("#= sum#");
-info.Group(g1 => g1.HeaderHtmlAttributes(new { style = "background-color: #F4B084;" }).HeaderTemplate(@<text>Unknown Disposition (EPRD next 30 days)</text>)
-            .Columns(info1 =>
-            {
-                info1.Bound(m => m.UnknownDispNext30EPRD).Width(50).HeaderHtmlAttributes(new { style = "background-color: #BDD7EE;" }).HeaderTemplate(@<text>Count</text>).ClientFooterTemplate("#= sum#");
-                info1.Bound(m => m.UnknownDispNext30EPRDPct).Width(50).HeaderHtmlAttributes(new { style = "background-color: #BDD7EE;" }).HeaderTemplate(@<text>%</text>)
-                     .ClientFooterTemplate("#= kendo.toString(data.UnknownDispNext30EPRD.sum * 100 / data.Total30EPRD.sum, 'd')#");
-            }));
-info.Group(g1 => g1.HeaderHtmlAttributes(new { style = "background-color: #F4B084;" }).HeaderTemplate(@<text>Unknown Disposition (EPRD next 31-60 days)</text>)
-            .Columns(info1 =>
-            {
-                info1.Bound(m => m.UnknownDispNextNext30EPRD).Width(50).HeaderHtmlAttributes(new { style = "background-color: #BDD7EE;" }).HeaderTemplate(@<text>Count</text>).ClientFooterTemplate("#= sum#");
-                info1.Bound(m => m.UnknownDispNextNext30EPRDPct).Width(50).HeaderHtmlAttributes(new { style = "background-color: #BDD7EE;" }).HeaderTemplate(@<text>%</text>)
-                     .ClientFooterTemplate("#= kendo.toString(data.UnknownDispNextNext30EPRD.sum * 100 / data.Total31TO60EPRD.sum, 'd')#");
-            }));
-info.Group(g1 => g1.HeaderHtmlAttributes(new { style = "background-color: #C6E0B4;" }).HeaderTemplate(@<text>Referrals less than 60 days before EPRD (EPRD next 60 days)</text>)
-            .Columns(info1 =>
-            {
-                info1.Bound(m => m.TotalEPRDnext60days).Width(50).HeaderHtmlAttributes(new { style = "background-color: #BDD7EE;" }).HeaderTemplate(@<text>Count</text>).ClientFooterTemplate("#= sum#");
-info1.Bound(m => m.TotalEPRDnext60daysPct).Width(50).HeaderHtmlAttributes(new { style = "background-color: #BDD7EE;" }).HeaderTemplate(@<text>%</text>)
-                   .ClientFooterTemplate("<div>#= getTotalEPRDnext60daysPct()#</div>");
-            }));
-}));
-        })
-             .DataSource(ds => ds.Ajax()
-             .Aggregates(aggregates =>
+        column.Bound(m=>m.FacilityName).Width(250).HeaderHtmlAttributes(new { @class = "lightblue", style = "background-color:#2368C7" }).HeaderTemplate(@<text><span style="font-weight:bold;color:DarkBlue">Facility Name</span></text>).ClientFooterTemplate("Total:");
+        column.Group(g => g.Title("Total EPRD").Width(300).HeaderHtmlAttributes(new { style = "background-color: #FFC000;"}).HeaderTemplate(@<text><span style="font-weight: bold; color:darkblue;">Total EPRD</span></text>)
+  .Columns(info =>
+  {
+      info.Bound(sb=>sb.Total31T60EPRD).Hidden();
+      info.Bound(sb=>sb.Total61T90EPRD).Hidden();
+      info.Bound(sb => sb.Total91T120EPRD).Hidden();
+      info.Bound(sb => sb.Total121T150EPRD).Hidden();
+      info.Bound(sb => sb.Total151T180EPRD).Hidden();
+      info.Bound(sb => sb.Total140).Hidden();
+      info.Bound(sb => sb.Total0T30EPRD).Title("0-30 Days").Width(80).HeaderHtmlAttributes(new { style = "background-color: #93B8E8;font-weight: bold; color:darkblue;font-size:14px" })
+        .HeaderTemplate(@<text>0-30 days</text>).ClientFooterTemplate("#=sum#");
+              info.Bound(sb => sb.Total31T60EPRD).Title("31-90 Days").ClientTemplate("#= GetTotal31T90(Total31T60EPRD,Total61T90EPRD)#").Width(80).HeaderHtmlAttributes(new { style = "background-color: #93B8E8;font-weight: bold; color:darkblue;font-size:14px" })
+                .HeaderTemplate(@<text>31-90 days</text>).ClientFooterTemplate("#=GetTotal31T90EPRD()#");
+              info.Bound(sb => sb.Total91T120EPRD).Title("91-180 Days").Width(90).HeaderHtmlAttributes(new { style = "background-color: #93B8E8;font-weight: bold; color:darkblue;font-size:14px" })
+                .HeaderTemplate(@<text>91-180 days</text>).ClientFooterTemplate("#=GetTotal91T180EPRD()#");
+          }));
+        column.Group(g => g.Title("Unknown Disposition").Width(500).HeaderHtmlAttributes(new { style = "background-color: #E0B095;" }).HeaderTemplate(@<text><span style="font-weight: bold; color: darkblue">Unknown Disposition</span></text>)
+             .Columns(info =>
              {
-                 aggregates.Add(p => p.Total30EPRD).Sum().Average();
-                 aggregates.Add(p => p.Total31TO60EPRD).Sum().Average();
-                 aggregates.Add(p => p.Total61TO90EPRD).Sum().Average();
-                 aggregates.Add(p => p.Total91TO120EPRD).Sum().Average();
-                 aggregates.Add(p => p.Total121TO150EPRD).Sum().Average();
-                 aggregates.Add(p => p.Total151TO180EPRD).Sum().Average();
-                 aggregates.Add(p => p.TotalDiffNext30EPRD).Sum();
-                 aggregates.Add(p => p.UnknownDispNext30EPRD).Sum();
-                 aggregates.Add(p => p.UnknownDispNextNext30EPRD).Sum();
-                 aggregates.Add(p => p.TotalEPRDnext60days).Sum();
-             })
-            .Batch(false)
-            .ServerOperation(false)
-            .Model(m =>
-            {
-                m.Id(f => f.FacilityName);
-            })
-            .Read(r => r.Action("FacilityOutlookReportData_Read", "Reports").Data("getRptdate"))))
+                 info.Group(g3 => g3.Title("EPRD 0-30 Days").HeaderHtmlAttributes(new { @class = "k-date-filter", style = "background-color: #F8E5BB;font-weight: bold; color:darkblue;font-size:14px" })
+                   .Columns(sublv2 =>
+                   {
+                       sublv2.Bound(sb2 => sb2.UnknownDisp0T30EPRD).Title("Count").HeaderHtmlAttributes(new { style = "background-color: #93B8E8;font-weight: bold; color:darkblue;font-size:14px" }).ClientFooterTemplate("#=sum#");
+                       sublv2.Bound(sb2 => sb2.UnknownDisp0T30EPRDPct).Title("%").HeaderHtmlAttributes(new { style = "background-color: #93B8E8;font-weight: bold; color:darkblue;font-size:14px" })
+                       .ClientFooterTemplate("#= kendo.toString(data.UnknownDisp0T30EPRD.sum * 100 / data.Total0T30EPRD.sum, 'd')#");
+                   }));
+                 info.Group(g4 => g4.Title("EDRD 31-60 Days").HeaderHtmlAttributes(new { @class = "k-date-filter", style = "background-color: #F8E5BB;font-weight: bold; color:darkblue;font-size:14px" })
+                    .Columns(sublv2 =>
+                    {
+                        sublv2.Bound(sb2 => sb2.UnknownDisp31T60EPRD).Title("Count").HeaderHtmlAttributes(new { style = "background-color: #93B8E8;font-weight: bold; color:darkblue;font-size:14px" }).ClientFooterTemplate("#=sum#");
+                        sublv2.Bound(sb2 => sb2.UnknownDisp31T60EPRDPct).Title("%").HeaderHtmlAttributes(new { style = "background-color: #93B8E8;font-weight: bold; color:darkblue;font-size:14px" })
+                        .ClientFooterTemplate("#= kendo.toString(data.UnknownDisp31T60EPRD.sum * 100 / data.Total31T60EPRD.sum, 'd')#");
+                    }));
+                 info.Group(g4 => g4.Title("EDRD 61-90 Days").HeaderHtmlAttributes(new { @class = "k-date-filter", style = "background-color: #F8E5BB;font-weight: bold; color:darkblue;font-size:14px" })
+                     .Columns(sublv2 =>
+                     {
+                         sublv2.Bound(sb2 => sb2.UnknownDisp61T90EPRD).Title("Count").HeaderHtmlAttributes(new { style = "background-color: #93B8E8;font-weight: bold; color:darkblue;font-size:14px" }).ClientFooterTemplate("#=sum#");
+                         sublv2.Bound(sb2 => sb2.UnknownDisp61T90EPRDPct).Title("%").HeaderHtmlAttributes(new { style = "background-color: #93B8E8;font-weight: bold; color:darkblue;font-size:14px" })
+                         .ClientFooterTemplate("#= kendo.toString(data.UnknownDisp61T90EPRD.sum * 100 / data.Total61T90EPRD.sum, 'd')#");
+                     }));
+                 info.Group(g4 => g4.Title("EDRD 91-120 Days").HeaderHtmlAttributes(new { @class = "k-date-filter", style = "background-color: #F8E5BB;font-weight: bold; color:darkblue;font-size:14px" })
+                     .Columns(sublv2 =>
+                     {
+                         sublv2.Bound(sb2 => sb2.UnknownDisp91T120EPRD).Title("Count").HeaderHtmlAttributes(new { style = "background-color: #93B8E8;font-weight: bold; color:darkblue;font-size:14px" }).ClientFooterTemplate("#=sum#");
+                         sublv2.Bound(sb2 => sb2.UnknownDisp91T120EPRDPct).Title("%").HeaderHtmlAttributes(new { style = "background-color: #93B8E8;font-weight: bold; color:darkblue;font-size:14px" })
+                         .ClientFooterTemplate("#= kendo.toString(data.UnknownDisp91T120EPRD.sum * 100 / data.Total91T120EPRD.sum, 'd')#");
+                     }));
+                 info.Group(g4 => g4.Title("EDRD 121-150 Days").HeaderHtmlAttributes(new { @class = "k-date-filter", style = "background-color: #F8E5BB;font-weight: bold; color:darkblue;font-size:14px" })
+                     .Columns(sublv2 =>
+                     {
+                         sublv2.Bound(sb2 => sb2.UnknownDisp121T150EPRD).Title("Count").HeaderHtmlAttributes(new { style = "background-color: #93B8E8;font-weight: bold; color:darkblue;font-size:14px" }).ClientFooterTemplate("#=sum#"); ;
+                         sublv2.Bound(sb2 => sb2.UnknownDisp121T150EPRDPct).Title("%").HeaderHtmlAttributes(new { style = "background-color: #93B8E8;font-weight: bold; color:darkblue;font-size:14px" })
+                         .ClientFooterTemplate("#= kendo.toString(data.UnknownDisp121T150EPRD.sum * 100 / data.Total121T150EPRD.sum, 'd')#");
+
+                     }));
+                 info.Group(g4 => g4.Title("EDRD 151-180 Days").HeaderHtmlAttributes(new { @class = "k-date-filter", style = "background-color: #F8E5BB;font-weight: bold; color:darkblue;font-size:14px" })
+                     .Columns(sublv2 =>
+                     {
+                         sublv2.Bound(sb2 => sb2.UnknownDisp151T180EPRD).Title("Count").HeaderHtmlAttributes(new { style = "background-color: #93B8E8;font-weight: bold; color:darkblue;font-size:14px" }).ClientFooterTemplate("#=sum#");
+                         sublv2.Bound(sb2 => sb2.UnknownDisp151T180EPRDPct).Title("%").HeaderHtmlAttributes(new { style = "background-color: #93B8E8;font-weight: bold; color:darkblue;font-size:14px" })
+                         .ClientFooterTemplate("#=GetTotal151T180EPRDPct()#");
+                     }));
+             }));
+column.Group(g => g.Title("Late Referrals").Width(400).HeaderHtmlAttributes(new { style = "background-color: #C6E0B4;" }).HeaderTemplate(@<text><span style="font-weight: bold; color:darkblue;">Late Referrals</span></text>)
+    .Columns(info =>
+    {
+    info.Group(g5 => g5.Title("Less than 140 days").Width(400).HeaderHtmlAttributes(new { style = "background-color: #FFC000;" }).HeaderTemplate(@<text><span style="font-weight: bold; font-size: 14px; color:darkblue;">Less than 140 days</span></text>)
+      .Columns(sublv2 =>
+      {
+          sublv2.Bound(sb2 => sb2.TotalEPRDnext140days).Title("Count").HeaderHtmlAttributes(new { style = "background-color: #93B8E8;font-weight: bold; color:darkblue;font-size:14px" }).ClientFooterTemplate("#=sum#");
+          sublv2.Bound(sb2 => sb2.TotalEPRDnext140daysPct).Title("%").HeaderHtmlAttributes(new { style = "background-color: #93B8E8;font-weight: bold; color:darkblue;font-size:14px" })
+           .ClientFooterTemplate("#=GetTotal140EPRDPct()#");
+      }));
+    }));
+        })
+     .DataSource(ds => ds.Ajax()
+      .Aggregates(aggregates =>
+      {
+          aggregates.Add(p => p.Total0T30EPRD).Sum();
+          aggregates.Add(p => p.Total31T60EPRD).Sum();
+          aggregates.Add(p => p.Total61T90EPRD).Sum();
+          aggregates.Add(p => p.Total61T90EPRD).Sum();
+          aggregates.Add(p => p.Total91T120EPRD).Sum();
+          aggregates.Add(p => p.Total121T150EPRD).Sum();
+          aggregates.Add(p => p.Total151T180EPRD).Sum();
+          aggregates.Add(p => p.Total140).Sum();
+          aggregates.Add(p => p.UnknownDisp0T30EPRD).Sum();
+          aggregates.Add(p => p.UnknownDisp31T60EPRD).Sum();
+          aggregates.Add(p => p.UnknownDisp61T90EPRD).Sum();
+          aggregates.Add(p => p.UnknownDisp91T120EPRD).Sum();
+          aggregates.Add(p => p.UnknownDisp121T150EPRD).Sum();
+          aggregates.Add(p => p.UnknownDisp151T180EPRD).Sum();
+          aggregates.Add(p => p.TotalEPRDnext140days).Sum();
+      })
+     .Batch(false)
+     .ServerOperation(false)
+     .Model(m =>
+     {
+         m.Id(f => f.FacilityName);
+     })
+    .Read(r => r.Action("FacilityOutlookReportData_Read", "Reports").Data("getRptdate"))))
 
 <script>
     $("tbody").on("click", "tr", function (e) {

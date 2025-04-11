@@ -664,7 +664,7 @@
                   <div class="divOffenderPart1tr" style="width:90%;">
                       <div class="divOffenderPart1tb" style="width:80px;"><b>&nbsp;&nbsp;Address&nbsp;&nbsp;</b></div>
                       <div class="divOffenderPart1tb" style="height:22px!important;">
-                          @Html.Kendo().TextBoxFor(m => m.Inmate.EpisodeAddress).Name("Inmate.EpisodeAddress").Enable(Model.EditingEnabled).HtmlAttributes(new { @style = "width:350px;" })
+                          @Html.Kendo().TextBoxFor(m => m.Inmate.EpisodeAddress).Name("Inmate.EpisodeAddress").Enable(false).HtmlAttributes(new { @style = "width:350px;" })
                           <div class="divOffenderPart1tb" style="width:5px;margin-top:5px;"></div>
                           @(Html.Kendo().CheckBoxFor(m => m.Inmate.EpisodeAddressUpdated).Label("Updated")
         .Checked(Model.Inmate.EpisodeAddressUpdated.HasValue && Model.Inmate.EpisodeAddressUpdated.Value == true).Enable(false))&nbsp;&nbsp;&nbsp;&nbsp;
@@ -675,11 +675,11 @@
                   <div class="divOffenderPart1tr" style="width:90%;">
                       <div class="divOffenderPart1tb" style="width:80px;"></div>
                       <div class="divOffenderPart1tb" style="height:22px!important;">
-                          @Html.Kendo().TextBoxFor(m => m.Inmate.EpisodeAddressCity).Name("Inmate.EpisodeAddressCity").Enable(Model.EditingEnabled).HtmlAttributes(new { @style = "width:200px;" })
+                          @Html.Kendo().TextBoxFor(m => m.Inmate.EpisodeAddressCity).Name("Inmate.EpisodeAddressCity").Enable(false).HtmlAttributes(new { @style = "width:200px;" })
                           <div class="divOffenderPart1tb" style="width:5px;"></div>
                           @Html.Kendo().TextBoxFor(m => m.Inmate.EpisodeAddressState).Name("Inmate.EpisodeAddressState").Enable(false).HtmlAttributes(new { @style = "width:40px;" })
                           <div class="divOffenderPart1tb" style="width:5px;"></div>
-                          @Html.Kendo().TextBoxFor(m => m.Inmate.EpisodeAddressZip).Name("Inmate.EpisodeAddressZip").Enable(Model.EditingEnabled).HtmlAttributes(new { @style = "width:90px;" })
+                          @Html.Kendo().TextBoxFor(m => m.Inmate.EpisodeAddressZip).Name("Inmate.EpisodeAddressZip").Enable(false).HtmlAttributes(new { @style = "width:90px;" })
                           @*<div class="divOffenderPart1tb" style="width:5px;"></div>
         @(Html.Kendo().Button().Name("bntAddress").Content("Save").HtmlAttributes(new { @class = "k-st buttonWidth" }))*@
                       </div>

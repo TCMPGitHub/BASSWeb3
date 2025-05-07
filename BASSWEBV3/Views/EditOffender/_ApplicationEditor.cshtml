@@ -446,17 +446,17 @@
                     EnableButtons(true, appname, appID);
                 })
                 $('#appForm' + appname).on("click","input[type='radio']", function (e) {
-                    var screendate = $("#Inmate_ScreeningDate").val();
-                    var InfoSigned = $('#Inmate_ReleaseOfInfoSigned').prop('checked');
-                    var authchecked = $("#Inmate_AuthToRepresent").prop('checked');
-                    var AllowPartialEditAppt = (screendate !== undefined && screendate !== "" && screendate !== "__/__/____");
-                    var AllowEditAppt = AllowPartialEditAppt && InfoSigned &&  authchecked;
-                    if (e.target.value == "true"){
-                        if(!AllowPartialEditAppt || (AllowPartialEditAppt && !AllowEditAppt)){
-                            alert("AuthToRepresent and ReleaseOfInfoSigned checkboxes must be checked.");
-                            return false;
-                        }
-                    }
+                    //var screendate = $("#Inmate_ScreeningDate").val();
+                    //var InfoSigned = $('#Inmate_ReleaseOfInfoSigned').prop('checked');
+                    //var authchecked = $("#Inmate_AuthToRepresent").prop('checked');
+                    //var AllowPartialEditAppt = (screendate !== undefined && screendate !== "" && screendate !== "__/__/____");
+                    //var AllowEditAppt = AllowPartialEditAppt; // && InfoSigned &&  authchecked;
+                    //if (e.target.value == "true"){
+                    //    if(!AllowPartialEditAppt || (AllowPartialEditAppt && !AllowEditAppt)){
+                    //        alert("AuthToRepresent and ReleaseOfInfoSigned checkboxes must be checked.");
+                    //        return false;
+                    //    }
+                    //}
                     e.target.form['App.AgreesToApply'].value = e.target.value;
                     var span = document.getElementById("agreelv" + appname);
                     if(e.target.value == "true"){
@@ -525,11 +525,11 @@
             }
             function RefreshApplicationPanel(form, appname, appID) {
                 var editable = $("#hdIsEditable").val();
-                var screendate = $("#Inmate_ScreeningDate").val();
-                var InfoSigned = $('#Inmate_ReleaseOfInfoSigned').prop('checked');
-                var authchecked = $("#Inmate_AuthToRepresent").prop('checked');
-                var AllowPartialEditAppt = (screendate !== undefined && screendate !== "" && screendate !== "__/__/____");
-                var AllowEditAppt = AllowPartialEditAppt && InfoSigned &&  authchecked;
+                //var screendate = $("#Inmate_ScreeningDate").val();
+                //var InfoSigned = $('#Inmate_ReleaseOfInfoSigned').prop('checked');
+                //var authchecked = $("#Inmate_AuthToRepresent").prop('checked');
+                //var AllowPartialEditAppt = (screendate !== undefined && screendate !== "" && screendate !== "__/__/____");
+                //var AllowEditAppt = AllowPartialEditAppt && InfoSigned &&  authchecked;
                 var tempDLF = $("#App_CustodyFacilityId" + appname).data("kendoDropDownList");
                 var tempDLO = $("#App_ApplicationOutcomeID" + appname).data("kendoDropDownList");
                 var tempDPR = $("#App_AppliedOrRefusedOnDate" + appname).data("kendoDatePicker");
@@ -547,41 +547,41 @@
                 SetDatePickerPlaceHolder($("#App_OutcomeDate" + appname));
                 if (appname == "SSI") SetDatePickerPlaceHolder($("#App_PhoneInterviewDate" + appname));
                 
-                if (tempDLF != undefined) tempDLF.enable(false);
-                if (tempDLO != undefined) tempDLO.enable(false);
-                if (tempDPR != undefined) tempDPR.enable(false);
-                if (tempDPI != undefined) tempDPI.enable(false);
-                if (tempDPO != undefined) tempDPO.enable(false);
-                if (tempDPS != undefined) tempDPS.enable(false);
-                if (tempDLS != undefined) tempDLS.enable(false);
+                //if (tempDLF != undefined) tempDLF.enable(false);
+                //if (tempDLO != undefined) tempDLO.enable(false);
+                //if (tempDPR != undefined) tempDPR.enable(false);
+                //if (tempDPI != undefined) tempDPI.enable(false);
+                //if (tempDPO != undefined) tempDPO.enable(false);
+                //if (tempDPS != undefined) tempDPS.enable(false);
+                //if (tempDLS != undefined) tempDLS.enable(false);
                 if (editable == "False") {
                     $(chform).find("input, select, textarea, button").attr("disabled", true);
                 }
-                else if (AllowEditAppt || AllowPartialEditAppt) {
-                    if (chinput !== undefined && chinput !== "" && appID > 0 && AllowEditAppt) {
-                        if (tempDLF != undefined) tempDLF.enable(true);
-                        if (tempDLO != undefined) tempDLO.enable(true);
-                        if (tempDPR != undefined) tempDPR.enable(true);
-                        if (tempDPI != undefined) tempDPI.enable(true);
-                        if (tempDPO != undefined) tempDPO.enable(true);
-                        if (tempDPS != undefined) tempDPS.enable(true);
-                        if (tempDLS != undefined) tempDLS.enable(true);
-                        //if (appname == "MediCal")
-                            //$("#App_BICNum")[0].disabled = false;
-                    }
-                    else if (chinput !== undefined && chinput !== "" && appID > 0 && AllowPartialEditAppt){
-                        if(chinput == "False"){
-                            $(".agree_1_" + appname).attr("disabled", true);
-                            $(".agree_2_" + appname).attr("disabled", true);
-                            if (tempDLF != undefined) tempDLF.enable(true);
-                            if (tempDPR != undefined) tempDPR.enable(true);
-                        }
-                    }
-                }
-                else if (!AllowPartialEditAppt) {
-                     $(".agree_1_" + appname).attr("disabled", true);
-                     $(".agree_2_" + appname).attr("disabled", true);
-                }
+                //else if (AllowEditAppt || AllowPartialEditAppt) {
+                //    if (chinput !== undefined && chinput !== "" && appID > 0 && AllowEditAppt) {
+                //        if (tempDLF != undefined) tempDLF.enable(true);
+                //        if (tempDLO != undefined) tempDLO.enable(true);
+                //        if (tempDPR != undefined) tempDPR.enable(true);
+                //        if (tempDPI != undefined) tempDPI.enable(true);
+                //        if (tempDPO != undefined) tempDPO.enable(true);
+                //        if (tempDPS != undefined) tempDPS.enable(true);
+                //        if (tempDLS != undefined) tempDLS.enable(true);
+                //        //if (appname == "MediCal")
+                //            //$("#App_BICNum")[0].disabled = false;
+                //    }
+                //    else if (chinput !== undefined && chinput !== "" && appID > 0 && AllowPartialEditAppt){
+                //        if(chinput == "False"){
+                //            $(".agree_1_" + appname).attr("disabled", true);
+                //            $(".agree_2_" + appname).attr("disabled", true);
+                //            if (tempDLF != undefined) tempDLF.enable(true);
+                //            if (tempDPR != undefined) tempDPR.enable(true);
+                //        }
+                //    }
+                //}
+                //else if (!AllowPartialEditAppt) {
+                //     $(".agree_1_" + appname).attr("disabled", true);
+                //     $(".agree_2_" + appname).attr("disabled", true);
+                //}
 
                 if (appname == "MediCal") {
                     SetDatePickerPlaceHolder($("#App_IssuedOnDate" + appname));

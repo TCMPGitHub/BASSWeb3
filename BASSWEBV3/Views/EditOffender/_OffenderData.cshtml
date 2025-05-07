@@ -738,9 +738,9 @@
 
                     $('#offenderDataForm').submit(function (e) {
                         e.preventDefault();
-                        var screendate1 = $("#Inmate_ScreeningDate").val();
-                        var InfoSigned1 = $('#Inmate_ReleaseOfInfoSigned').prop('checked');
-                        var authchecked1 = $("#Inmate_AuthToRepresent").prop('checked');
+                        //var screendate1 = $("#Inmate_ScreeningDate").val();
+                        //var InfoSigned1 = $('#Inmate_ReleaseOfInfoSigned').prop('checked');
+                        //var authchecked1 = $("#Inmate_AuthToRepresent").prop('checked');
                         var vrss1 = $("#Inmate_VRSS").prop('checked');
                         var vet1 = $("#Inmate_USVet").prop('checked');
                         var actionText = UnsavedChanges("offenderDataForm");
@@ -758,7 +758,8 @@
                         OFFENDERButtonDisable(false);
                         initdata = nowdata;
                         postFormAndReplaceDivHtml($(".flex-item-b"), function (e) {
-                            if (screendate != screendate1 || authchecked != authchecked1 || InfoSigned != InfoSigned1 || vrss != vrss1 || vet != vet1) {
+                            //if (screendate != screendate1 || authchecked != authchecked1 || InfoSigned != InfoSigned1 || vrss != vrss1 || vet != vet1) {
+                            if (vrss != vrss1 || vet != vet1) {
                                 ReloadApplication();
                             }
                         });

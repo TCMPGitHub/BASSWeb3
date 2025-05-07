@@ -68,15 +68,17 @@
            }
 
            function ShowGrid(e) {
-               var releaseOfInfoSigned = $("#Inmate_ReleaseOfInfoSigned").prop('checked');
-               var authToRepresent = $("#Inmate_AuthToRepresent").prop('checked');
-               if (e.sender._data.length > 0 && releaseOfInfoSigned && authToRepresent ) {
+               //var releaseOfInfoSigned = $("#Inmate_ReleaseOfInfoSigned").prop('checked');
+               //var authToRepresent = $("#Inmate_AuthToRepresent").prop('checked');
+               // && releaseOfInfoSigned && authToRepresent 
+               if (e.sender._data.length > 0) {
                     $("#gridArchivedApplication").show();
                     $("#divNoFound").hide();
                 }
-                else {
+               else {
+                   //&& !releaseOfInfoSigned || !authToRepresent
                    $("#gridArchivedApplication").hide();
-                   if (e.sender._data.length > 0 && !releaseOfInfoSigned || !authToRepresent)
+                   if (e.sender._data.length > 0 )
                        $("#divNoFound").hide();
                    else
                        $("#divNoFound").show();

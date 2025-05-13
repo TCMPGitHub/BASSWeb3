@@ -78,6 +78,9 @@
     .yellowcolor{
         background-color:yellow;
     }
+    .pink {
+        background-color: pink;
+    }
 </style>
 
 <script type="text/javascript">
@@ -123,7 +126,9 @@
                 else if (row.RedFlag == '2')
                     $('tr[data-uid="' + row.uid + '"]').css("background-color", "#ff9966");
                 else if (row.RedFlag == '3')
-                    $('tr[data-uid="' + row.uid + '"]').css("background-color", "yellow");
+                $('tr[data-uid="' + row.uid + '"]').css("background-color", "yellow");
+                else if (row.RedFlag == '4')
+                    $('tr[data-uid="' + row.uid + '"]').css("background-color", "pink");
             });
     }
     function NavClientLink(CDCRNums) {
@@ -221,6 +226,8 @@
         <td style="height:8px!important;border-style:none;width:160px!important;"><span style="color:white;">IP has no application.</span></td>
         <td style="height:8px!important;border-style:none;"><span class="dot yellowcolor"></span></td>
         <td style="height:8px!important;border-style:none;width:220px!important;"><span style="color:white;">IP has application older than 120 days.</span></td>
+        <td style="height:8px!important;border-style:none;"><span class="dot pink"></span></td>
+        <td style="height:8px!important;border-style:none;width:220px!important;"><span style="color:white;">Medi-Cal Status Check.</span></td>
     </tr>
 </table>
 

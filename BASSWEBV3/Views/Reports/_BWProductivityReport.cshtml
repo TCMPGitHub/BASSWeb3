@@ -350,6 +350,10 @@
                     .ClientGroupHeaderColumnTemplate("#=sum#")
                     .ClientFooterTemplate("#=sum#")
                     .ClientGroupFooterTemplate("#=sum#").FooterHtmlAttributes(new { style = "background-color:rgb(161,202,241)" });
+                column.Bound(m => m.CIDNeedsAssessment).Width(80).Title("CID Needs Ass. Amount").Filterable(true)
+                   .ClientGroupHeaderColumnTemplate("#=sum#")
+                   .ClientFooterTemplate("#=sum#")
+                   .ClientGroupFooterTemplate("#=sum#").FooterHtmlAttributes(new { style = "background-color:rgb(161,202,241)" });
             })
              .Resizable(resize => resize.Columns(true))
              .Pageable(pageable => pageable
@@ -369,6 +373,7 @@
                  aggregates.Add(p => p.MediCalBnp).Sum();
                  aggregates.Add(p => p.SSIBnp).Sum();
                  aggregates.Add(p => p.VABnp).Sum();
+                 aggregates.Add(p => p.CIDNeedsAssessment).Sum();
              })
             .PageSize(100)
             //.Events(events=> { events.RequestStart("onRequestStart"); })

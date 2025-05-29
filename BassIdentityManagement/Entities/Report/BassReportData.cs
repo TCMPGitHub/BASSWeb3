@@ -159,6 +159,7 @@ namespace BassIdentityManagement.Entities
         public int MediCalBnp { get; set; }
         public int SSIBnp { get; set; }
         public int VABnp { get; set; }
+        public int CIDNeedsAssessment { get; set; }
     }
 
     public class InmatesReportData

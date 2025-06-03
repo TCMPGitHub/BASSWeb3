@@ -1319,28 +1319,9 @@ namespace BassWebV3.Controllers
         
         public ActionResult GetUserWorkStatus(int userID)
         {
-            var query = string.Format(@"
-DECLARE @count int=( select COUNT(*) FROM UserWorkStatus Where UserID = {0}
-   AND CheckOutDateTime is null)
-IF @count =0
-BEGIN
-SELECT 0 as StatusID, 0 as UserID, 0 as FacilityID, SupervisorID, 
-     (FirstName + ' ' + LastName)UserName,'' AS Facility,
-     '' as LocationNote,'' as CheckedOutNote, 0 as Traveling, null as CheckInDateTime, null as CheckOutDateTime  
-  From  [User] Where UserID = {0}
-END
-ELSE
-BEGIN
-  SELECT t1.StatusID, t1.UserID, t1.FacilityID, t2.SupervisorID, 
-   (t2.FirstName + ' ' + t2.LastName)UserName, t3.Abbr AS Facility,
-   t1.LocationNote,t1.CheckedOutNote, t1.Traveling, t1.CheckInDateTime, t1.CheckOutDateTime  
-From UserWorkStatus t1 right Join [User] t2 ON t1.UserID  = t2.UserID 
-   LEFT OUTER JOIN dbo.[Facility] t3 ON t1.FacilityID = t3.FacilityID
-Where t2.UserID = {0}
-  AND t1.CheckOutDateTime is null
-END
-", userID);
-            var result = SqlHelper.ExecuteCommands<UserWorkStatus>(query, 1).FirstOrDefault();
+            List<ParameterInfo> parameters = new List<ParameterInfo>();
+            parameters.Add(new ParameterInfo() { ParameterName = "UserID", ParameterValue = CurrentUser.UserID });
+            UserWorkStatus result = SqlHelper.GetRecords<UserWorkStatus>("spGetUserWorkStatus", parameters).ToList().FirstOrDefault();
             return PartialView("_Status", result);
         }
         public ActionResult GetUserWorkStatusHis(int? UserID)

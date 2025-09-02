@@ -31,6 +31,9 @@ namespace BassIdentityManagement.Entities
         [Display(Name = "Housing"), StringLength(25)]
         public string Housing { get; set; }
         [Required]
+        [Display(Name = "Days to Release"), StringLength(10)]
+        public string DaytoRelease { get; set; }
+        [Required]
         [Display(Name = "Application"), StringLength(15)]
         public string Apps { get; set; }
         [Display(Name = "App Status"), StringLength(200)]

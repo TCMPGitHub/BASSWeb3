@@ -185,7 +185,8 @@
           columns.Bound(f => f.EpisodeID).Hidden();
           columns.Bound(f => f.CDCRNum).Title("CDCR#").Width(60).HeaderHtmlAttributes(new { style = "font-weight:bold; color:darkblue;text-align:center;" }).ClientTemplate("#= BuildNavClientLink(CDCRNum)#");
           columns.Bound(f => f.ClientName).Title("IP Name").Width(160).HeaderHtmlAttributes(new { style = "font-weight:bold; color:darkblue;text-align:center;" });
-          columns.Bound(f => f.Housing).Title("Housing").Width(120).HeaderHtmlAttributes(new { style = "font-weight:bold; color:darkblue;text-align:center;" });
+          columns.Bound(f => f.DaytoRelease).Title("Days to Release").Width(80).HeaderHtmlAttributes(new { style = "font-weight:bold; color:darkblue;text-align:center;" });
+          columns.Bound(f => f.Housing).Title("Housing").Width(120).HeaderHtmlAttributes(new { style = "font-weight:bold; color:darkblue;text-align:center;" }).Hidden();
           columns.Bound(f => f.MHClass).Title("MHClass/SOMS Codes").Width(100).HeaderHtmlAttributes(new { style = "font-weight:bold; color:darkblue;text-align:center;" });
           columns.Group(group => group.Title("Custody Facility").HeaderHtmlAttributes(new { style = "font-weight:bold; color:darkblue;text-align:center;" })
           .Columns(inis =>

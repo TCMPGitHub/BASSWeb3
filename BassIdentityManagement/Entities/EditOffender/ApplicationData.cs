@@ -32,6 +32,7 @@ namespace BassIdentityManagement.Entities
         public int? SubmitCountyID { get; set; }
         public DateTime DateAction { get; set; }
         public DateTime? DHCSDate { get; set; }
+        public DateTime? MEDSDOB { get; set; }
         public bool IsEditable { get; set; }
     }
 
@@ -57,6 +58,7 @@ namespace BassIdentityManagement.Entities
         public DateTime? PhoneInterviewDate { get; set; }
         public DateTime? IssuedOnDate { get; set; }
         public DateTime? OutcomeDate { get; set; }
+        public DateTime? MEDSDOB { get; set; }
         public string CustodyFacility { get; set; }
         public string Outcome { get; set; }
         public string BICNum { get; set; }

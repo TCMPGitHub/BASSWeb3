@@ -21,6 +21,13 @@
             <td class="padded agreed alignright">@(Model.AgreesToApply ? "Applied" : "Refused") On&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
             <td class="padded buttonwidth">@Html.TextBoxFor(m => m.AppliedOrRefusedOnDate, "{0:MM/dd/yyyy}", new { @disabled = "disabled" })</td>
         </tr>
+        @if (Model.MEDSDOB.HasValue)
+        {
+            <tr>
+                <td class="padded agreed alignright">MEDS DOB&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                <td class="padded buttonwidth">@Html.TextBoxFor(m => m.MEDSDOB, "{0:MM/dd/yyyy}", new { @disabled = "disabled" })</td>
+            </tr>
+        }
         @if (!string.IsNullOrEmpty(Model.CustodyFacility))
         {
             <tr>

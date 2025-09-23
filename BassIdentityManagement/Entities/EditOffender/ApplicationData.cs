@@ -33,6 +33,10 @@ namespace BassIdentityManagement.Entities
         public DateTime DateAction { get; set; }
         public DateTime? DHCSDate { get; set; }
         public DateTime? MEDSDOB { get; set; }
+        public int? DOBSource { get; set; }
+        public bool? DOBS { get; set; }
+        public bool? DOBM { get; set; }
+        public bool? DOBR { get; set; }
         public bool IsEditable { get; set; }
     }
 
@@ -59,6 +63,10 @@ namespace BassIdentityManagement.Entities
         public DateTime? IssuedOnDate { get; set; }
         public DateTime? OutcomeDate { get; set; }
         public DateTime? MEDSDOB { get; set; }
+        public int? DOBSource { get; set; }
+        public bool? DOBS { get; set; }
+        public bool? DOBM { get; set; }
+        public bool? DOBR { get; set; }
         public string CustodyFacility { get; set; }
         public string Outcome { get; set; }
         public string BICNum { get; set; }

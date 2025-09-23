@@ -503,15 +503,15 @@ namespace BassWebV3.Controllers
                 var query = string.Format(@"DECLARE @ApplicationID int = {13}
                IF @ApplicationID > 0
                 BEGIN
-            INSERT INTO [dbo].[ApplicationTrace]([ApplicationID],[ApplicationTypeID],[EpisodeID],[MEDSDOB]
+            INSERT INTO [dbo].[ApplicationTrace]([ApplicationID],[ApplicationTypeID],[EpisodeID],[MEDSDOB],[DOBSource]
                                 ,[ApplicationOutcomeID],[AgreesToApply],[AppliedOrRefusedOnDate],[PhoneInterviewDate]
                                 ,[OutcomeDate],[BICNum],[CINNum],[SubmitCountyID],[IssuedOnDate],[ArchivedOnDate],[CreatedByUserID],[CustodyFacilityId]
                                 ,[DateAction]) 
-            SELECT [ApplicationID],[ApplicationTypeID],[EpisodeID],[MEDSDOB],[ApplicationOutcomeID],[AgreesToApply]
+            SELECT [ApplicationID],[ApplicationTypeID],[EpisodeID],[MEDSDOB],[DOBSource],[ApplicationOutcomeID],[AgreesToApply]
                   ,[AppliedOrRefusedOnDate],[PhoneInterviewDate],[OutcomeDate],[BICNum],[CINNum],[SubmitCountyID],[IssuedOnDate],[ArchivedOnDate]
                   ,[CreatedByUserID],[CustodyFacilityId],[DateAction]
              FROM [dbo].[Application] WHERE ApplicationID  = @ApplicationID
-                  UPDATE [dbo].[Application] SET [ApplicationTypeID] ={0} ,[EpisodeID] ={1},[MEDSDOB] = {16}
+                  UPDATE [dbo].[Application] SET [ApplicationTypeID] ={0} ,[EpisodeID] ={1},[MEDSDOB] = {16},[DOBSource]={17}
                     ,[ApplicationOutcomeID] = {2},[AgreesToApply] = {3},[AppliedOrRefusedOnDate] = {4}
                     ,[PhoneInterviewDate] = {5}, [OutcomeDate]= {6},[BICNum] = {7},[CINNum] = {14},[SubmitCountyID]={15}
                     ,[IssuedOnDate] = {8},[ArchivedOnDate] = {9},[CreatedByUserID] = {10},[CustodyFacilityId] = {11}
@@ -523,15 +523,15 @@ namespace BassWebV3.Controllers
                    BEGIN
               INSERT INTO [dbo].[Application]([ApplicationTypeID],[EpisodeID]
                     ,[ApplicationOutcomeID],[AgreesToApply],[AppliedOrRefusedOnDate],[PhoneInterviewDate]
-                    ,[OutcomeDate],[BICNum],[CINNUm],[IssuedOnDate],[ArchivedOnDate],[CreatedByUserID],[CustodyFacilityId],[MEDSDOB]
-                    ,[SubmitCountyID],[DateAction]) VALUES({0},{1},{2},{3},{4},{5},{6},{7},{14},{8},{9},{10},{11},{16},{15}, GetDate())
+                    ,[OutcomeDate],[BICNum],[CINNUm],[IssuedOnDate],[ArchivedOnDate],[CreatedByUserID],[CustodyFacilityId],[MEDSDOB],[DOBSource]
+                    ,[SubmitCountyID],[DateAction]) VALUES({0},{1},{2},{3},{4},{5},{6},{7},{14},{8},{9},{10},{11},{16},{15},{17}, GetDate())
                  END
                  ELSE
                  BEGIN
                      UPDATE [dbo].[Application] SET [ApplicationTypeID] ={0} ,[EpisodeID] ={1}
                     ,[ApplicationOutcomeID] = {2},[AgreesToApply] = {3},[AppliedOrRefusedOnDate] = {4}
                     ,[PhoneInterviewDate] = {5}, [OutcomeDate]= {6},[BICNum] = {7},[CINNum]={14},[IssuedOnDate] = {8}
-                    ,[ArchivedOnDate] = {9},[CreatedByUserID] = {10},[CustodyFacilityId] = {11},[MEDSDOB] = {16}
+                    ,[ArchivedOnDate] = {9},[CreatedByUserID] = {10},[CustodyFacilityId] = {11},[MEDSDOB] = {16},[DOBSource]={17}
                     ,[SubmitCountyID] = {15},[DateAction] = GetDate(),[DHCSDate] = {12} WHERE ApplicationID = {13} 
                  END
               END
@@ -549,7 +549,8 @@ namespace BassWebV3.Controllers
            AppData.App.DHCSDate.HasValue ? "'" + AppData.App.DHCSDate.Value.ToShortDateString() + "'" : "null", AppData.App.ApplicationID,
            string.IsNullOrEmpty(AppData.App.CINNum) ? "null" : "'" + AppData.App.CINNum + "'", 
            AppData.App.SubmitCountyID.HasValue ? AppData.App.SubmitCountyID.ToString() : "null",
-            AppData.App.MEDSDOB.HasValue ? "'" + AppData.App.MEDSDOB.Value.ToShortDateString() + "'" : "null");
+            AppData.App.MEDSDOB.HasValue ? "'" + AppData.App.MEDSDOB.Value.ToShortDateString() + "'" : "null",
+            AppData.App.DOBSource.HasValue ? AppData.App.DOBSource.Value.ToString() : "null");
 
                 var results = SqlHelper.ExecuteMultipleAppCommands(query).ToList();
 
@@ -616,6 +617,7 @@ namespace BassWebV3.Controllers
             model.CustodyFacilityId = null;
             model.OutcomeDate = null;
             model.MEDSDOB = null;
+            model.DOBSource = null;
             model.PhoneInterviewDate = null;
             model.CreatedByUserID = CurrentUser.UserID;
             model.EpisodeID = EpisodeID;

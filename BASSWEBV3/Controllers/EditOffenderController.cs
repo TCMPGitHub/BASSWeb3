@@ -524,7 +524,7 @@ namespace BassWebV3.Controllers
               INSERT INTO [dbo].[Application]([ApplicationTypeID],[EpisodeID]
                     ,[ApplicationOutcomeID],[AgreesToApply],[AppliedOrRefusedOnDate],[PhoneInterviewDate]
                     ,[OutcomeDate],[BICNum],[CINNUm],[IssuedOnDate],[ArchivedOnDate],[CreatedByUserID],[CustodyFacilityId],[MEDSDOB],[DOBSource]
-                    ,[SubmitCountyID],[DateAction]) VALUES({0},{1},{2},{3},{4},{5},{6},{7},{14},{8},{9},{10},{11},{16},{15},{17}, GetDate())
+                    ,[SubmitCountyID],[DateAction]) VALUES({0},{1},{2},{3},{4},{5},{6},{7},{14},{8},{9},{10},{11},{16},{17},{15}, GetDate())
                  END
                  ELSE
                  BEGIN

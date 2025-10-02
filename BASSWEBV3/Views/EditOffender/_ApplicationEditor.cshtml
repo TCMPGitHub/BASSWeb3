@@ -471,7 +471,7 @@
                     }
                     if (appname === "MediCal") {
                         $("#hdIssuedOnDate").val(e.target['App.IssuedOnDate' + appname].value);
-                        $("#hdMEDSDOB").val(e.target['App.MEDSDOB'].value);
+                        $("#hdMEDSDOB").val(e.target['App.MEDSDOB' + appname].value);
                         if (e.target['App.IsEditable'].value == "False") {
                             var bicnum = e.target['App.BICNum'].value;
                             var cinnum = e.target['App.CINNum'].value;
@@ -479,6 +479,10 @@
                             EnableButtons(false, appname, appID);
                             return;
                         }
+                    }
+                    if (appname === "MediCal" && (tempMEDS == undefined || tempMEDS.element[0].value == "" || tempMEDS.element[0].value == "__/__/____")) {
+                        alert("DOB is required.");
+                        return false;
                     }
                     $("#hdOutcomeDate").val(e.target['App.OutcomeDate' + appname].value);
                     if(appname === "SSI")

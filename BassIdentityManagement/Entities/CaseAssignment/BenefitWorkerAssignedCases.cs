@@ -42,5 +42,7 @@ namespace BassIdentityManagement.Entities
         public string BICNum { get; set; }
         public string CINNum { get; set; }
         public string Outcome { get; set; }
+        public DateTime? FaceToFaceDate { get; set; }
+        public DateTime? ExitInterviewDate { get; set; }
     }
 }

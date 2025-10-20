@@ -200,11 +200,13 @@
               r.Bound(y => y.SomsReleaseDate).Format("{0:MM/dd/yyyy}").Title("SOMS").Width(75).HeaderHtmlAttributes(new { style = "font: italic small-caps bold 10px/4 cursive;" }).Filterable(false);
               r.Bound(y => y.ReleaseDate).Format("{0:MM/dd/yyyy}").Title("BASS").Width(75).HeaderHtmlAttributes(new { style = "font: italic small-caps bold 10px/4 cursive;" }).Filterable(false);
           }));
+          columns.Bound(f => f.FaceToFaceDate).Title("Face To Face Date").Width(75).HeaderHtmlAttributes(new { style = "font-weight:bold; color:darkblue;text-align:center;" }).HtmlAttributes(new { style = "line-height:14px!important;padding:0px;" });
           columns.Bound(f => f.Apps).Title("Application").Width(80).HeaderHtmlAttributes(new { style = "font-weight:bold; color:darkblue;text-align:center;" }).HtmlAttributes(new { style = "line-height:14px!important;padding:0px;" });
-          columns.Bound(f=>f.BICNum).Title("BICNum").Width(60).HeaderHtmlAttributes(new { style = "font-weight:bold; color:darkblue;text-align:center;" }).HtmlAttributes(new { style = "line-height:14px!important;padding:0px;" });
+          columns.Bound(f => f.BICNum).Title("BICNum").Width(60).HeaderHtmlAttributes(new { style = "font-weight:bold; color:darkblue;text-align:center;" }).HtmlAttributes(new { style = "line-height:14px!important;padding:0px;" });
           columns.Bound(f => f.CINNum).Title("CINNum").Width(60).HeaderHtmlAttributes(new { style = "font-weight:bold; color:darkblue;text-align:center;" }).HtmlAttributes(new { style = "line-height:14px!important;padding:0px;" });
           columns.Bound(f => f.Outcome).Title("Outcome").Width(60).HeaderHtmlAttributes(new { style = "font-weight:bold; color:darkblue;text-align:center;" }).HtmlAttributes(new { style = "line-height:14px!important;padding:0px;" });
           columns.Bound(f => f.AppStatus).Title("Disposition").Width(160).HeaderHtmlAttributes(new { style = "font-weight:bold; color:darkblue;text-align:center;" }).HtmlAttributes(new { style = "line-height:14px!important;padding:0px;" });
+          columns.Bound(f => f.ExitInterviewDate).Title("Exit Interview Date").Width(75).HeaderHtmlAttributes(new { style = "font-weight:bold; color:darkblue;text-align:center;" }).HtmlAttributes(new { style = "line-height:14px!important;padding:0px;" });
       })
        .Sortable(sortable => sortable.AllowUnsort(true))
         .Scrollable(a => a.Height(280))

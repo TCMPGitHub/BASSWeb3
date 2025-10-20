@@ -142,18 +142,20 @@
                    column.Bound(m => m.BICNum).Width(100).Title("BIC Number").Filterable(false);
                    column.Bound(m => m.CINNum).Width(100).Title("CIN Number").Filterable(false);
                    column.Bound(m => m.Outcome).Width(100).Title("Outcome").Filterable(false);
-                   column.Bound(m => m.TotalApps).Width(50).Title("Total Submitted").ClientFooterTemplate("#=sum#").Filterable(false);
-                   column.Bound(m => m.MediCalApps).Width(50).Title("MediCal Submitted").ClientFooterTemplate("#=sum#").Filterable(false);
-                   column.Bound(m => m.VaApps).Width(50).Title("VA Submitted").ClientFooterTemplate("#=sum#").Filterable(false);
-                   column.Bound(m => m.SsiApps).Width(50).Title("SSI Submitted").ClientFooterTemplate("#=sum#").Filterable(false);
+                   column.Bound(m => m.TotalApps).Width(50).Title("Total Submitted").ClientFooterTemplate("#=sum#").Filterable(false).Hidden(true);
+                   column.Bound(m => m.MediCalApps).Width(50).Title("MediCal Submitted").ClientFooterTemplate("#=sum#").Filterable(false).Hidden(true);
+                   column.Bound(m => m.VaApps).Width(50).Title("VA Submitted").ClientFooterTemplate("#=sum#").Filterable(false).Hidden(true);
+                   column.Bound(m => m.SsiApps).Width(50).Title("SSI Submitted").ClientFooterTemplate("#=sum#").Filterable(false).Hidden(true);
                    column.Bound(m => m.SignedCid).Width(50).Title("CID Created").ClientFooterTemplate("#=sum#").Filterable(false);
                    column.Bound(m => m.Release).Width(50).Title("Parole/PRCS (OLD)").Filterable(false);
                    column.Bound(m => m.MentallyIll).Width(150).Title("Mentally Ill?").Filterable(false);
                    column.Bound(m => m.Elderly).Width(30).Title("Elderly").Filterable(false);
                    column.Bound(m => m.Gender).Width(30).Title("Gender").Filterable(false);
+                   column.Bound(m => m.FaceToFaceDate).Width(80).Title("Face To Face Date").Filterable(false);
                    column.Bound(m => m.MediApplyDate).Width(80).Title("MediCal Applied").Filterable(false);
                    column.Bound(m => m.VAApplyDate).Width(80).Title("VA Applied").Filterable(false);
                    column.Bound(m => m.SSIApplyDate).Width(80).Title("SSI Applied").Filterable(false);
+                   column.Bound(m => m.ExitInterviewDate).Width(80).Title("Exit Interview Date").Filterable(false);
                })
              .Resizable(resize => resize.Columns(true))
              .Pageable(pageable => pageable

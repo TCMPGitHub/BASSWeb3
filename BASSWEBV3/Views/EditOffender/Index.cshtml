@@ -402,12 +402,14 @@
                { value: "Housing", bold: true, background: "#dcdcdc",rowSpan: 2, vAlign: "center", hAlign: "center" },
                { value: "MHClass/SOMS Codes", bold: true, background: "#dcdcdc",rowSpan: 2, vAlign: "center", hAlign: "center" },
                { value: "Custody Facility", bold: true, background: "#dcdcdc",colSpan : 2,  vAlign: "center", hAlign: "center" },
-               { value: "Release Date", bold: true, background: "#dcdcdc",colSpan : 2, vAlign: "center", hAlign: "center"},
+               { value: "Release Date", bold: true, background: "#dcdcdc", colSpan: 2, vAlign: "center", hAlign: "center" },
+               { value: "Face To Face Date", bold: true, background: "#dcdcdc", rowSpan: 2, vAlign: "center", hAlign: "center" },
                { value: "Application", bold: true, background: "#dcdcdc", rowSpan: 2, vAlign: "center", hAlign: "center" },
                { value: "BIC Number", bold: true, background: "#dcdcdc", rowSpan: 2, vAlign: "center", hAlign: "center" },
                { value: "CIN Number", bold: true, background: "#dcdcdc", rowSpan: 2, vAlign: "center", hAlign: "center" },
                { value: "Outcome", bold: true, background: "#dcdcdc", rowSpan: 2, vAlign: "center", hAlign: "center" },
-               { value: "Disposition", bold: true, background: "#dcdcdc",rowSpan: 2, vAlign: "center", hAlign: "center" }
+               { value: "Disposition", bold: true, background: "#dcdcdc", rowSpan: 2, vAlign: "center", hAlign: "center" },
+               { value: "Exit Interview Date", bold: true, background: "#dcdcdc", rowSpan: 2, vAlign: "center", hAlign: "center" }
             ]
         }];
 
@@ -460,12 +462,14 @@
                   {background:custfacolor, value: data[i].SomsCustFacilityName},
                   {background:custfacolor, value: data[i].CustFacilityName },
                   {background:releaseColor,value: data[i].SomsReleaseDate },
-                  {background:releaseColor,value: data[i].ReleaseDate },
+                  {background:releaseColor, value: data[i].ReleaseDate },
+                  {background:bgcolor, value: data[i].FaceToFaceDate },
                   {background:bgcolor, value: data[i].Apps },
                   {background:bgcolor, value: data[i].BICNum },
-                  { background: bgcolor, value: data[i].CINNUM },
-                  { background: bgcolor, value: data[i].Outcome },
+                  {background:bgcolor, value: data[i].CINNUM },
+                  {background:bgcolor, value: data[i].Outcome },
                   {background:bgcolor, value: data[i].AppStatus },
+                  {background: bgcolor, value: data[i].ExitInterviewDate },
                 ]
             });
         }
@@ -475,8 +479,8 @@
             sheets: [
               {
                   columns: [ { width: 60 }, { width: 160 }, { width: 120 }, { width: 150 }, { width: 50 },
-                             { width: 50 }, { width: 75 },  { width: 75 },  { width: 75 },  { width: 75 },
-                             { width: 75 }, { width: 75 },  { width: 160 }],
+                             { width: 50 }, { width: 75 }, { width: 75 }, { width: 75 }, { width: 75 },
+                             { width: 75 }, { width: 75 }, { width: 75 }, { width: 160 }, { width: 75 }],
                   title: "MyAssignment",
                   rows: rows
               }

@@ -88,8 +88,8 @@ namespace BassIdentityManagement.Entities
         public string SSIApplyDate { get; set; }
         public string VAApplyDate { get; set; }
         public string BenefitWorkerName { get; set; }
-        public string FaceToFaceDate { get; set; }
-        public string ExitInterviewDate { get; set; }
+        public DateTime? FaceToFaceDate { get; set; }
+        public DateTime? ExitInterviewDate { get; set; }
     }
 
     public class ProductivityReportRowDetail

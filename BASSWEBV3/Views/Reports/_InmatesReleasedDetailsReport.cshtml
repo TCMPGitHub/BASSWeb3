@@ -151,11 +151,11 @@
                    column.Bound(m => m.MentallyIll).Width(150).Title("Mentally Ill?").Filterable(false);
                    column.Bound(m => m.Elderly).Width(30).Title("Elderly").Filterable(false);
                    column.Bound(m => m.Gender).Width(30).Title("Gender").Filterable(false);
-                   column.Bound(m => m.FaceToFaceDate).Width(80).Title("Face To Face Date").Filterable(false);
+                   column.Bound(m => m.FaceToFaceDate).Width(80).Format("{0:MM/dd/yyyy}").Title("Face To Face Date").Filterable(false);
                    column.Bound(m => m.MediApplyDate).Width(80).Title("MediCal Applied").Filterable(false);
                    column.Bound(m => m.VAApplyDate).Width(80).Title("VA Applied").Filterable(false);
                    column.Bound(m => m.SSIApplyDate).Width(80).Title("SSI Applied").Filterable(false);
-                   column.Bound(m => m.ExitInterviewDate).Width(80).Title("Exit Interview Date").Filterable(false);
+                   column.Bound(m => m.ExitInterviewDate).Width(80).Format("{0:MM/dd/yyyy}").Title("Exit Interview Date").Filterable(false);
                })
              .Resizable(resize => resize.Columns(true))
              .Pageable(pageable => pageable

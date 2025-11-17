@@ -54,6 +54,12 @@
         function disableDates(date) {
             return (date && date.getTime() > (new Date()).getTime());
         }
+        function disableDOBDates(date) {
+            const yearsAgo = 18; // 18 years ago
+            const pastYearDate = new Date();
+            pastYearDate.setFullYear(pastYearDate.getFullYear() - yearsAgo);
+            return (date && date.getTime() > (new Date(pastYearDate)).getTime());
+        }
     </script>
     if (!string.IsNullOrEmpty(Model.ErrorMessage))
     {
@@ -175,11 +181,11 @@
                 e.sender.element[0].form['App.AppliedOrRefusedOnDate'].value = kendo.toString(new Date(this.value()), "d");
             }
             $("#App_MEDSDOBMediCal").on("blur", function (e) {
-                if (disableDates(new Date(this.value))) {
-                    this.value = "";
+              if (disableDOBDates(new Date(this.value))) {
+                    this.value = "__/__/____";
                     e.preventDefault();
                     return;
-                }
+              }
             });
             function ChangeMEDSDOB(e) {
                 if (this.value() == null) {
@@ -187,9 +193,8 @@
                     e.preventDefault();
                     return;
                 }
-                var startdate = new Date(this.value());
-                if (disableDates(startdate)) {
-                    this.value = "";
+                if (disableDOBDates(new Date(this.value))) {
+                    this.value = "__/__/____";
                     e.preventDefault();
                     return;
                 }
@@ -237,7 +242,7 @@
             <div class="divOffenderPart2tbs" style="width:50%;">
                 @(Html.Kendo().DatePickerFor(m => m.App.MEDSDOB).Format("MM/dd/yyyy").DateInput().HtmlAttributes(new { @style = "width:120px!important;height:22px!important;" })
              .Value(Model.App.MEDSDOB).Name("App.MEDSDOB" + Model.ApplicationTypeName)
-             .DisableDates("disableDates")
+             .DisableDates("disableDOBDates")
              .Events(e => e.Change("ChangeMEDSDOB")).Enable(Model.App.IsEditable))
             </div>
         </div>

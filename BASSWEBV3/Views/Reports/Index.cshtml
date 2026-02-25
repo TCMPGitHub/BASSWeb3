@@ -8,69 +8,80 @@
 
 <style>
     .k-tabstrip > .k-tabstrip-items .k-item {
-        background-color:aliceblue;
-        border-top:0.1px solid silver;
-        border-left:0.1px solid silver;
-        border-right:0.1px solid silver;
-        border-radius:3px;
-        margin-left:2px;
-        padding:2px;
-        font-weight:normal;
-        height:22px!important;
+        background-color: aliceblue;
+        border-top: 0.1px solid silver;
+        border-left: 0.1px solid silver;
+        border-right: 0.1px solid silver;
+        border-radius: 3px;
+        margin-left: 2px;
+        padding: 2px;
+        font-weight: normal;
+        height: 22px !important;
     }
-     :after{
-        background-color:lavender;
-        border-top:0.1px solid lavender;
-        border-left:0.1px solid lavender;
-        border-right:0.1px solid lavender;
+
+    :after {
+        background-color: lavender;
+        border-top: 0.1px solid lavender;
+        border-left: 0.1px solid lavender;
+        border-right: 0.1px solid lavender;
     }
-     .k-tabstrip > .k-tabstrip-items .k-state-active.k-item .k-link{
-         background-color:#526a7f;
-         padding:1px;
-         color:white;
-         font-weight:bold;
-         height:20px!important;
-     }
-     .k-widget k-grid k-display-block{
-         /*height: calc(100vh - 150px);*/
-         font-size:14px!important;
-        
-     }
-     span.k-icon.k-i-calendar{
-         margin-top:-15px!important;
-     }
-    .k-tabstrip-wrapper{
-        padding:1px;
+
+    .k-tabstrip > .k-tabstrip-items .k-state-active.k-item .k-link {
+        background-color: #526a7f;
+        padding: 1px;
+        color: white;
+        font-weight: bold;
+        height: 20px !important;
     }
-    .k-reset .k-tabstrip-items{
-        height:15px!important;
+
+    .k-widget k-grid k-display-block {
+        /*height: calc(100vh - 150px);*/
+        font-size: 14px !important;
     }
-    .k-item k-state-default{
-        height:15px!important;
+
+    span.k-icon.k-i-calendar {
+        margin-top: -15px !important;
     }
+
+    .k-tabstrip-wrapper {
+        padding: 1px;
+    }
+
+    .k-reset .k-tabstrip-items {
+        height: 15px !important;
+    }
+
+    .k-item k-state-default {
+        height: 15px !important;
+    }
+
     .k-grid tr td {
         border-bottom: 0.1px solid lightgray;
         white-space: normal;
         font-size: 14px;
         line-height: 12px !important;
     }
+
     .k-grid .k-state-selected {
         background-color: #3379b5 !important;
         color: #fff;
     }
+
     .k-grid .k-alt.k-state-selected {
         background-color: #3379b5 !important;
         color: #fff;
     }
-    #rpttabstrip-1, #rpttabstrip-2, #rpttabstrip-3, #rpttabstrip-4, #rpttabstrip-5 {
+
+    #rpttabstrip-1, #rpttabstrip-2, #rpttabstrip-3, #rpttabstrip-4 {
         padding: 0px !important;
         height: calc(inherit - 30px);
-        width:calc(inherit - 20px);
-        overflow:auto;
+        width: calc(inherit - 20px);
+        overflow: auto;
     }
-    input.k-textbox{
-        width:100px!important;
-        height:25px!important
+
+    input.k-textbox {
+        width: 100px !important;
+        height: 25px !important
     }
 </style>
 <script>
@@ -86,9 +97,9 @@
     function getbwprams() {
         return { FromDate: $("#FromDate").val(), ToDate: $("#ToDate").val(), BfWorkerIDs: $("#RptBW").data("kendoMultiSelect").value().join(',') }
     }
-    
+
     function DateChanged(e) {
-       var start = $('#FromDate').val();
+        var start = $('#FromDate').val();
         var date = new Date(start);
         var d = (new Date(1900 + date.getFullYear(), date.getMonth() + 1, 0)).getDate();
         date.setDate(date.getDate() + d);
@@ -106,7 +117,7 @@
         $("#gridInmatesDetails").data("kendoGrid").dataSource.read({ FromDate: $("#FromDate").val(), ToDate: $("#ToDate").val() });
         $('#gridInmatesDetails').data('kendoGrid').refresh();
 
-        GetProductivityReport($("#gridInmatesProductivity").data("kendoGrid"));
+        // GetProductivityReport($("#gridInmatesProductivity").data("kendoGrid"));
 
         GetBWProductivityReport($("#gridBWProductivity").data("kendoGrid"));
     }
@@ -122,6 +133,7 @@
             }
             datestring = users + " " + datestring;
         }
+        alert(datestring + "1");
         return datestring;
     }
     function GetProductivityReport(e) {
@@ -135,62 +147,67 @@
         }
         $("#rptprodspan").html(datestring);
     }
-    function GetBWProductivityReport(e) {  
+    function GetBWProductivityReport(e) {
+        alert("GetBWProductivityReport");
+        var grid = $("#gridBWProductivity").data("kendoGrid");
+        grid.dataSource.read({ FromDate: $("#FromDate").val(), ToDate: $("#ToDate").val(), BfWorkerIDs: $("#RptBW").data("kendoMultiSelect").value().join(',') });
+        grid.refresh();
         var datestring = kendo.toString($("#FromDate").val() + " - " + $("#ToDate").val());
-        var selectItem = "-1";
+        alert(datestring);
+        //var selectItem = "-1";
         var items = $("#RptBW").data("kendoMultiSelect").dataItems();
         if (items.length > 0) {
             datestring = GetDispayClientNames(items);
         }
         $("#rptprodspan").html(datestring);
-        var grid = $("#gridBWProductivity").data("kendoGrid");
-        grid.dataSource.read({ FromDate: $("#FromDate").val(), ToDate: $("#ToDate").val(), BfWorkerIDs: $("#RptBW").data("kendoMultiSelect").value().join(',') });
-        grid.refresh();
+        //var grid = $("#gridBWProductivity").data("kendoGrid");
+        //grid.dataSource.read({ FromDate: $("#FromDate").val(), ToDate: $("#ToDate").val(), BfWorkerIDs: $("#RptBW").data("kendoMultiSelect").value().join(',') });
+        //grid.refresh();
     }
-   function GetNewDate(obj) {
+    function GetNewDate(obj) {
         return new Date(obj.getFullYear(), obj.getMonth(), 1)
     }
-     $(".k-textbox").click(function (e) {
+    $(".k-textbox").click(function (e) {
         e.preventDefault();
-    })   
+    })
 </script>
 
 <div class="editContent" style="border-top: thin solid; padding-top:1px;height:28px;">
-   <div style="float:left;">&nbsp;&nbsp;<b>Select Report Date Ranges</b>&nbsp;&nbsp;</div>&nbsp;&nbsp;
-   &nbsp;&nbsp;@Html.Label("From ")&nbsp;&nbsp;
-        @(Html.Kendo().DatePicker()
+    <div style="float:left;">&nbsp;&nbsp;<b>Select Report Date Ranges</b>&nbsp;&nbsp;</div>&nbsp;&nbsp;
+    &nbsp;&nbsp;@Html.Label("From ")&nbsp;&nbsp;
+    @(Html.Kendo().DatePicker()
 .Name("FromDate").Format("MM/dd/yyyy").Value(Model.FromDate).Events(e => e.Change("DateChanged"))
 .HtmlAttributes(new { @style = "width:120px;height:22px;"}))
-        &nbsp;&nbsp;@Html.Label("To ")&nbsp;&nbsp;
-        @(Html.Kendo().DatePicker()
+    &nbsp;&nbsp;@Html.Label("To ")&nbsp;&nbsp;
+    @(Html.Kendo().DatePicker()
 .Name("ToDate").Format("MM/dd/yyyy").Value(Model.ToDate)
 .HtmlAttributes(new { @style = "width:120px;height:22px;"}))
-        @(Html.Kendo().Button().Name("GetReport").Events(e => e.Click("GetReports")).Content("Get Report")
+    @(Html.Kendo().Button().Name("GetReport").Events(e => e.Click("GetReports")).Content("Get Report")
            .HtmlAttributes(new { @style = "height:22px;" }))
-    </div>
+</div>
 <div style="height:91vh;width:inherit;">
     @(Html.Kendo().TabStrip()
          .Name("rpttabstrip")
          .HtmlAttributes(new { style = "min-height:50vh; padding: 0; height:inherit!important;width:100vw!important;" })
          .Animation(animation =>
-             animation.Open(effect =>
-                 effect.Fade(FadeDirection.In)))
+             animation.Open(effect =>effect.Fade(FadeDirection.In)))
       .Items(tabstrip =>
       {
           tabstrip.Add().Text("Facility Outlook Report").Selected(true).Content(
           @Html.Partial("_FacilityOutlookReport").ToHtmlString()).HtmlAttributes(new { style = "padding:0px!important;" });
           tabstrip.Add().Text("IP Released Summary Report").Content(
-         @Html.Partial("_InmatesReleasedReport").ToHtmlString()).HtmlAttributes(new { style = "padding:0px;!important" });
+          @Html.Partial("_InmatesReleasedReport").ToHtmlString()).HtmlAttributes(new { style = "padding:0px;!important" });
           tabstrip.Add().Text("IP Released Details Report").Content(
           @Html.Partial("_InmatesReleasedDetailsReport").ToHtmlString()).HtmlAttributes(new { style = "padding:0px!important;" });
-          tabstrip.Add().Text("Productivity Report").Content(
-         @Html.Partial("_InmatesProductivityReport", Model).ToHtmlString()).HtmlAttributes(new { style = "padding:0px!important;overflow:hidden;" });
           tabstrip.Add().Text("Benefit Worker Productivity Report").Content(
-         @Html.Partial("_BWProductivityReport", Model).ToHtmlString()).HtmlAttributes(new { style = "padding:0px!important;" });
+          @Html.Partial("_BWProductivityReport", Model).ToHtmlString()).HtmlAttributes(new { style = "padding:0px!important;" });
+          tabstrip.Add().Text("Productivity Report").Enabled(false).Content(
+          @Html.Partial("_InmatesProductivityReport", Model).ToHtmlString()).HtmlAttributes(new { style = "padding:0px!important;overflow:hidden;width:0" });
       }
     ))
 </div>
-
+@*tabstrip.Add().Text("Productivity Report").Visible(false).Content(
+@Html.Partial("_InmatesProductivityReport", Model).ToHtmlString()).HtmlAttributes(new { style = "padding:0px!important;overflow:hidden;" });*@
 <script type="text/javascript">
     $("#bntOpenDateRange").kendoButton({
         icon: "calendar"

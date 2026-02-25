@@ -64,7 +64,7 @@
         if (dataFiletr.length > 0)
             val1 = { FromDate: $("#FromDate").val(), ToDate: $("#ToDate").val(), BfWorkerIDs: dataFiletr.join(',') };
         else
-            val1 = getbwprams();
+            val1 = { FromDate: $("#FromDate").val(), ToDate: $("#ToDate").val(), BfWorkerIDs: '' };
         var thedata = encodeURIComponent(JSON.stringify(val1));
         // Get the export link as jQuery object
         var $exportLink = grid.element.find('.export');
@@ -141,12 +141,11 @@
         var rows = [{
             cells: [{ value: "BenefitWorkerName" },
               { value: "MCTotal" },
+              { value: "TMediCalAReinstatement" },
               { value: "SSITotal" },
               { value: "VATotal" },
               { value: "SNPRTotal" },
-              { value: "MediCalBnp" },
-              { value: "SSIBnp" },
-              { value: "VABnp" }]
+              { value: "CIDNeedsAssessment" }]
         }];
 
         //using fetch, so we can process the data when the request is successfully completed
@@ -158,12 +157,11 @@
                     cells: [
                        { value: data[i].BenefitWorkerName },
                        { value: data[i].MCTotal },
+                       { value: data[i].TMediCalAReinstatement },
                        { value: data[i].SSITotal },
                        { value: data[i].VATotal },
                        { value: data[i].SNPRTotal },
-                       { value: data[i].MediCalBnp },
-                       { value: data[i].SSIBnp },
-                       { value: data[i].VABnp }]
+                       { value: data[i].CIDNeedsAssessment }]
                 })
             }
             var workbook = new kendo.ooxml.Workbook({
@@ -175,8 +173,9 @@
                         { autoWidth: true },
                         { autoWidth: true },
                         { autoWidth: true },
-                        { autoWidth: true }
-                      ],
+                        { autoWidth: true },
+                        { autoWidth: true },
+                        { autoWidth: true }],
                       // Title of the sheet
                       title: "Benefit Worker Productivity Report",
                       // Rows of the sheet
@@ -191,6 +190,7 @@
     function GetFilterParameter() {
         return { BfWorkerIDs: $("#RptBW").data("kendoMultiSelect").value().join(',') };
     }
+    function GetReportParameterData() { return '' }
     function SelectFacility(e) {
         var sel = $("#Facility").data("kendoDropDownList").value();
         //console.log("Facility Selected: " + sel);
@@ -244,7 +244,10 @@
         if (e.sender.data().length === 0)
             return;
     }
-    
+    $("#gridBWProductivity> .k-i-refresh").click(function () {
+        alert("k-i-refresh");
+        GetBWProductivityReport($("#gridBWProductivity").data("kendoGrid"));
+    })
 </script>
 
 @(Html.Kendo().Grid<BassIdentityManagement.Entities.BWProductivityReportData>()
@@ -303,7 +306,7 @@
 }))
             </div>
             <div class="col" style="float:left;margin-left:10px;margin-top:5px; color:blue;">
-                <a onclick="GetBWProductivityReport(this)" style="cursor: pointer; font-weight:bold;" title="Refresh Report">
+                <a href="javascript:GetBWProductivityReport(this)" style="cursor: pointer; font-weight:bold;" title="Refresh Report">
                     <span class="k-icon k-i-refresh"></span>
                 </a>
             </div>
@@ -322,7 +325,11 @@
                     .ClientGroupHeaderColumnTemplate("#=count#")
                     .ClientFooterTemplate("#=count#")
                     .ClientGroupFooterTemplate("#=count#").FooterHtmlAttributes(new { style = "background-color:rgb(161,202,241)" });
-                column.Bound(m => m.MCTotal).Width(60).Title("MediCal Amount").Filterable(true)
+                column.Bound(m => m.MCTotal).Width(60).Title("Medi-Cal Amount").Filterable(true)
+                    .ClientGroupHeaderColumnTemplate("#=sum#")
+                    .ClientFooterTemplate("#=sum#")
+                    .ClientGroupFooterTemplate("#=sum#").FooterHtmlAttributes(new { style = "background-color:rgb(161,202,241)" });
+                column.Bound(m => m.TMediCalAReinstatement).Width(60).Title("Medi-Cal Admin Reinstatement").Filterable(true)
                     .ClientGroupHeaderColumnTemplate("#=sum#")
                     .ClientFooterTemplate("#=sum#")
                     .ClientGroupFooterTemplate("#=sum#").FooterHtmlAttributes(new { style = "background-color:rgb(161,202,241)" });
@@ -333,23 +340,11 @@
                 column.Bound(m => m.VATotal).Width(80).Title("VA Amount").Filterable(true)
                     .ClientGroupHeaderColumnTemplate("#=sum#")
                     .ClientFooterTemplate("#=sum#")
-                    .ClientGroupFooterTemplate("#=sum#").FooterHtmlAttributes(new { style = "background-color:rgb(161,202,241)" });
+                   .ClientGroupFooterTemplate("#=sum#").FooterHtmlAttributes(new { style = "background-color:rgb(161,202,241)" });
                 column.Bound(m => m.SNPRTotal).Width(80).Title("SNP/Refuse Amount").Filterable(true)
-                    .ClientGroupHeaderColumnTemplate("#=sum#")
-                    .ClientFooterTemplate("#=sum#")
-                    .ClientGroupFooterTemplate("#=sum#").FooterHtmlAttributes(new { style = "background-color:rgb(161,202,241)" });
-                column.Bound(m => m.MediCalBnp).Width(80).Title("MediCal BNP Amount").Filterable(true)
-                    .ClientGroupHeaderColumnTemplate("#=sum#")
-                    .ClientFooterTemplate("#=sum#")
-                    .ClientGroupFooterTemplate("#=sum#").FooterHtmlAttributes(new { style = "background-color:rgb(161,202,241)" });
-                column.Bound(m => m.SSIBnp).Width(80).Title("SSI BNP Amount").Filterable(true)
-                    .ClientGroupHeaderColumnTemplate("#=sum#")
-                    .ClientFooterTemplate("#=sum#")
-                    .ClientGroupFooterTemplate("#=sum#").FooterHtmlAttributes(new { style = "background-color:rgb(161,202,241)" });
-                column.Bound(m => m.VABnp).Width(80).Title("VA BNP Amount").Filterable(true)
-                    .ClientGroupHeaderColumnTemplate("#=sum#")
-                    .ClientFooterTemplate("#=sum#")
-                    .ClientGroupFooterTemplate("#=sum#").FooterHtmlAttributes(new { style = "background-color:rgb(161,202,241)" });
+                   .ClientGroupHeaderColumnTemplate("#=sum#")
+                   .ClientFooterTemplate("#=sum#")
+                   .ClientGroupFooterTemplate("#=sum#").FooterHtmlAttributes(new { style = "background-color:rgb(161,202,241)" });
                 column.Bound(m => m.CIDNeedsAssessment).Width(80).Title("CID Needs Ass. Amount").Filterable(true)
                    .ClientGroupHeaderColumnTemplate("#=sum#")
                    .ClientFooterTemplate("#=sum#")
@@ -367,12 +362,10 @@
                  aggregates.Add(p => p.BenefitWorkerName).Count();
                  aggregates.Add(p => p.CDCRNum).Count();
                  aggregates.Add(p => p.MCTotal).Sum();
+                 aggregates.Add(p => p.TMediCalAReinstatement).Sum();
                  aggregates.Add(p => p.SSITotal).Sum();
                  aggregates.Add(p => p.VATotal).Sum();
                  aggregates.Add(p => p.SNPRTotal).Sum();
-                 aggregates.Add(p => p.MediCalBnp).Sum();
-                 aggregates.Add(p => p.SSIBnp).Sum();
-                 aggregates.Add(p => p.VABnp).Sum();
                  aggregates.Add(p => p.CIDNeedsAssessment).Sum();
              })
             .PageSize(100)

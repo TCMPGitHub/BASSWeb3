@@ -732,12 +732,13 @@ namespace BassWebV3.Controllers
             row.CreateCell(1, CellType.String).SetCellValue("ClientName");
             row.CreateCell(2, CellType.String).SetCellValue("CDCRNum");
             row.CreateCell(3, CellType.String).SetCellValue("Medi-cal Amount");
-            row.CreateCell(4, CellType.String).SetCellValue("SSI Amount");
-            row.CreateCell(5, CellType.String).SetCellValue("VA Amount");
-            row.CreateCell(6, CellType.String).SetCellValue("SNP/REFUSE Amount");
-            row.CreateCell(7, CellType.String).SetCellValue("Medi-cal BNP Amount");
-            row.CreateCell(8, CellType.String).SetCellValue("SSI BNP Amount");
-            row.CreateCell(9, CellType.String).SetCellValue("VA BNP Amount");
+            row.CreateCell(4, CellType.String).SetCellValue("Medi-cal Admin Reinstatement");
+            row.CreateCell(5, CellType.String).SetCellValue("SSI Amount");
+            row.CreateCell(6, CellType.String).SetCellValue("VA Amount");
+            row.CreateCell(7, CellType.String).SetCellValue("SNP/REFUSE Amount");
+            row.CreateCell(8, CellType.String).SetCellValue("CID Needs Assessment");
+            //row.CreateCell(8, CellType.String).SetCellValue("SSI BNP Amount");
+            //row.CreateCell(9, CellType.String).SetCellValue("VA BNP Amount");
 
             foreach (var cell in row.Cells)
             {
@@ -753,8 +754,7 @@ namespace BassWebV3.Controllers
             sheet.SetColumnWidth(5, 20 * 256);
             sheet.SetColumnWidth(6, 20 * 256);
             sheet.SetColumnWidth(7, 20 * 256);
-            sheet.SetColumnWidth(8, 20 * 256);
-            sheet.SetColumnWidth(9, 20 * 256);
+            sheet.SetColumnWidth(8, 20 * 256);         
 
             //(Optional) freeze the header row so it is not scrolled
             //sheet.CreateFreezePane(7, 1, 7, 1);
@@ -772,12 +772,13 @@ namespace BassWebV3.Controllers
                 headerrow.CreateCell(1, CellType.String).SetCellValue("");
                 headerrow.CreateCell(2, CellType.String).SetCellValue(ptvr.Count());
                 headerrow.CreateCell(3, CellType.String).SetCellValue(ptvr.Sum(s => s.MCTotal));
-                headerrow.CreateCell(4, CellType.String).SetCellValue(ptvr.Sum(s => s.SSITotal));
-                headerrow.CreateCell(5, CellType.String).SetCellValue(ptvr.Sum(s => s.VATotal));
-                headerrow.CreateCell(6, CellType.String).SetCellValue(ptvr.Sum(s => s.SNPRTotal));
-                headerrow.CreateCell(7, CellType.String).SetCellValue(ptvr.Sum(s => s.MediCalBnp));
-                headerrow.CreateCell(8, CellType.String).SetCellValue(ptvr.Sum(s => s.SSIBnp));
-                headerrow.CreateCell(9, CellType.String).SetCellValue(ptvr.Sum(s => s.VATotal));
+                headerrow.CreateCell(4, CellType.String).SetCellValue(ptvr.Sum(s => s.TMediCalAReinstatement));
+                headerrow.CreateCell(5, CellType.String).SetCellValue(ptvr.Sum(s => s.SSITotal));
+                headerrow.CreateCell(6, CellType.String).SetCellValue(ptvr.Sum(s => s.VATotal));
+                headerrow.CreateCell(7, CellType.String).SetCellValue(ptvr.Sum(s => s.SNPRTotal));
+                headerrow.CreateCell(8, CellType.String).SetCellValue(ptvr.Sum(s => s.CIDNeedsAssessment));
+                //headerrow.CreateCell(8, CellType.String).SetCellValue(ptvr.Sum(s => s.SSIBnp));
+                //headerrow.CreateCell(9, CellType.String).SetCellValue(ptvr.Sum(s => s.VATotal));
                 var name = ptvr.Select(s => s.BenefitWorkerName).FirstOrDefault();
                 headerrow.CreateCell(0, CellType.String).SetCellValue(name);
                 foreach (var item in ptvr)
@@ -788,12 +789,13 @@ namespace BassWebV3.Controllers
                     row1.CreateCell(1, CellType.String).SetCellValue(item.ClientName);
                     row1.CreateCell(2, CellType.String).SetCellValue(item.CDCRNum);
                     row1.CreateCell(3, CellType.String).SetCellValue(item.MCTotal);
-                    row1.CreateCell(4, CellType.String).SetCellValue(item.SSITotal);
-                    row1.CreateCell(5, CellType.String).SetCellValue(item.VATotal);
-                    row1.CreateCell(6, CellType.String).SetCellValue(item.SNPRTotal);
-                    row1.CreateCell(7, CellType.String).SetCellValue(item.MediCalBnp);
-                    row1.CreateCell(8, CellType.String).SetCellValue(item.SSIBnp);
-                    row1.CreateCell(9, CellType.String).SetCellValue(item.VABnp);
+                    row1.CreateCell(4, CellType.String).SetCellValue(item.TMediCalAReinstatement);
+                    row1.CreateCell(5, CellType.String).SetCellValue(item.SSITotal);
+                    row1.CreateCell(6, CellType.String).SetCellValue(item.VATotal);
+                    row1.CreateCell(7, CellType.String).SetCellValue(item.SNPRTotal);
+                    row1.CreateCell(8, CellType.String).SetCellValue(item.CIDNeedsAssessment);
+                    //row1.CreateCell(8, CellType.String).SetCellValue(item.SSIBnp);
+                    //row1.CreateCell(9, CellType.String).SetCellValue(item.VABnp);
                 }
 
                 var footerrow = sheet.CreateRow(rowNumber++);
@@ -801,12 +803,13 @@ namespace BassWebV3.Controllers
                 footerrow.CreateCell(1, CellType.String).SetCellValue("Group Total:");
                 footerrow.CreateCell(2, CellType.String).SetCellValue(ptvr.Count());
                 footerrow.CreateCell(3, CellType.String).SetCellValue(ptvr.Sum(s => s.MCTotal));
-                footerrow.CreateCell(4, CellType.String).SetCellValue(ptvr.Sum(s => s.SSITotal));
-                footerrow.CreateCell(5, CellType.String).SetCellValue(ptvr.Sum(s => s.VATotal));
-                footerrow.CreateCell(6, CellType.String).SetCellValue(ptvr.Sum(s => s.SNPRTotal));
-                footerrow.CreateCell(7, CellType.String).SetCellValue(ptvr.Sum(s => s.MediCalBnp));
-                footerrow.CreateCell(8, CellType.String).SetCellValue(ptvr.Sum(s => s.SSIBnp));
-                footerrow.CreateCell(9, CellType.String).SetCellValue(ptvr.Sum(s => s.VATotal));
+                footerrow.CreateCell(4, CellType.String).SetCellValue(ptvr.Sum(s => s.TMediCalAReinstatement));
+                footerrow.CreateCell(5, CellType.String).SetCellValue(ptvr.Sum(s => s.SSITotal));
+                footerrow.CreateCell(6, CellType.String).SetCellValue(ptvr.Sum(s => s.VATotal));
+                footerrow.CreateCell(7, CellType.String).SetCellValue(ptvr.Sum(s => s.SNPRTotal));
+                footerrow.CreateCell(8, CellType.String).SetCellValue(ptvr.Sum(s => s.CIDNeedsAssessment));
+                //footerrow.CreateCell(8, CellType.String).SetCellValue(ptvr.Sum(s => s.SSIBnp));
+                //footerrow.CreateCell(9, CellType.String).SetCellValue(ptvr.Sum(s => s.VATotal));
                 firstrow = rowNumber;
             }
 
@@ -830,12 +833,13 @@ namespace BassWebV3.Controllers
             row2.CreateCell(1, CellType.String).SetCellValue("");
             row2.CreateCell(2, CellType.String).SetCellValue(productivities.Count());
             row2.CreateCell(3, CellType.String).SetCellValue(productivities.Sum(s => s.MCTotal));
-            row2.CreateCell(4, CellType.String).SetCellValue(productivities.Sum(s => s.SSITotal));
-            row2.CreateCell(5, CellType.String).SetCellValue(productivities.Sum(s => s.VATotal));
-            row2.CreateCell(6, CellType.String).SetCellValue(productivities.Sum(s => s.SNPRTotal));
-            row2.CreateCell(7, CellType.String).SetCellValue(productivities.Sum(s => s.MediCalBnp));
-            row2.CreateCell(8, CellType.String).SetCellValue(productivities.Sum(s => s.SSIBnp));
-            row2.CreateCell(9, CellType.String).SetCellValue(productivities.Sum(s => s.VATotal));
+            row2.CreateCell(4, CellType.String).SetCellValue(productivities.Sum(s => s.TMediCalAReinstatement));
+            row2.CreateCell(5, CellType.String).SetCellValue(productivities.Sum(s => s.SSITotal));
+            row2.CreateCell(6, CellType.String).SetCellValue(productivities.Sum(s => s.VATotal));
+            row2.CreateCell(7, CellType.String).SetCellValue(productivities.Sum(s => s.SNPRTotal));
+            row2.CreateCell(8, CellType.String).SetCellValue(productivities.Sum(s => s.CIDNeedsAssessment));
+            //row2.CreateCell(8, CellType.String).SetCellValue(productivities.Sum(s => s.SSIBnp));
+            //row2.CreateCell(9, CellType.String).SetCellValue(productivities.Sum(s => s.VATotal));
 
             foreach (var cell in row2.Cells)
             {
@@ -1327,16 +1331,16 @@ namespace BassWebV3.Controllers
 
         private List<ProductivityReportRowDetail> GetProductivityReport(DateTime FromDate, DateTime ToDate, string BfWorkerIDs)
         {
-            if (string.IsNullOrEmpty(BfWorkerIDs)) return new List<ProductivityReportRowDetail>();
+            //if (string.IsNullOrEmpty(BfWorkerIDs)) return new List<ProductivityReportRowDetail>();
 
-            List<ParameterInfo> ParamList = new List<ParameterInfo>
-            {
-               new ParameterInfo {ParameterName="FromDate", ParameterValue=FromDate },
-               new ParameterInfo {ParameterName="ToDate", ParameterValue=ToDate },
-               new ParameterInfo {ParameterName="BfWorkerIDs", ParameterValue=BfWorkerIDs }
-            };
-            var result = SqlHelper.GetRecords<ProductivityReportRowDetail>("spRptProductivityV3", ParamList).ToList();
-            return result;
+            //List<ParameterInfo> ParamList = new List<ParameterInfo>
+            //{
+            //   new ParameterInfo {ParameterName="FromDate", ParameterValue=FromDate },
+            //   new ParameterInfo {ParameterName="ToDate", ParameterValue=ToDate },
+            //   new ParameterInfo {ParameterName="BfWorkerIDs", ParameterValue=BfWorkerIDs }
+            //};
+            //var result = SqlHelper.GetRecords<ProductivityReportRowDetail>("spRptProductivityV3", ParamList).ToList();
+            return new List<ProductivityReportRowDetail>(); ;
         }
 
         private List<InmatesReleaseReportData> GetInmatesReport(DateTime StartDate, DateTime EndDate, int Details)

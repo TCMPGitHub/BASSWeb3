@@ -67,6 +67,7 @@ namespace BassIdentityManagement.Entities
         public string CDCRNum { get; set; }
         public string LastName { get; set; }
         public string FirstName { get; set; }
+        public string DaytoRelease { get; set; }
         public string FacilityName { get; set; }
         // release date
         public DateTime EPRD { get; set; }
@@ -155,12 +156,13 @@ namespace BassIdentityManagement.Entities
         public string ClientName { get; set; }
         public string CDCRNum { get; set; }
         public int MCTotal { get; set; }
+        public int TMediCalAReinstatement { get; set; }
         public int SSITotal { get; set; }
         public int VATotal { get; set; }
         public int SNPRTotal { get; set; }
-        public int MediCalBnp { get; set; }
-        public int SSIBnp { get; set; }
-        public int VABnp { get; set; }
+        //public int MediCalBnp { get; set; }
+        //public int SSIBnp { get; set; }
+        //public int VABnp { get; set; }
         public int CIDNeedsAssessment { get; set; }
     }
 

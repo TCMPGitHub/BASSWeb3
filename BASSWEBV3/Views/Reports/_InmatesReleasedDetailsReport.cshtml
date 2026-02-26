@@ -22,6 +22,7 @@
               { value: "CDCR#", background: "#CD5C5C" },
               { value: "LastName" },
               { value: "FirstName" },
+              { value: "DaytoRelease" },
               { value: "Facility" },
               { value: "EPRD" },
               { value: "Housing" },
@@ -48,6 +49,7 @@
                        { value: data[i].CDCRNum },
                        { value: data[i].LastName },
                        { value: data[i].FirstName },
+                       { value: data[i].DaytoRelease },
                        { value: data[i].Facility },
                        { value: data[i].EPRD },
                        { value: data[i].Housing },
@@ -152,7 +154,7 @@
         //column.Bound(m => m.Release).Width(50).Title("Parole/PRCS (OLD)").Filterable(false);
         column.Bound(m => m.MentallyIll).Width(150).Title("Mentally Ill?").Filterable(false).HeaderHtmlAttributes(new { style = "background-color: #93B8E8;font-weight: bold; color:darkblue;font-size:14px" });
         column.Bound(m => m.Elderly).Width(30).Title("Elderly").Filterable(false).HeaderHtmlAttributes(new { style = "background-color: #93B8E8;font-weight: bold; color:darkblue;font-size:14px" });
-        column.Bound(m => m.Elderly).Width(80).Title("MEDSLITE Screening").Filterable(false).HeaderHtmlAttributes(new { style = "background-color: #93B8E8;font-weight: bold; color:darkblue;font-size:14px" });
+        column.Bound(m => m.MEDSLITEScreening).Width(80).Format("{0:MM/dd/yyyy}").Title("MEDSLITE Screening").Filterable(false).HeaderHtmlAttributes(new { style = "background-color: #93B8E8;font-weight: bold; color:darkblue;font-size:14px" });
         //column.Bound(m => m.Gender).Width(30).Title("Gender").Filterable(false);
         column.Bound(m => m.FaceToFaceDate).Width(80).Format("{0:MM/dd/yyyy}").Title("Face To Face Date").Filterable(false).HeaderHtmlAttributes(new { style = "background-color: #93B8E8;font-weight: bold; color:darkblue;font-size:14px" });  //aliceblue  #93B8E8
         column.Group(g=>g.Title("Medi-Cal").Width(450).HeaderHtmlAttributes(new { style = "background-color: #93B8E8;font-weight: bold; color:darkblue;font-size:14px" })

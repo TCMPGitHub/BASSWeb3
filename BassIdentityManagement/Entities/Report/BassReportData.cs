@@ -89,6 +89,7 @@ namespace BassIdentityManagement.Entities
         public string SSIApplyDate { get; set; }
         public string VAApplyDate { get; set; }
         public string BenefitWorkerName { get; set; }
+        public DateTime? MEDSLITEScreening { get; set; }
         public DateTime? FaceToFaceDate { get; set; }
         public DateTime? ExitInterviewDate { get; set; }
     }

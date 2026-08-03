@@ -151,11 +151,13 @@ namespace BassIdentityManagement.Entities
         //Name MC#    SSI#   VA#   SNP/Refusal#
         [Key]
         public int BenefitWorkerId { get; set; }
+        public string Facility { get; set; }
         [Display(Name = "Benefit Worker")]
         public string BenefitWorkerName { get; set; }
         public int EpisodeID { get; set; }
         public string ClientName { get; set; }
         public string CDCRNum { get; set; }
+        public int FaceToFace { get; set; }
         public int MCTotal { get; set; }
         public int TMediCalAReinstatement { get; set; }
         public int SSITotal { get; set; }

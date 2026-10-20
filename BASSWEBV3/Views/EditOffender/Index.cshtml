@@ -394,24 +394,25 @@
 
 <script type="text/javascript">
     function exportMyAssignmentToExcel() {
+        //{ value: "MEDSLITE Screening", bold: true, background: "#dcdcdc", rowSpan: 2, vAlign: "center", hAlign: "center" },
          //header 1
         var rows = [{
             cells: [
                { value: "CDCR#", bold: true, background: "#dcdcdc",rowSpan: 2, vAlign: "center", hAlign: "center" },
                { value: "Offender Name", bold: true, background: "#dcdcdc",rowSpan: 2, vAlign: "center", hAlign: "center" },
-               { value: "Housing", bold: true, background: "#dcdcdc",rowSpan: 2, vAlign: "center", hAlign: "center" },
+               { value: "Housing", bold: true, background: "#dcdcdc", rowSpan: 2, vAlign: "center", hAlign: "center" },
+               { value: "Days to Release", bold: true, background: "#dcdcdc", rowSpan: 2, vAlign: "center", hAlign: "center" }, 
                { value: "MHClass/SOMS Codes", bold: true, background: "#dcdcdc",rowSpan: 2, vAlign: "center", hAlign: "center" },
-               { value: "Custody Facility", bold: true, background: "#dcdcdc",colSpan : 2,  vAlign: "center", hAlign: "center" },
                { value: "Release Date", bold: true, background: "#dcdcdc", colSpan: 2, vAlign: "center", hAlign: "center" },
-               { value: "MEDSLITE Screening", bold: true, background: "#dcdcdc", rowSpan: 2, vAlign: "center", hAlign: "center" },
+               { value: "County of Release", bold: true, background: "#dcdcdc", colSpan: 2, vAlign: "center", hAlign: "center" },
                { value: "Face To Face Date", bold: true, background: "#dcdcdc", rowSpan: 2, vAlign: "center", hAlign: "center" },
                { value: "Application", bold: true, background: "#dcdcdc", rowSpan: 2, vAlign: "center", hAlign: "center" },
-               { value: "BIC Number", bold: true, background: "#dcdcdc", rowSpan: 2, vAlign: "center", hAlign: "center" },
-               { value: "CIN Number", bold: true, background: "#dcdcdc", rowSpan: 2, vAlign: "center", hAlign: "center" },
-               { value: "Outcome", bold: true, background: "#dcdcdc", rowSpan: 2, vAlign: "center", hAlign: "center" },
                { value: "Disposition", bold: true, background: "#dcdcdc", rowSpan: 2, vAlign: "center", hAlign: "center" },
-               { value: "Exit Interview Date", bold: true, background: "#dcdcdc", rowSpan: 2, vAlign: "center", hAlign: "center" }
-            ]
+               { value: "Outcome", bold: true, background: "#dcdcdc", rowSpan: 2, vAlign: "center", hAlign: "center" },
+               { value: "Exit Interview Date", bold: true, background: "#dcdcdc", rowSpan: 2, vAlign: "center", hAlign: "center" },
+               { value: "BIC Number", bold: true, background: "#dcdcdc", rowSpan: 2, vAlign: "center", hAlign: "center" },             
+               { value: "CIN Number", bold: true, background: "#dcdcdc", rowSpan: 2, vAlign: "center", hAlign: "center" }
+          ]
         }];
 
         //header 2
@@ -453,26 +454,25 @@
 
             if(((new Date(data[i].SomsReleaseDate)) - (new Date(data[i].ReleaseDate))) !==0)
                 releaseColor = "#4e9a06";
-
+            //{background: bgcolor, value: data[i].MEDSLiteScreening },
             rows.push({
                 cells: [
-                  {background:bgcolor, value: data[i].CDCRNum },
-                  {background:bgcolor, value: data[i].ClientName },
-                  {background:bgcolor, value: data[i].Housing },
-                  {background:bgcolor, value: data[i].MHClass },
-                  {background:custfacolor, value: data[i].SomsCustFacilityName},
-                  {background:custfacolor, value: data[i].CustFacilityName },
-                  {background:releaseColor,value: data[i].SomsReleaseDate },
-                  {background:releaseColor, value: data[i].ReleaseDate },
-                  {background: bgcolor, value: data[i].MEDSLiteScreening },
-                  {background:bgcolor, value: data[i].FaceToFaceDate },
-                  {background:bgcolor, value: data[i].Apps },
-                  {background:bgcolor, value: data[i].BICNum },
-                  {background:bgcolor, value: data[i].CINNUM },
-                  {background:bgcolor, value: data[i].Outcome },
-                  {background:bgcolor, value: data[i].AppStatus },
-                  {background:bgcolor, value: data[i].ExitInterviewDate },
-                ]
+                  { background: bgcolor, value: data[i].CDCRNum },
+                  { background: bgcolor, value: data[i].ClientName },
+                  { background: bgcolor, value: data[i].Housing },
+                  { background: bgcolor, value: data[i].DaytoRelease },
+                  { background: bgcolor, value: data[i].MHClass },
+                  { background: bgcolor, value: data[i].SomsReleaseDate },
+                  { background: bgcolor, value: data[i].ReleaseDate },
+                  { background: bgcolor, value: data[i].SomsCountyOfRelease },
+                  { background: bgcolor, value: data[i].CountyOfRelease },                
+                  { background: bgcolor, value: data[i].FaceToFaceDate },
+                  { background: bgcolor, value: data[i].Apps },                
+                  { background: bgcolor, value: data[i].AppStatus },
+                  { background: bgcolor, value: data[i].Outcome },
+                  { background: bgcolor, value: data[i].ExitInterviewDate },
+                  { background: bgcolor, value: data[i].BICNum },
+                  { background: bgcolor, value: data[i].CINNUM }]
             });
         }
 
@@ -480,9 +480,9 @@
         var workbook = new kendo.ooxml.Workbook({
             sheets: [
               {
-                  columns: [ { width: 60 }, { width: 160 }, { width: 120 }, { width: 150 }, { width: 50 },
-                             { width: 50 }, { width: 75 }, { width: 75 }, { width: 75 }, { width: 75 }, { width: 75 },
-                             { width: 75 }, { width: 75 }, { width: 75 }, { width: 160 }, { width: 75 }],
+                  columns: [ { width: 60 }, { width: 160 }, { width: 120 }, { width:60 }, { width: 100 },
+                             { width: 75 }, { width: 75 }, { width: 75 }, { width: 75 }, { width: 75 }, 
+                             { width: 165 }, { width: 165 }, { width: 75 }, { width: 75 }, { width: 100 }, { width: 100 }],
                   title: "MyAssignment",
                   rows: rows
               }

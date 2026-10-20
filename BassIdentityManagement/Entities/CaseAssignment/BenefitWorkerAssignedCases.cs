@@ -22,11 +22,11 @@ namespace BassIdentityManagement.Entities
         [Required]
         [Display(Name = "Release Date")]
         public DateTime ReleaseDate { get; set; }
-        [Display(Name = "Soms Custody Facility Name"), StringLength(100)]
-        public string SomsCustFacilityName { get; set; }
+        [Display(Name = "Soms County of Release Name"), StringLength(25)]
+        public string SomsCountyOfRelease { get; set; }
         [Required]
-        [Display(Name = "Custody Facility Name"), StringLength(100)]
-        public string CustFacilityName { get; set; }
+        [Display(Name = "County of Release Name"), StringLength(25)]
+        public string CountyOfRelease { get; set; }
         [Required]
         [Display(Name = "Housing"), StringLength(25)]
         public string Housing { get; set; }
